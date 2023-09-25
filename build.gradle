@@ -25,6 +25,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
+	//thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
 	//jwt 의존성 추가
 	// For JWT API
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'

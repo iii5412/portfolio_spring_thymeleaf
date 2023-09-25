@@ -1,10 +1,19 @@
 package com.learn.learnJwt.controller;
 
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@Controller
 public class MainController {
+
     @GetMapping("/")
-    public
+    public String index() {
+        return "index";
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
 }

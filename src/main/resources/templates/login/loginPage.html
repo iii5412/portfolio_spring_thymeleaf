@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+</head>
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 10px;
+        width: 300px;
+        align-items: center;
+    }
+
+    .grid-container input {
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+</style>
+<body>
+    <div class="grid-container">
+        <div>아이디</div>
+        <input type="text" name="loginId" id="loginId">
+
+        <div>비밀번호</div>
+        <input type="text" name="loginPassword" id="loginPassword">
+    </div>
+</body>
+</html>

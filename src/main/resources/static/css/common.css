@@ -1,0 +1,72 @@
+/* 기본 스타일 */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f8;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 테마 컬러 */
+:root {
+    --theme-color: #009BFF; /* 좀 더 밝은 파란색 */
+    --light-theme-color: #e6f5ff; /* 조금 더 밝은 파란색의 연한 버전 */
+    --dark-theme-color: #0070c0; /* 약간 진한 파란색의 버전 */
+}
+
+/* 헤더 */
+.header {
+    background-color: var(--theme-color);
+    color: #ffffff;
+    padding: 15px 0;
+    text-align: center;
+}
+
+.menu-nav {
+    background-color: var(--theme-color);
+    padding: 10px 0;
+}
+
+.menu-nav ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.menu-nav li {
+    margin: 0 15px;
+}
+
+.menu-nav a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.menu-nav a:hover {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* 컨텐츠 */
+.content {
+    padding: 20px 0;
+    background-color: #ffffff;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+}
+
+/* 풋터 */
+.footer {
+    background-color: var(--theme-color);
+    color: #ffffff;
+    text-align: center;
+    padding: 15px 0;
+    margin-top: 20px;
+}

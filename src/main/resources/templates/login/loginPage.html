@@ -1,31 +1,42 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
+<script th:type="module" th:src="@{/js/util.js}"></script>
 <head>
     <meta charset="UTF-8">
     <title>로그인</title>
 </head>
-<style>
-    .grid-container {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 10px;
-        width: 300px;
-        align-items: center;
-    }
-
-    .grid-container input {
-        padding: 5px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-</style>
-<body>
     <div class="grid-container">
         <div>아이디</div>
-        <input type="text" name="loginId" id="loginId">
-
+        <input th:type="text" name="username" id="username">
         <div>비밀번호</div>
-        <input type="text" name="loginPassword" id="loginPassword">
+        <input th:type="text" name="password" id="password">
+        <input th:type="button" id="loginBtn" value="로그인" />
     </div>
-</body>
+    <script th:type="module">
+        import {qs, FETCH} from "/js/util.js";
+        const loginBtn = qs('#loginBtn');
+
+
+
+        loginBtn.addEventListener('click', () => {
+            const username = qs('#username').value;
+            const password = qs('#password').value;
+            FETCH.post('/auth/login', {username, password})
+                .then(response => {
+                    if(response.ok){
+                        location.href = "/";
+                    } else {
+                        if(response.status === 401){
+                            throw new Error('아이디/비밀번호를 확인하세요.')
+                        } else {
+                            throw new Error('로그인에 실패하였습니다.')
+                        }
+                    }
+                })
+                .catch(e => {
+                    alert(e.message);
+                });
+        })
+
+    </script>
 </html>

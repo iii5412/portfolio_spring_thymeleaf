@@ -1,4 +1,4 @@
-package com.learn.learnJwt.security.jwt;
+package com.learn.learnJwt.security.jwt.filters;
 
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;

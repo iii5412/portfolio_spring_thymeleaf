@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<body>
+<div class="header" th:fragment="header">
+    <div sec:authorize="isAuthenticated()">
+        <span sec:authentication="name"></span>님 환영합니다.
+        <input id="logoutBtn" type="button" value="로그아웃"/>
+    </div>
+    <div th:if="${#authentication.name == 'anonymousUser'}">
+        <input id="loginBtn" type="button" value="로그인"/>
+    </div>
+</div>
+</body>
+</html>

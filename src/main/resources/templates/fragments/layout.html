@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>메인페이지</title>
+  <script th:type="module" th:src="@{/js/util.js}"></script>
+  <link rel="stylesheet" th:href="@{/css/common.css}"/>
+</head>
+<body>
+  <div>
+    <div th:replace="fragments/header :: header"></div>
+    <div th:replace="fragments/menu :: menu"></div>
+    <div class="content" layout:fragment="content"></div>
+    <div th:replace="fragments/footer :: footer"></div>
+  </div>
+</body>
+<script th:type="module">
+  import {qs, FETCH} from "/js/util.js";
+
+  const loginBtn = qs('#loginBtn');
+  const logoutBtn = qs('#logoutBtn');
+
+  if (loginBtn)
+    loginBtn.addEventListener('click', () => {
+      location.href = '/loginPage';
+    })
+  if (logoutBtn)
+    logoutBtn.addEventListener('click', () => {
+      FETCH.post('/auth/logout')
+              .then(response => {
+                if (response.ok)
+                  location.href = "/";
+              })
+              .catch(e => {
+                throw "로그아웃에 실패하였습니다.";
+              });
+    });
+</script>
+</html>

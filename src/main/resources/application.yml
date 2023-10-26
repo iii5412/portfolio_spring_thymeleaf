@@ -1,9 +1,36 @@
 spring:
+  datasource:
+    #    url: jdbc:h2:tcp://localhost/~/todolist
+    #    username: sa
+    #    password:
+    #    driver-class-name: org.h2.Driver
+    #    url: jdbc:mysql://mysql:3306/tododb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    url: jdbc:mysql://host.docker.internal:3306/tododb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: appuser
+    password: appuser
+    driver-class-name: com.mysql.cj.jdbc.Driver
   thymeleaf:
     cache: false
+
+jpa:
+  hibernate:
+    ddl-auto: validate #create create-drop, update, validate, none
+  properties:
+    hibernate:
+      dialect: org.hibernate.dialect.MySQL8Dialect
+      highlight_sql: true
+      format_sql: true
+      show_sql: true
+  #    open-in-view: false
+
 logging:
   level:
     root: DEBUG
     org.springframework.web: DEBUG
     org.springframework.security: DEBUG
+    org.hibernate:
+      SQL: debug
+      type:
+        descriptor:
+          sql: trace
 

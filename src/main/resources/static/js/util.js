@@ -29,7 +29,7 @@ class Fetch {
     }
 }
 
-const qs = (selector) => document.querySelector(selector);
+const qs = (target, selector) => target.querySelector(selector);
 const qsAll = (target, selector) => Array.from(target.querySelectorAll(selector));
 const FETCH = new Fetch();
 

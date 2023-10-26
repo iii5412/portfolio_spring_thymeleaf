@@ -14,14 +14,12 @@
     </div>
     <script th:type="module">
         import {qs, FETCH} from "/js/util.js";
-        const loginBtn = qs('#loginBtn');
-
-
+        const loginBtn = qs(document, '#loginBtn');
 
         loginBtn.addEventListener('click', () => {
-            const username = qs('#username').value;
-            const password = qs('#password').value;
-            FETCH.post('/auth/login', {username, password})
+            const username = qs(document, '#username').value;
+            const password = qs(document, '#password').value;
+            FETCH.post('/account/login', {username, password})
                 .then(response => {
                     if(response.ok){
                         location.href = "/";

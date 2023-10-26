@@ -4,12 +4,28 @@
 <div th:fragment="menu">
   <nav class="menu-nav">
     <ul>
-      <li><a href="#">가</a></li>
+      <li><a href="#" data-url="/todo">TODO</a></li>
       <li><a href="#">나</a></li>
       <li><a href="#">다</a></li>
       <li><a href="#">라</a></li>
     </ul>
   </nav>
+  <script th:type="module">
+    import {qs, qsAll} from '/js/util.js';
+    import {loadContent} from "/js/common.js";
+
+    const nav = qs(document, '.menu-nav');
+    const menuAtags = qsAll(nav, 'a');
+
+    menuAtags.forEach(a => {
+      a.addEventListener('click', (event) => {
+        const url = event.target.dataset.url;
+        loadContent(url);
+      })
+    })
+
+  </script>
 </div>
 </body>
+
 </html>

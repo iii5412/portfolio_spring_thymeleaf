@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  mysql:
+    container_name: todo_mysql
+    image: mysql:8.0.2
+    environment:
+      MYSQL_ROOT_PASSWORD: 6212
+      MYSQL_DATABASE: tododb
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: appuser
+    volumes:
+      - ./todo-mysql/setup.sql:/docker-entrypoint-initdb.d/setup.sql
+    ports:
+      - "3306:3306"

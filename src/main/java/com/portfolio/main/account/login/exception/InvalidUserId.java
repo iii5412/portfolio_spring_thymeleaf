@@ -1,16 +1,16 @@
-package com.portfolio.main.account.exception;
+package com.portfolio.main.account.login.exception;
 
 import com.portfolio.main.exception.BusiException;
 import org.springframework.http.HttpStatus;
 
-public class InvalidLoginId extends BusiException {
+public class InvalidUserId extends BusiException {
     public static final String MESSAGE = "아이디를 확인해주세요.";
 
-    public InvalidLoginId() {
+    public InvalidUserId() {
         super(MESSAGE);
     }
 
-    public InvalidLoginId(String fieldName, String message) {
+    public InvalidUserId(String fieldName, String message) {
         super(MESSAGE);
         addValidation(fieldName, message);
     }

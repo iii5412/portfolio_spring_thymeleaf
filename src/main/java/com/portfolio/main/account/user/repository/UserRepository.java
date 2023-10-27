@@ -1,4 +1,4 @@
-package com.portfolio.main.account.user.service;
+package com.portfolio.main.account.user.repository;
 
 import com.portfolio.main.account.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;

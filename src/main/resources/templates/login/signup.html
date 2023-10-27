@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{/css/login/signup.css}"/>
+<script th:type="module" th:src="@{/js/util.js}"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+</head>
+<div class="container">
+    <div class="header">
+        <h1>회원가입</h1>
+    </div>
+    <div class="content">
+        <div class="input-container">
+            <label for="loginId">아이디</label>
+            <input type="text" id="loginId" name="loginId">
+        </div>
+        <div class="input-container">
+            <label for="username">성명</label>
+            <input type="text" id="username" name="username">
+        </div>
+        <div class="input-container">
+            <label for="loginPw1">1차 비밀번호</label>
+            <input type="password" id="loginPw1" name="loginPw1">
+        </div>
+        <div class="input-container">
+            <label for="loginPw2">2차 비밀번호</label>
+            <input type="password" id="loginPw2" name="loginPw2">
+        </div>
+        <input type="button" id="signupBtn" value="가입">
+    </div>
+</div>
+<script th:type="module">
+    import {qs, FETCH} from "/js/util.js";
+    import {goMainPage} from "/js/apis/auth/auth.js";
+
+    const signupBtn = qs(document, '#signupBtn');
+    signupBtn.addEventListener('click', () => {
+        const loginId = qs(document, '#loginId').value;
+        const username = qs(document, '#username').value;
+        const loginPw1 = qs(document, '#loginPw1').value;
+        const loginPw2 = qs(document, '#loginPw2').value;
+
+        FETCH.post('/account/signup', {loginId, username, loginPw1, loginPw2})
+            .then(async response => {
+                if (response.ok) {
+                    goMainPage();
+                } else {
+                    const responseJson = await response.json();
+                    debugger;
+                }
+            }).catch(e => {
+            debugger;
+        })
+    })
+
+</script>
+</html>

@@ -2,35 +2,34 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <body>
 <div class="header" th:fragment="header">
-    <div sec:authorize="isAuthenticated()">
-        <span sec:authentication="name"></span>님 환영합니다.
-        <input id="logoutBtn" type="button" value="로그아웃"/>
-    </div>
-    <div th:if="${#authentication.name == 'anonymousUser'}">
-        <input id="loginBtn" type="button" value="로그인"/>
-        <input id="join" type="button" value="회원가입"/>
+    <div class="loginDiv">
+        <div sec:authorize="isFullyAuthenticated()">
+            <span sec:authentication="name"></span>님 환영합니다.
+            <a id="logoutBtn">로그아웃</a>
+        </div>
+        <div sec:authorize="!isFullyAuthenticated()">
+            <a id="loginBtn">로그인</a>
+            <a id="signupBtn">회원가입</a>
+        </div>
     </div>
     <script th:type="module">
-        import {qs, FETCH} from "/js/util.js";
+        import {qs} from "/js/util.js";
+        import {logout, goLoginPage, goSignupPage} from "/js/apis/auth/auth.js";
 
         const loginBtn = qs(document, '#loginBtn');
         const logoutBtn = qs(document, '#logoutBtn');
+        const signupBtn = qs(document, '#signupBtn');
 
         if (loginBtn)
             loginBtn.addEventListener('click', () => {
-                location.href = '/loginPage';
+                goLoginPage();
             })
         if (logoutBtn)
             logoutBtn.addEventListener('click', () => {
-                FETCH.post('/account/logout')
-                    .then(response => {
-                        if (response.ok)
-                            location.href = "/";
-                    })
-                    .catch(e => {
-                        throw "로그아웃에 실패하였습니다.";
-                    });
+                logout();
             });
+
+        signupBtn.addEventListener('click', goSignupPage);
     </script>
 </div>
 </body>

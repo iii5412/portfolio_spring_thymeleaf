@@ -1,5 +1,6 @@
 package com.portfolio.main.account.domain;
 
+import com.portfolio.main.account.user.service.RoleCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,11 +14,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Role {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "role_code")
-    private String roleCode;
+    private RoleCode roleCode;
 
     @Column(name = "role_name")
     private String roleName;

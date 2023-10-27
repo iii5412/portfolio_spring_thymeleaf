@@ -1,6 +1,6 @@
 package com.portfolio.main.security.jwt.filters;
 
-import com.portfolio.main.account.dto.JwtResponse;
+import com.portfolio.main.account.login.dto.JwtResponse;
 import com.portfolio.main.security.jwt.util.TokenUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

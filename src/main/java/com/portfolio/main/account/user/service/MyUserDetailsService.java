@@ -1,8 +1,10 @@
 package com.portfolio.main.account.user.service;
 
 import com.portfolio.main.account.domain.User;
-import com.portfolio.main.account.exception.InvalidLoginId;
-import com.portfolio.main.account.exception.InvalidLoginPassword;
+import com.portfolio.main.account.login.exception.InvalidLoginId;
+import com.portfolio.main.account.login.exception.InvalidLoginPassword;
+import com.portfolio.main.account.login.exception.InvalidUserId;
+import com.portfolio.main.account.user.repository.UserRepository;
 import com.portfolio.main.security.MyUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +29,14 @@ public class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String loginId) throws InvalidLoginId {
         final User findUser = userRepository.findByLoginId(loginId).orElseThrow(InvalidLoginId::new);
         return new MyUserDetails(findUser);
+    }
+
+    public User findUserByLoginId(String loginId) throws InvalidLoginId{
+        return userRepository.findByLoginId(loginId).orElseThrow(InvalidLoginId::new);
+    }
+
+    public User findByUserId(Long userId) {
+        return userRepository.findById(userId).orElseThrow(InvalidUserId::new);
     }
 
     public User validateUser(String loginId, String password) throws InvalidLoginId, InvalidLoginPassword {

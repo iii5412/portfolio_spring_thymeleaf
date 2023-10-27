@@ -11,13 +11,4 @@ public class MainController {
     public String index() {
         return "index";
     }
-
-    @GetMapping("/loginPage")
-    public String loginPage(@AuthenticationPrincipal UserDetails userDetails) {
-        if(userDetails != null)
-            return "/";
-
-        return "login/loginPage";
-    }
-
 }

@@ -13,6 +13,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Configuration
 //@EnableWebSecurity
 //public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -52,11 +55,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        final String[] permitAllUrls = {"/", "/error", "/account/login", "/account/signup", "/signup", "/loginPage", "/js/**", "/css/**", "/images/**"};
+
         http
                 .csrf().disable()
                 .authorizeHttpRequests(authorizeHttpRequests -> {
                     authorizeHttpRequests
-                            .requestMatchers("/", "/account/login", "/account/signup", "/loginPage", "/js/**", "/css/**", "/images/**").permitAll()
+                            .requestMatchers(permitAllUrls).permitAll()
                             .anyRequest().authenticated();
                 })
                 .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)

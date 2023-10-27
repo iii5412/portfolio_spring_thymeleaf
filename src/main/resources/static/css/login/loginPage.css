@@ -1,0 +1,75 @@
+/* 기본 스타일 */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f8;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 테마 컬러 */
+:root {
+    --theme-color: #009BFF; /* 좀 더 밝은 파란색 */
+    --light-theme-color: #e6f5ff; /* 조금 더 밝은 파란색의 연한 버전 */
+    --dark-theme-color: #0070c0; /* 약간 진한 파란색의 버전 */
+}
+
+/* 로그인 페이지 */
+.login-page {
+    background-color: #ffffff;
+    padding: 20px 0;
+    margin: 0 auto;
+    max-width: 400px;
+    text-align: center;
+}
+
+.header {
+    background-color: var(--theme-color);
+    color: #ffffff;
+    padding: 15px 0;
+    text-align: center;
+}
+
+.content {
+    margin: 20px 0;
+}
+
+.input-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.input-container label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.input-container input {
+    width: 200px;
+}
+
+/* 버튼 */
+.button {
+    color: #ffffff;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s;
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 5px;
+    width: 200px;
+    background-color: #009BFF;
+    cursor: pointer;
+}
+
+.button:hover {
+    color: rgba(255, 255, 255, 0.7);
+}

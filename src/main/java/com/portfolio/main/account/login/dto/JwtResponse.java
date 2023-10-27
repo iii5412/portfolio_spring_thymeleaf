@@ -1,4 +1,4 @@
-package com.portfolio.main.account.dto;
+package com.portfolio.main.account.login.dto;
 
 public class JwtResponse {
     private String token;

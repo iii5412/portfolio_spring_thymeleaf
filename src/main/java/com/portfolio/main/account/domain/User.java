@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -35,7 +35,7 @@ public class User {
 
     public List<String> getRoleCodes() {
         return userRoles.stream()
-                .map(userRole -> userRole.getRole().getRoleCode())
+                .map(userRole -> userRole.getRole().getRoleCode().name())
                 .collect(Collectors.toList());
     }
 

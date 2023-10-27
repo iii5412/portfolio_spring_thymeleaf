@@ -27,3 +27,14 @@ create table user_role (
                            foreign key (user_id) references users(id),
                            foreign key (role_id) references role(id)
 ) comment 'users와 role 사이의 다대다 테이블'
+
+
+CREATE TABLE user_login_history (
+                                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                    user_id INT NOT NULL, -- 외래키 (사용자 테이블과 연결)
+                                    actionType VARCHAR(10) NOT NULL, -- LOGIN, LOGOUT
+                                    ip_address VARCHAR(255), -- 로그인을 시도한 IP 주소 (옵션)
+                                    device_info VARCHAR(255), -- 로그인을 시도한 디바이스 정보 (옵션)
+                                    actionTime TIMESTAMP default CURRENT_TIMESTAMP NOT NULL,
+                                    FOREIGN KEY (user_id) REFERENCES users(id) -- users는 사용자 테이블 이름이라 가정
+);

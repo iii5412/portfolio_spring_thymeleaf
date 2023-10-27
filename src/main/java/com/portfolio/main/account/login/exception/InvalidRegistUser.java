@@ -1,4 +1,4 @@
-package com.portfolio.main.account.exception;
+package com.portfolio.main.account.login.exception;
 
 import com.portfolio.main.exception.BusiException;
 import org.springframework.http.HttpStatus;

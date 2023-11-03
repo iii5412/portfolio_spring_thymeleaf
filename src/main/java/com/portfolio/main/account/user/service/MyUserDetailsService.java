@@ -5,25 +5,20 @@ import com.portfolio.main.account.login.exception.InvalidLoginId;
 import com.portfolio.main.account.login.exception.InvalidLoginPassword;
 import com.portfolio.main.account.login.exception.InvalidUserId;
 import com.portfolio.main.account.user.repository.UserRepository;
-import com.portfolio.main.security.MyUserDetails;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.portfolio.main.config.security.MyUserDetails;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class MyUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-    @Autowired
-    public MyUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String loginId) throws InvalidLoginId {
@@ -31,7 +26,7 @@ public class MyUserDetailsService implements UserDetailsService {
         return new MyUserDetails(findUser);
     }
 
-    public User findUserByLoginId(String loginId) throws InvalidLoginId{
+    public User findUserByLoginId(String loginId) throws InvalidLoginId {
         return userRepository.findByLoginId(loginId).orElseThrow(InvalidLoginId::new);
     }
 
@@ -39,14 +34,17 @@ public class MyUserDetailsService implements UserDetailsService {
         return userRepository.findById(userId).orElseThrow(InvalidUserId::new);
     }
 
-    public User validateUser(String loginId, String password) throws InvalidLoginId, InvalidLoginPassword {
+    public User validateUser(String loginId, String loginPw) throws InvalidLoginId, InvalidLoginPassword {
         final User user = userRepository.findByLoginId(loginId)
                 .orElseThrow(InvalidLoginId::new);
 
-        String encodedUserPassword = passwordEncoder.encode(user.getLoginPw());
-        if (!passwordEncoder.matches(password, encodedUserPassword))
+        if (!checkPassword(loginPw, user.getLoginPw()))
             throw new InvalidLoginPassword();
 
         return user;
+    }
+
+    private boolean checkPassword(String rawPassword, String encryptedPassword) {
+        return passwordEncoder.matches(rawPassword, encryptedPassword);
     }
 }

@@ -1,23 +1,22 @@
 package com.portfolio.main.account.login.service;
 
 import com.portfolio.main.account.domain.Role;
+import com.portfolio.main.account.domain.User;
 import com.portfolio.main.account.domain.UserRole;
 import com.portfolio.main.account.login.dto.JwtResponse;
 import com.portfolio.main.account.login.dto.UserRegist;
-import com.portfolio.main.account.domain.User;
 import com.portfolio.main.account.login.exception.InvalidLoginId;
 import com.portfolio.main.account.login.exception.InvalidLoginPassword;
-import com.portfolio.main.account.user.service.RoleCode;
 import com.portfolio.main.account.user.repository.RoleRepository;
-import com.portfolio.main.exception.BusiException;
-import com.portfolio.main.security.jwt.JwtAuthenticationToken;
-import com.portfolio.main.security.jwt.provider.JwtProvider;
-import com.portfolio.main.account.user.service.MyUserDetailsService;
 import com.portfolio.main.account.user.repository.UserRepository;
+import com.portfolio.main.account.user.service.MyUserDetailsService;
+import com.portfolio.main.account.user.service.RoleCode;
+import com.portfolio.main.config.security.jwt.JwtAuthenticationToken;
+import com.portfolio.main.config.security.jwt.provider.JwtProvider;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @AllArgsConstructor
 public class AccountService {
-    private MyUserDetailsService userService;
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
-    private JwtProvider jwtProvider;
+    private final MyUserDetailsService userService;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final JwtProvider jwtProvider;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public JwtResponse login(String loginId, String loginPw) throws InvalidLoginId, InvalidLoginPassword {
         try {
@@ -50,7 +50,7 @@ public class AccountService {
     public Long signUp(UserRegist userRegist) {
         final User user = User.builder()
                 .loginId(userRegist.getLoginId())
-                .loginPw(userRegist.getLoginPw1())
+                .loginPw(passwordEncoder.encode(userRegist.getLoginPw1()))
                 .username(userRegist.getUsername())
                 .build();
 

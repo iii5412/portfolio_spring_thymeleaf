@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "user_role")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class UserRole {
 
     public UserRole(User user, Role role) {

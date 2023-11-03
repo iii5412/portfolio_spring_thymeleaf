@@ -16,11 +16,10 @@ public class UserLoginHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "login_id")
+    private String loginId;
 
-    @Column(name = "actionType")
+    @Column(name = "action_type")
     @Enumerated(EnumType.STRING)
     private LoginActionType actionType;
 
@@ -30,13 +29,17 @@ public class UserLoginHistory {
     @Column(name = "device_info")
     private String deviceInfo;
 
-    @Column(name = "actionTime", nullable = false)
-    private LocalDateTime loginTime;
+    @Column(name = "action_time", nullable = false, insertable = false)
+    private LocalDateTime actionTime;
 
-    public UserLoginHistory(User user, LoginActionType actionType, String ipAddress, String deviceInfo) {
-        this.user = user;
+    public UserLoginHistory(String loginId, LoginActionType actionType, String ipAddress, String deviceInfo) {
+        this.loginId = loginId;
         this.actionType = actionType;
         this.ipAddress = ipAddress;
         this.deviceInfo = deviceInfo;
+    }
+
+    public void changeActionType(LoginActionType actionType) {
+        this.actionType = actionType;
     }
 }

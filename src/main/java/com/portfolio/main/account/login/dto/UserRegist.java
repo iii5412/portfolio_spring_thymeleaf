@@ -40,7 +40,7 @@ public class UserRegist {
             invalidRegistUser.addValidation("loginPw1", "입력해주세요.");
 
         if(!StringUtils.hasText(loginPw2))
-            invalidRegistUser.addValidation("loginPw1", "입력해주세요.");
+            invalidRegistUser.addValidation("loginPw2", "입력해주세요.");
 
         if(isEqualPasswords()){
             invalidRegistUser.addValidation("loginPw1", "비밀번호가 일치하지 않습니다.");

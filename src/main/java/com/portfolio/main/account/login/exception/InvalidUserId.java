@@ -10,11 +10,6 @@ public class InvalidUserId extends BusiException {
         super(MESSAGE);
     }
 
-    public InvalidUserId(String fieldName, String message) {
-        super(MESSAGE);
-        addValidation(fieldName, message);
-    }
-
     @Override
     public int getStatusCode() {
         return HttpStatus.BAD_REQUEST.value();

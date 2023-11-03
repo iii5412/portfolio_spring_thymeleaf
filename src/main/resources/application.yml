@@ -5,7 +5,7 @@ spring:
     #    password:
     #    driver-class-name: org.h2.Driver
     #    url: jdbc:mysql://mysql:3306/tododb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    url: jdbc:mysql://host.docker.internal:3306/tododb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    url: jdbc:mysql://host.docker.internal:3306/portfolio_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: appuser
     password: appuser
     driver-class-name: com.mysql.cj.jdbc.Driver

@@ -28,8 +28,8 @@
             logoutBtn.addEventListener('click', () => {
                 logout();
             });
-
-        signupBtn.addEventListener('click', goSignupPage);
+        if(signupBtn)
+            signupBtn.addEventListener('click', goSignupPage);
     </script>
 </div>
 </body>

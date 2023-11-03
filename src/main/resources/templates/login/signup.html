@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{/css/common.css}"/>
 <link rel="stylesheet" th:href="@{/css/login/signup.css}"/>
 <script th:type="module" th:src="@{/js/util.js}"></script>
 <head>
@@ -14,44 +15,67 @@
         <div class="input-container">
             <label for="loginId">아이디</label>
             <input type="text" id="loginId" name="loginId">
+            <div class="field-error-message" id="loginIdError"></div>
         </div>
         <div class="input-container">
             <label for="username">성명</label>
             <input type="text" id="username" name="username">
+            <div class="field-error-message" id="usernameError"></div>
         </div>
         <div class="input-container">
             <label for="loginPw1">1차 비밀번호</label>
             <input type="password" id="loginPw1" name="loginPw1">
+            <div class="field-error-message" id="loginPw1Error"></div>
         </div>
         <div class="input-container">
             <label for="loginPw2">2차 비밀번호</label>
             <input type="password" id="loginPw2" name="loginPw2">
+            <div class="field-error-message" id="loginPw2Error"></div>
         </div>
         <input type="button" id="signupBtn" value="가입">
     </div>
 </div>
 <script th:type="module">
-    import {qs, FETCH} from "/js/util.js";
+    import {qs, qsAll, FETCH} from "/js/util.js";
     import {goMainPage} from "/js/apis/auth/auth.js";
+    import {FieldFetchError} from "/js/error/fetchError.js";
+    import FieldError from "/js/validate/fieldError.js";
 
-    const signupBtn = qs(document, '#signupBtn');
+    const contentDiv = qs(document, '.content');
+    // const fieldError = new FieldError(contentDiv);
+
+    // qsAll(contentDiv, 'input[type="text"]').forEach(input => {
+    //     input.addEventListener('keyup', (e) => {
+    //         if (e.target.value.length > 0)
+    //             fieldError.clearMessage(input);
+    //         else
+    //             fieldError.showMessage(input.id, '입력해주세요.');
+    //     });
+    // });
+
+    const signupBtn = qs(contentDiv, '#signupBtn');
     signupBtn.addEventListener('click', () => {
-        const loginId = qs(document, '#loginId').value;
-        const username = qs(document, '#username').value;
-        const loginPw1 = qs(document, '#loginPw1').value;
-        const loginPw2 = qs(document, '#loginPw2').value;
+        const loginId = qs(contentDiv, '#loginId').value;
+        const username = qs(contentDiv, '#username').value;
+        const loginPw1 = qs(contentDiv, '#loginPw1').value;
+        const loginPw2 = qs(contentDiv, '#loginPw2').value;
 
         FETCH.post('/account/signup', {loginId, username, loginPw1, loginPw2})
             .then(async response => {
                 if (response.ok) {
+                    alert('회원가입이 완료되었습니다.');
                     goMainPage();
                 } else {
                     const responseJson = await response.json();
-                    debugger;
+                    const fieldFetchError = new FieldFetchError(contentDiv, responseJson);
+                    fieldFetchError.clearMessage(...qsAll(contentDiv, 'input[type="text"], input[type="password"]'));
+                    fieldFetchError.bindingMessage();
                 }
-            }).catch(e => {
-            debugger;
-        })
+            })
+            .catch(e => {
+                alert('회원가입 도중 오류가 발생하였습니다.');
+                throw e;
+            });
     })
 
 </script>

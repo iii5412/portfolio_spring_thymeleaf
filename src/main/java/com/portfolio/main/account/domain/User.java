@@ -28,7 +28,7 @@ public class User {
     private String loginPw;
     @Column(name = "user_name")
     private String username;
-    @Column(name = "created_at")
+    @Column(name = "created_at", insertable = false)
     private LocalDateTime createdAt;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<UserRole> userRoles = new ArrayList<>();

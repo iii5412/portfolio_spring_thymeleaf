@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,6 +19,10 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "upper_id")
+    private Role upperRole;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role_code")
     private RoleCode roleCode;
@@ -24,10 +30,13 @@ public class Role {
     @Column(name = "role_name")
     private String roleName;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", insertable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", insertable = false)
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "upperRole", cascade = CascadeType.ALL)
+    private List<Role> childRoles = new ArrayList<>();
 
 }

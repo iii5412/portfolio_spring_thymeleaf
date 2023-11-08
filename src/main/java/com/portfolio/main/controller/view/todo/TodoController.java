@@ -1,4 +1,4 @@
-package com.portfolio.main.view.todo;
+package com.portfolio.main.controller.view.todo;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

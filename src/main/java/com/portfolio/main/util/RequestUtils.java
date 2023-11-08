@@ -1,8 +1,11 @@
 package com.portfolio.main.util;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public class RequestUtil {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class RequestUtils {
     public static String getClientIP(HttpServletRequest request) {
         String clientIP = request.getHeader("X-Forwarded-For");
         if (clientIP == null || clientIP.isEmpty() || "unknown".equalsIgnoreCase(clientIP)) {

@@ -6,7 +6,7 @@ import com.portfolio.main.account.login.dto.UserRegist;
 import com.portfolio.main.account.login.exception.InvalidLoginId;
 import com.portfolio.main.account.login.exception.InvalidLoginPassword;
 import com.portfolio.main.account.login.exception.InvalidRegistUser;
-import com.portfolio.main.account.login.service.AccountService;
+import com.portfolio.main.account.login.service.LoginService;
 import com.portfolio.main.account.user.service.MyUserDetailsService;
 import com.portfolio.main.account.user.service.RoleCode;
 import com.portfolio.main.account.user.repository.UserRepository;
@@ -21,12 +21,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Slf4j
-class AccountServiceTest {
+class LoginServiceTest {
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    AccountService accountService;
+    LoginService loginService;
 
     @Autowired
     MyUserDetailsService userDetailsService;
@@ -35,7 +35,7 @@ class AccountServiceTest {
     void login_invalid_loginId() {
         String invalidLoginId = "invalidLoginId";
         assertThrows(InvalidLoginId.class, () -> {
-            final JwtResponse jwtResponse = accountService.login(invalidLoginId, null);
+            final JwtResponse jwtResponse = loginService.login(invalidLoginId, null);
         });
     }
 
@@ -44,14 +44,14 @@ class AccountServiceTest {
     void login_invalid_password() {
         //given
         final UserRegist testUserRegist = createTestUserRegist();
-        final Long userId = accountService.signUp(testUserRegist);
+        final Long userId = loginService.signUp(testUserRegist);
         final User findUser = userDetailsService.findByUserId(userId);
 
         log.info("findUser.getLoginPw() = {}", findUser.getLoginPw());
 
         //expected
         assertThrows(InvalidLoginPassword.class, () -> {
-            accountService.login(findUser.getLoginId(), findUser.getLoginPw() + "!");
+            loginService.login(findUser.getLoginId(), findUser.getLoginPw() + "!");
         });
     }
 
@@ -60,11 +60,11 @@ class AccountServiceTest {
     void login() {
         //given
         final UserRegist testUserRegist = createTestUserRegist();
-        final Long userId = accountService.signUp(testUserRegist);
+        final Long userId = loginService.signUp(testUserRegist);
         final User findUser = userDetailsService.findByUserId(userId);
 
         //when
-        final JwtResponse jwtResponse = accountService.login(findUser.getLoginId(), findUser.getLoginPw());
+        final JwtResponse jwtResponse = loginService.login(findUser.getLoginId(), testUserRegist.getLoginPw1());
 
         log.info("jwtResponse.getToken() => {}", jwtResponse.getToken());
 
@@ -86,7 +86,7 @@ class AccountServiceTest {
         final UserRegist userRegist = createTestUserRegist();
 
         //when
-        accountService.signUp(userRegist);
+        loginService.signUp(userRegist);
 
         //then
         final User findUser = userDetailsService.findUserByLoginId(userRegist.getLoginId());

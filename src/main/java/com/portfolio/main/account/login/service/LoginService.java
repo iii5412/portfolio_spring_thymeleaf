@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @AllArgsConstructor
-public class AccountService {
+public class LoginService {
     private final MyUserDetailsService userService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;

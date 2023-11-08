@@ -1,4 +1,4 @@
-package com.portfolio.main.view.login;
+package com.portfolio.main.controller.view.login;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;

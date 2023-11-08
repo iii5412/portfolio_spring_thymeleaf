@@ -7,11 +7,14 @@ import com.portfolio.main.account.login.exception.InvalidUserId;
 import com.portfolio.main.account.user.repository.UserRepository;
 import com.portfolio.main.config.security.MyUserDetails;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -42,6 +45,10 @@ public class MyUserDetailsService implements UserDetailsService {
             throw new InvalidLoginPassword();
 
         return user;
+    }
+
+    public List<User> findAllUser() {
+        return userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     private boolean checkPassword(String rawPassword, String encryptedPassword) {

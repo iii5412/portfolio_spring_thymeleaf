@@ -42,17 +42,48 @@ create table if not exists portfolio_db.user_login_history
 );
 
 
-create table menu
+create table if not exists portfolio_db.menu
 (
-    id         int auto_increment comment 'primary key',
-    upper_id   int null comment '상위 menu id',
-    menu_name   varchar(20)                         not null comment '로그인 id',
-    created_at timestamp default CURRENT_TIMESTAMP not null comment '등록일',
-    updated_at timestamp default CURRENT_TIMESTAMP not null comment '수정일',
-    PRIMARY KEY (id),
-    FOREIGN KEY (upper_id) REFERENCES menu(id) ON DELETE SET NULL ON UPDATE CASCADE
+    id               int auto_increment comment 'primary key'
+        primary key,
+    upper_id         int                                 null comment '상위 menu id',
+    menu_name        varchar(20)                         not null comment '로그인 id',
+    menu_type        varchar(10) not null comment '메뉴 타입',
+    created_at       timestamp default CURRENT_TIMESTAMP not null comment '등록일',
+    updated_at       timestamp default CURRENT_TIMESTAMP not null comment '수정일',
+    last_modified_by varchar(20)                         not null comment '마지막 수정자 ID',
+    order_num        int       default 0                 not null comment '메뉴 순서',
+    constraint menu_ibfk_1
+        foreign key (upper_id) references menu (id)
+            on update cascade on delete set null
 );
 
+create table if not exists portfolio_db.program
+(
+    id              int auto_increment comment '프로그램 기본 키'
+        primary key,
+    program_name    varchar(20)                         not null comment '프로그램 명',
+    url             varchar(255)                        not null comment '프로그램 URL',
+    created_at      timestamp default CURRENT_TIMESTAMP not null comment '생성일',
+    updated_at      timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '수정일',
+    last_updated_by int                                 null comment '마지막으로 수정한 사용자의 ID',
+    constraint url_unique
+        unique (url) comment 'URL은 고유해야 합니다.'
+);
+
+create table if not exists portfolio_db.program_role
+(
+    program_id int not null,
+    role_id    int not null,
+    primary key (program_id, role_id),
+    constraint program_role_ibfk_1
+    foreign key (program_id) references program (id)
+    on update cascade on delete cascade,
+    constraint program_role_ibfk_2
+    foreign key (role_id) references role (id)
+    on update cascade on delete cascade
+)
+comment '프로그램과 권한의 연결 테이블';
 
 #
 # insert into portfolio_db.role (role_code, role_name)

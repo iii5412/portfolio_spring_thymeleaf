@@ -1,6 +1,6 @@
 package com.portfolio.main.menu.reqeust;
 
-import com.portfolio.main.menu.dto.SearchProgram;
+import com.portfolio.main.menu.dto.program.SearchProgram;
 import lombok.Getter;
 import lombok.Setter;
 

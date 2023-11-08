@@ -3,8 +3,11 @@ package com.portfolio.main.util;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public class CookieUtils {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class CookieUtils {
     public static String getCookie(HttpServletRequest request, String cookieName) {
         String value = null;
         final Cookie[] cookies = request.getCookies();

@@ -39,6 +39,12 @@ public class User {
                 .collect(Collectors.toList());
     }
 
+    public List<String> getRoleNames() {
+        return userRoles.stream()
+                .map(userRole -> userRole.getRole().getRoleName())
+                .collect(Collectors.toList());
+    }
+
     @Override
     public boolean equals(Object obj) {
         final User targetUser = (User) obj;

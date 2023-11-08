@@ -8,7 +8,7 @@ import com.portfolio.main.config.security.MyUserDetails;
 import com.portfolio.main.config.security.jwt.JwtAuthenticationToken;
 import com.portfolio.main.config.security.jwt.provider.JwtAuthenticationProvider;
 import com.portfolio.main.config.security.jwt.util.TokenUtil;
-import com.portfolio.main.util.RequestUtil;
+import com.portfolio.main.util.RequestUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -63,12 +63,12 @@ public class LoginHistoryInterceptor implements HandlerInterceptor {
     }
 
     private void saveLoginHistory(HttpServletRequest request, User user) {
-        final UserLoginHistory userLoginHistory = new UserLoginHistory(user.getLoginId(), LoginActionType.LOGIN, RequestUtil.getClientIP(request), RequestUtil.getClientDeviceInfo(request));
+        final UserLoginHistory userLoginHistory = new UserLoginHistory(user.getLoginId(), LoginActionType.LOGIN, RequestUtils.getClientIP(request), RequestUtils.getClientDeviceInfo(request));
         userLoginHistoryRepository.save(userLoginHistory);
     }
 
     private void saveLogoutHistory(HttpServletRequest request, User user) {
-        final UserLoginHistory userLoginHistory = new UserLoginHistory(user.getLoginId(), LoginActionType.LOGOUT, RequestUtil.getClientIP(request), RequestUtil.getClientDeviceInfo(request));
+        final UserLoginHistory userLoginHistory = new UserLoginHistory(user.getLoginId(), LoginActionType.LOGOUT, RequestUtils.getClientIP(request), RequestUtils.getClientDeviceInfo(request));
         userLoginHistoryRepository.save(userLoginHistory);
     }
 }

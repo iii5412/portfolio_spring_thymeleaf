@@ -3,7 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.0.3'
 	id 'io.spring.dependency-management' version '1.1.3'
 	//QueryDsl 추가
-	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+//	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 }
 
 group = 'com.portfolio'
@@ -68,20 +68,22 @@ tasks.named('test') {
 }
 
 //QueryDsl Qclass 경로 변경
-//def querydslDir = "$buildDir/generated/querydsl"
-def querydslDir = "src/main/generated/querydsl"
-
-querydsl {
-	jpa = true
-	querydslSourcesDir = querydslDir
-}
-sourceSets {
-	main.java.srcDir querydslDir
-}
-configurations {
-	querydsl.extendsFrom compileClasspath
-}
-compileQuerydsl {
-	options.annotationProcessorPath = configurations.querydsl
-}
+//def querydslDir = "$buildDir/generated/sources/annotationProcessor/java/main"
+//
+//querydsl {
+//	jpa = true
+//	querydslSourcesDir = querydslDir
+//}
+//sourceSets {
+//	main.java.srcDir querydslDir
+//}
+//configurations {
+//	querydsl.extendsFrom compileClasspath
+//}
+//
+//compileQuerydsl {
+//	options.annotationProcessorPath = configurations.querydsl
+//	options.sourcepath = files(querydslDir)
+//}
 //끝
+

@@ -1,4 +1,4 @@
-import {FETCH} from "/js/util.js";
+import {FETCH} from "/js/common/util.js";
 
 const tag = '[auth]';
 
@@ -24,17 +24,5 @@ function login(loginId, loginPw) {
     }
 }
 
-function goLoginPage() {
-    location.href = '/loginPage';
-}
 
-function goSignupPage() {
-    location.href = '/signup';
-}
-
-function goMainPage() {
-    location.href = '/';
-}
-
-
-export {logout, login, goLoginPage, goSignupPage, goMainPage};
+export {logout, login};

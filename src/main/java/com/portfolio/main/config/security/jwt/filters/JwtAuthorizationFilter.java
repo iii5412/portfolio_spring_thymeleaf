@@ -1,14 +1,15 @@
 package com.portfolio.main.config.security.jwt.filters;
 
+import com.portfolio.main.account.user.service.MyUserDetailsService;
 import com.portfolio.main.config.security.jwt.util.TokenUtil;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import jakarta.servlet.FilterChain;
@@ -23,23 +24,42 @@ import java.util.ArrayList;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final String secretKeyString;
+    private final MyUserDetailsService userDetailsService;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, String secretKeyString) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager
+            , MyUserDetailsService userDetailsService
+            , String secretKeyString) {
+//        super(authenticationManager, ((request, response, authException) -> {
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            response.sendRedirect("/loginPage");
+//        }));
         super(authenticationManager);
+        this.userDetailsService = userDetailsService;
         this.secretKeyString = secretKeyString;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        final String tokenFromRequest = TokenUtil.getTokenFromRequest(request);
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException, ExpiredJwtException {
+        try {
 
-        if (!StringUtils.hasText(tokenFromRequest)) {
-            chain.doFilter(request, response);
+            if(request.getRequestURI().equals("/loginPage")){
+                chain.doFilter(request, response);
+                return;
+            }
+
+            final String tokenFromRequest = TokenUtil.getTokenFromRequest(request);
+
+            if (!StringUtils.hasText(tokenFromRequest)) {
+                chain.doFilter(request, response);
+                return;
+            }
+
+            Authentication authentication = getAuthentication(tokenFromRequest);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (ExpiredJwtException e) {
+            this.getAuthenticationEntryPoint().commence(request, response, new AuthenticationServiceException("Token expired", e));
             return;
         }
-
-        Authentication authentication = getAuthentication(tokenFromRequest);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(request, response);
     }
 
@@ -47,10 +67,13 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         if (token != null) {
             final JwtParser jwtParser = Jwts.parserBuilder().setSigningKey(TokenUtil.getSecretKeyStringToEncodingUTF8Bytes(secretKeyString)).build();
             final Jws<Claims> claimsJws = jwtParser.parseClaimsJws(token);
-            final String user = claimsJws.getBody().getSubject();
+            final String loginId = claimsJws.getBody().getSubject();
 
-            if (user != null) {
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(loginId);
+
+
+            if (loginId != null) {
+                return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null, userDetails.getAuthorities());
             }
         }
         return null;

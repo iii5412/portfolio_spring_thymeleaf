@@ -1,6 +1,5 @@
 package com.portfolio.main.menu.dto.menu;
 
-import com.portfolio.main.menu.domain.Menu;
 import com.portfolio.main.menu.service.MenuType;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,20 +11,25 @@ public class CreateMenu {
     private String menuName;
     private MenuType menuType;
     private Long orderNum;
-    private String lastModifiedBy;
+    private String createUserLoginId;
 
-    public CreateMenu(String menuName, MenuType menuType, Long orderNum, String lastModifiedBy) {
+    public CreateMenu() {
+    }
+
+    public CreateMenu(String menuName, MenuType menuType, Long orderNum, String createUserLoginId) {
         this.menuName = menuName;
         this.menuType = menuType;
         this.orderNum = orderNum;
-        this.lastModifiedBy = lastModifiedBy;
+        this.createUserLoginId = createUserLoginId;
     }
 
-    public CreateMenu(Long upperId, String menuName, MenuType menuType, Long orderNum, String lastModifiedBy) {
+    public CreateMenu(Long upperId, String menuName, MenuType menuType, Long orderNum, String createUserLoginId) {
         this.upperId = upperId;
         this.menuName = menuName;
         this.menuType = menuType;
         this.orderNum = orderNum;
-        this.lastModifiedBy = lastModifiedBy;
+        this.createUserLoginId = createUserLoginId;
     }
+
+
 }

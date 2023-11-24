@@ -2,9 +2,12 @@ package com.portfolio.main.menu.service;
 
 import com.portfolio.main.menu.domain.Menu;
 import com.portfolio.main.menu.dto.menu.CreateMenu;
+import com.portfolio.main.menu.dto.menu.EditMenu;
 import com.portfolio.main.menu.dto.menu.SearchMenu;
+import com.portfolio.main.menu.dto.program.CreateProgram;
 import com.portfolio.main.menu.exception.CannotDeleteMenuWithSubmenusException;
 import com.portfolio.main.menu.exception.MenuNotFoundException;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,10 +25,14 @@ class MenuServiceTest {
     private String testModifiedBy = "test";
     @Autowired
     private MenuService menuService;
+    @Autowired
+    private ProgramService programService;
+    @Autowired
+    private EntityManager entityManager;
 
     @Test
     void findAll() {
-        final List<Menu> allMenu = menuService.findAll();
+        final List<Menu> allMenu = menuService.findAllWithProgram();
         assertEquals(1, allMenu.size());
         assertEquals(3, allMenu.get(0).getSubMenus().size());
     }
@@ -50,7 +57,7 @@ class MenuServiceTest {
         //then
         assertEquals("폴더메뉴", savedMenu.getMenuName());
         assertEquals(MenuType.FOLDER, savedMenu.getMenuType());
-        assertEquals(testModifiedBy, savedMenu.getLastModifiedBy());
+        assertEquals(testModifiedBy, savedMenu.getLastModifiedByUser().getLoginId());
     }
 
     @Test
@@ -98,6 +105,31 @@ class MenuServiceTest {
 
         //then
         assertThrows(MenuNotFoundException.class, () -> menuService.findById(saved_3_lvl_menuId));
+    }
+
+    @Test
+    void editMenu() {
+        //given
+        final Long savedTestParentMenuId = menuService.saveMenu(new CreateMenu("테스트", MenuType.FOLDER, 2L, "admin"));
+        final List<Menu> menus = menuService.selectMenu(SearchMenu.builder().id(2L).build());
+        final Long savedTestProgramId = programService.save(new CreateProgram("테스트_프로그램", "/testProgram", "admin"));
+        final Menu targetMenu = menus.get(0);
+        final EditMenu editMenu = new EditMenu(savedTestParentMenuId, "사용자관리2", MenuType.PROGRAM, 99L, savedTestProgramId);
+
+        //when
+        menuService.edit(targetMenu.getId(), editMenu);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        //then
+        final Menu editedMenu = menuService.findById(targetMenu.getId());
+        assertEquals(savedTestParentMenuId, editMenu.getUpperId());
+        assertEquals("테스트_프로그램", editedMenu.getProgram().getProgramName());
+        assertEquals(savedTestProgramId, editedMenu.getProgram().getId());
+        assertEquals("사용자관리2", editedMenu.getMenuName());
+        assertEquals(editedMenu.getLastModifiedByUser().getLoginId(), "admin");
+
     }
 
     private List<Menu> getLastChildSubMunus(Menu menu) {

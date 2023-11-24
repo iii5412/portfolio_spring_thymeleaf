@@ -1,8 +1,8 @@
 package com.portfolio.main.menu.repository.custom.program;
 
+import com.portfolio.main.account.domain.QRole;
 import com.portfolio.main.menu.domain.Program;
 import com.portfolio.main.menu.domain.QProgram;
-import com.portfolio.main.menu.dto.program.DeleteProgram;
 import com.portfolio.main.menu.dto.program.SearchProgram;
 import com.portfolio.main.util.page.PageResult;
 import com.portfolio.main.util.page.QuerydslUtils;
@@ -30,10 +30,10 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom {
         this.entityManager = entityManager;
     }
 
-
     @Override
     public PageResult<Program> selectProgram(SearchProgram searchProgram, Pageable pageable) {
         final QProgram qProgram = QProgram.program;
+        final QRole qRole = QRole.role;
         final BooleanBuilder whereBuilder = new BooleanBuilder();
 
         if (searchProgram.getId() != null)
@@ -42,12 +42,12 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom {
         if (StringUtils.hasText(searchProgram.getProgramName()))
             whereBuilder.and(qProgram.programName.contains(searchProgram.getProgramName()));
 
-
         if (StringUtils.hasText(searchProgram.getUrl()))
             whereBuilder.and(qProgram.url.contains(searchProgram.getUrl()));
 
         final JPAQuery<Program> query = queryFactory
                 .selectFrom(qProgram)
+                .leftJoin(qProgram.role, qRole).fetchJoin()
                 .where(whereBuilder)
                 .orderBy(QuerydslUtils.getAllOrderSpecifiers(qProgram, pageable).toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
@@ -60,25 +60,12 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom {
     }
 
     @Override
-    public void deleteProgram(DeleteProgram deleteProgram) {
+    public void deleteProgram(Long programId) {
         final QProgram qProgram = QProgram.program;
-        final BooleanBuilder whereBuilder = new BooleanBuilder();
-
-        if (deleteProgram.getId() == null) {
-
-            if (StringUtils.hasText(deleteProgram.getProgramName()))
-                whereBuilder.and(qProgram.programName.contains(deleteProgram.getProgramName()));
-
-            if (StringUtils.hasText(deleteProgram.getProgramUrl()))
-                whereBuilder.and(qProgram.url.contains(deleteProgram.getProgramUrl()));
-
-        } else {
-            whereBuilder.and(qProgram.id.eq(deleteProgram.getId()));
-        }
 
         queryFactory
                 .delete(qProgram)
-                .where(whereBuilder)
+                .where(qProgram.id.eq(programId))
                 .execute();
 
         entityManager.clear();

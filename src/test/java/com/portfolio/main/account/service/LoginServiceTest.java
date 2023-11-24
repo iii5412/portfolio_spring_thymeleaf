@@ -23,9 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 class LoginServiceTest {
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     LoginService loginService;
 
     @Autowired

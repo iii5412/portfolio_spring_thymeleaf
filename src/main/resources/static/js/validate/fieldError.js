@@ -1,4 +1,4 @@
-import {qs} from "/js/util.js";
+import {qs} from "/js/common/util.js";
 
 export default class FieldError {
     constructor(target) {

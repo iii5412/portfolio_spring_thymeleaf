@@ -28,9 +28,9 @@ public class User {
     private String loginPw;
     @Column(name = "user_name")
     private String username;
-    @Column(name = "created_at", insertable = false)
+    @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<UserRole> userRoles = new ArrayList<>();
 
     public List<String> getRoleCodes() {
@@ -43,6 +43,10 @@ public class User {
         return userRoles.stream()
                 .map(userRole -> userRole.getRole().getRoleName())
                 .collect(Collectors.toList());
+    }
+
+    public void addUserRole(UserRole userRole) {
+        this.userRoles.add(userRole);
     }
 
     @Override

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <link rel="stylesheet" th:href="@{/css/login/loginPage.css}"/>
-<script th:type="module" th:src="@{/js/util.js}"></script>
+<script th:type="module" th:src="@{/js/common/util.js}"></script>
 <head>
     <meta charset="UTF-8">
     <title>로그인</title>
@@ -24,8 +24,9 @@
     </div>
 </div>
 <script th:type="module">
-    import {qs} from "/js/util.js";
-    import {login, goSignupPage} from "/js/apis/auth/auth.js";
+    import {qs} from "/js/common/util.js";
+    import {login} from "/js/apis/auth/auth.js";
+    import {goSignupPage} from "/js/common/route.js";
     import {FetchError} from "/js/error/fetchError.js";
     const loginBtn = qs(document, '#loginBtn');
     const signUpBtn = qs(document, '#signUpBtn');
@@ -41,7 +42,7 @@
                 } else {
                     if (response.status === 400) {
                         const responseJson = await response.json();
-                        throw new FetchError(responseJson);
+                        throw new FetchError(responseJson.code, responseJson.message);
                     }
                 }
             })

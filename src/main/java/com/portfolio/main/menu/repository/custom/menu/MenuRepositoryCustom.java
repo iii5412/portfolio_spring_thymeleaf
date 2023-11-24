@@ -6,8 +6,5 @@ import com.portfolio.main.menu.dto.menu.SearchMenu;
 import java.util.List;
 
 public interface MenuRepositoryCustom {
-
-//    void saveParentMenu(CreateMenu createMenu);
-//
-//    void saveChildMenu(Menu parentMenu, CreateMenu createMenu);
+    List<Menu> selectMenuWithProgram();
 }

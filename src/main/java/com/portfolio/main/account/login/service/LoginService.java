@@ -57,7 +57,7 @@ public class LoginService {
         final Role role = roleRepository.findByRoleCode(RoleCode.ROLE_USER);
         final UserRole userRole = new UserRole(user, role);
 
-        user.getUserRoles().add(userRole);
+        user.addUserRole(userRole);
         final User savedUser = userRepository.save(user);
         return savedUser.getId();
     }

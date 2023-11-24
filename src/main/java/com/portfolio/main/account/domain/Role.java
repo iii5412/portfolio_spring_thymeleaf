@@ -30,10 +30,10 @@ public class Role {
     @Column(name = "role_name")
     private String roleName;
 
-    @Column(name = "created_at", insertable = false)
+    @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", insertable = false)
+    @Column(name = "updated_at", insertable = false, updatable = false)
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "upperRole", cascade = CascadeType.ALL)

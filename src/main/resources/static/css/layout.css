@@ -1,0 +1,72 @@
+.row {
+    display: flex;
+    flex-grow: 1; /* 남은 공간을 채우도록 함 */
+}
+
+.layout {
+    display: flex;
+    flex-direction: column; /* 자식 요소들을 수직으로 정렬 */
+    height: 100vh; /* 전체 화면 높이를 채움 */
+    margin: 0; /* 기본 마진 제거 */
+}
+
+/* 헤더 */
+.header {
+    padding: 15px 0;
+    height: 20px;
+}
+
+.header .loginDiv {
+    display: flex;
+    flex-grow: 1;
+    justify-content: flex-end; /* 우측 정렬 */
+}
+
+.header .loginDiv a {
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s;
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.header .loginDiv a:hover {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.header .loginDiv a.login {
+    background-color: var(--light-theme-color);
+}
+
+.header .loginDiv a.logout {
+    background-color: #ffffff;
+    color: var(--theme-color);
+}
+
+.topMenu {
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* 컨텐츠 */
+.content {
+    padding: 20px 0;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    min-height: calc(100vh - 50px);
+    flex-grow: 1;
+    height: calc(100vh - 50px);
+}
+
+/* 풋터 */
+.footer {
+    background-color: var(--theme-color);
+    color: #ffffff;
+    text-align: center;
+    padding: 15px 0;
+    margin-top: 20px;
+}
+

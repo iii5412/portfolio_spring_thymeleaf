@@ -16,12 +16,12 @@ public class SearchProgram extends PageDto {
     private String url;
 
     @Builder
-    public SearchProgram(Long id, String programName, String url, int page, int size, List<String> sortFields, List<Sort.Direction> sort) {
+    public SearchProgram(Long id, String programName, String url, Integer page, Integer size, List<String> sortFields, List<Sort.Direction> sort) {
         this.id = id;
         this.programName = programName;
         this.url = url;
-        this.setPage(page);
-        this.setSize(size);
+        this.setPage(page == null ? 0 : page);
+        this.setSize(size == null ? 0 : size);
 
         if (sortFields != null && !sortFields.isEmpty())
             this.setSortFields(sortFields);

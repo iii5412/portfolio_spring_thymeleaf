@@ -4,15 +4,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>메인페이지</title>
-  <script th:type="module" th:src="@{/js/util.js}"></script>
+  <script th:type="module" th:src="@{/js/common/util.js}"></script>
   <link rel="stylesheet" th:href="@{/css/common.css}"/>
+  <link rel="stylesheet" th:href="@{/css/layout.css}"/>
+  <link rel="stylesheet" th:href="@{/css/menu/menu.css}"/>
+  <link href="/js/realgrid/realgrid.2.7.2/realgrid-style.css" rel="stylesheet" />
+  <script src="/js/realgrid/realgrid.2.7.2/realgrid-lic.js"></script>
+  <script src="/js/realgrid/realgrid.2.7.2/realgrid.2.7.2.min.js"></script>
+
 </head>
 <body>
-  <div>
-    <div th:replace="fragments/header :: header"></div>
-    <div th:replace="fragments/menu :: menu"></div>
-    <div class="content" layout:fragment="content"></div>
-<!--    <div th:replace="fragments/footer :: footer"></div>-->
+<div class="layout">
+  <div id="header" th:replace="fragments/header :: header"></div>
+  <div id="menu" th:replace="fragments/menu :: menu"></div>
+  <div class="row">
+    <div id="content" class="content"></div>
   </div>
+</div>
 </body>
+<script th:type="module">
+  import {qs} from '/js/common/util.js';
+  import Menus from "/js/menu/menu.js";
+  import {loadContent} from "/js/common/common.js";
+
+  async function getMenus() {
+    const nav = qs(document, '.menu-nav');
+    const leftMenuArea = qs(document, '.leftMenuArea');
+    const menus = new Menus(nav, leftMenuArea);
+    await menus.init();
+    return menus;
+  }
+
+  const menus = await getMenus();
+
+  loadContent("/");
+
+</script>
 </html>

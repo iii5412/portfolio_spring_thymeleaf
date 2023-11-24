@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <body>
-<div class="header" th:fragment="header">
+<div th:fragment="header" class="row header">
     <div class="loginDiv">
         <div sec:authorize="isFullyAuthenticated()">
             <span sec:authentication="name"></span>님 환영합니다.
@@ -13,8 +13,9 @@
         </div>
     </div>
     <script th:type="module">
-        import {qs} from "/js/util.js";
-        import {logout, goLoginPage, goSignupPage} from "/js/apis/auth/auth.js";
+        import {qs} from "/js/common/util.js";
+        import {logout} from "/js/apis/auth/auth.js";
+        import {goLoginPage, goSignupPage} from "/js/common/route.js"
 
         const loginBtn = qs(document, '#loginBtn');
         const logoutBtn = qs(document, '#logoutBtn');

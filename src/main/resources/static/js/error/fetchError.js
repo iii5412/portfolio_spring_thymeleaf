@@ -3,19 +3,19 @@ import FieldError from "/js/validate/fieldError.js";
 class FetchError {
     status;
     serverMessage = "";
-    validation;
 
-    constructor({code, message, validation = {}}) {
+    constructor(code, message) {
         this.status = code;
         this.serverMessage = message;
-        this.validation = validation;
     }
 }
 
 class FieldFetchError extends FetchError {
-    constructor(target, {code, message, validation}) {
-        super({code, message, validation});
+    validation;
+    constructor(target, {code, message, validation = {}}) {
+        super(code, message);
         this.target = target;
+        this.validation = validation;
         this.fieldError = new FieldError(target);
     }
 

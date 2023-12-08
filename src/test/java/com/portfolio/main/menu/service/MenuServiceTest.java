@@ -112,7 +112,7 @@ class MenuServiceTest {
         //given
         final Long savedTestParentMenuId = menuService.saveMenu(new CreateMenu("테스트", MenuType.FOLDER, 2L, "admin"));
         final List<Menu> menus = menuService.selectMenu(SearchMenu.builder().id(2L).build());
-        final Long savedTestProgramId = programService.save(new CreateProgram("테스트_프로그램", "/testProgram", "admin"));
+        final Long savedTestProgramId = programService.create(new CreateProgram("테스트_프로그램", "/testProgram", "admin"));
         final Menu targetMenu = menus.get(0);
         final EditMenu editMenu = new EditMenu(savedTestParentMenuId, "사용자관리2", MenuType.PROGRAM, 99L, savedTestProgramId);
 

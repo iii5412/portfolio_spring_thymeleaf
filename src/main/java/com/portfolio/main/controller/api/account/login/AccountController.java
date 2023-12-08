@@ -5,6 +5,7 @@ import com.portfolio.main.account.login.dto.LoginRequest;
 import com.portfolio.main.account.login.dto.UserRegist;
 import com.portfolio.main.account.login.service.LoginService;
 import com.portfolio.main.config.security.jwt.util.TokenUtil;
+import com.portfolio.main.controller.api.response.SuccResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -28,19 +29,19 @@ public class AccountController {
         final JwtResponse jwtResponse = loginService.login(loginRequest.getLoginId(), loginRequest.getLoginPw());
         TokenUtil.setTokenToResponse(response, jwtResponse);
         request.setAttribute("token", jwtResponse.getToken());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new SuccResponse());
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         loginService.logout(response);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new SuccResponse());
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody UserRegist userRegist) {
         userRegist.validate();
         loginService.signUp(userRegist);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new SuccResponse());
     }
 }

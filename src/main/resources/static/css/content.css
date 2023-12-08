@@ -1,0 +1,5 @@
+.contentHeader {
+    display: flex;        /* Flexbox 사용 */
+    justify-content: space-between; /* 양쪽에 요소를 분산 */
+    align-items: center;  /* 요소들을 세로 중앙에 정렬 */
+}

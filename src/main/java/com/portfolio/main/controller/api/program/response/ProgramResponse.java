@@ -13,10 +13,11 @@ public class ProgramResponse {
     private Long id;
     private String programName;
     private String url;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "${locale.timezone}")
     private LocalDateTime createdAt;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "${locale.timezone}")
     private LocalDateTime updatedAt;
+
     private String lastUpdatedByUserLoginId;
 
     public ProgramResponse(Program program) {

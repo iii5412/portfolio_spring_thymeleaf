@@ -1,21 +1,45 @@
 import FieldError from "/js/validate/fieldError.js";
+import {HTTP_STATUS} from "/js/common/util.js";
+import {errorAlert} from "/js/common/alert.js";
+import {goLoginPage} from "/js/common/route.js";
 
-class FetchError {
+class FetchError extends Error {
     status;
     serverMessage = "";
-
-    constructor(code, message) {
-        this.status = code;
+    validation = {};
+    constructor({code, message, validation = {}}) {
+        super(message);
+        this.status = Number(code);
         this.serverMessage = message;
+        this.validation = validation;
+
+        switch(this.status) {
+            case HTTP_STATUS.UNAUTHORIZED :
+                errorAlert("인증을 확인해주세요.");
+                goLoginPage();
+                break;
+            case HTTP_STATUS.FORBIDDEN :
+                errorAlert("권한이 없습니다.");
+                break;
+        }
+
     }
 }
 
-class FieldFetchError extends FetchError {
+class FieldFetchError {
+    status;
+    serverMessage;
     validation;
-    constructor(target, {code, message, validation = {}}) {
-        super(code, message);
+
+    /**
+     * @param {Element} target
+     * @param {FetchError} fetchError
+     */
+    constructor(target, fetchError) {
         this.target = target;
-        this.validation = validation;
+        this.status = fetchError.status;
+        this.serverMessage = fetchError.serverMessage;
+        this.validation = fetchError.validation;
         this.fieldError = new FieldError(target);
     }
 

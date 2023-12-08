@@ -21,4 +21,8 @@ public abstract class BusiException extends RuntimeException {
     public void addValidation(String fieldName, String message) {
         validation.put(fieldName, message);
     }
+
+    public boolean hasErrors() {
+        return !this.getValidation().isEmpty();
+    }
 }

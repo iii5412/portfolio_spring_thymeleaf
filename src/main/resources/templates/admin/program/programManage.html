@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{/css/common.css}"/>
+<link rel="stylesheet" href="@{/js/realgrid/realgrid.2.7.2/realgrid-style.css}"
+      th:href="@{/js/realgrid/realgrid.2.7.2/realgrid-style.css}"/>
+<link rel="stylesheet" th:href="@{/css/realgrid/custom.css}"/>
+<script src="/js/realgrid/realgrid.2.7.2/realgrid-lic.js"></script>
+<script src="/js/realgrid/realgrid.2.7.2/realgrid.2.7.2.min.js"></script>
+
+<style>
+    .programContent {
+        display: flex;
+    }
+
+    .left {
+        flex: 1;
+    }
+
+    .right {
+        flex: 1;
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        grid-gap: 10px; /* 셀 사이의 간격 */
+        padding: 10px;
+    }
+
+    .grid-header {
+        background-color: #f2f2f2;
+        padding: 10px;
+        text-align: left;
+    }
+
+    .grid-cell {
+        grid-column: span 1; /* 기본적으로 한 열 차지 */
+        padding: 10px;
+    }
+</style>
+<body>
+<div id="content" class="programContent">
+    <div class="left">
+        <div id="grid" style="height: 470px;">
+        </div>
+    </div>
+    <div class="right">
+        <div id="programEditForm" name="programEditForm">
+            <input type="text" class="hidden" name="id" id="id"/>
+            <div class="grid-container">
+                <div class="grid-header">프로그램명</div>
+                <div class="grid-cell">
+                    <input type="text" style="width: 100%;" name="programName" id="programName"/>
+                    <div class="field-error-message" data-target="programName"></div>
+                </div>
+
+                <div class="grid-header">URL</div>
+                <div class="grid-cell">
+                    <input type="text" style="width: 100%;" name="url" id="url"/>
+<!--                    <div class="field-error-message" data-target="url"></div>-->
+                </div>
+
+                <div class="grid-header">생성일</div>
+                <div class="grid-cell">
+                    <input type="text" style="width: 100%;" name="createdAt" id="createdAt" disabled/>
+                </div>
+
+                <div class="grid-header">수정일</div>
+                <div class="grid-cell">
+                    <input type="text" style="width: 100%;" name="updatedAt" id="updatedAt" disabled/>
+                </div>
+
+                <div class="grid-header">수정자</div>
+                <div class="grid-cell">
+                    <input type="text" style="width: 100%;" name="lastUpdatedByUserLoginId"
+                           id="lastUpdatedByUserLoginId" disabled/>
+                </div>
+            </div>
+            <div class="rightBtnArea">
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:type="module">
+    import {qs, qsAll, createEl, FETCH, HTTP_STATUS} from "/js/common/util.js";
+    import {fetchProgram} from "/js/apis/menu/program.js";
+    import {errorAlert, infoAlert} from "/js/common/alert.js";
+    import {programMapping, Program} from "/js/program/program.js";
+    import {GRID_FILED_TYPE} from "/js/realgrid/gridUtil.js";
+    import {createColumn, COLUMN_TYPE} from "/js/realgrid/gridUtil.js";
+    import {FetchError, FieldFetchError} from "/js/error/fetchError.js";
+
+
+
+    const tag = '[programManage]';
+
+    class ProgramGrid {
+        gridView;
+        gridProvider;
+
+        constructor() {
+        }
+
+        async init() {
+            const {programList, programCount} = await this.#getProgramData();
+            this.#drawGrid(programList, programCount);
+        }
+
+        async refreshGrid() {
+            debugger;
+            const {programList, programCount} = await this.#getProgramData();
+            this.gridProvider.setRows(programList);
+            this.gridView.refresh();
+        }
+
+        /**
+         * @param {Program[]} programList
+         * @param {Number} programCount
+         * @return {Promise<void>}
+         */
+        #drawGrid(programList, programCount) {
+            const gridContainer = qs(document, '#grid');
+            const gridProvider = new RealGrid.LocalDataProvider(false);
+            const gridView = new RealGrid.GridView(gridContainer);
+
+            gridView.setDataSource(gridProvider);
+            //컬럼의 사이즈를 그리드 여백에 맞춰 설정해준다.
+            gridView.displayOptions.fitStyle = "evenFill";
+
+            //provider에서는 삭제하지말고
+            gridProvider.softDeleting = true;
+            //저장되지않는 추가건은 삭제시 provider에도 삭제한다.
+            gridProvider.deleteCreated = true;
+            //화면에서만 숨기도록
+            gridView.hideDeletedRows = true;
+
+            gridProvider.setFields([
+                {
+                    fieldName: 'id',
+                    dataType: GRID_FILED_TYPE.NUMBER,
+                },
+                {
+                    fieldName: 'programName',
+                    dataType: GRID_FILED_TYPE.TEXT,
+                },
+                {
+                    fieldName: 'url',
+                    dataType: GRID_FILED_TYPE.TEXT,
+                },
+                {
+                    fieldName: 'createdAt',
+                    // dataType: GRID_FILED_TYPE.DATE,
+                    dataType: GRID_FILED_TYPE.TEXT,
+                },
+                {
+                    fieldName: 'updatedAt',
+                    // dataType: GRID_FILED_TYPE.DATE,
+                    dataType: GRID_FILED_TYPE.TEXT,
+                },
+                {
+                    fieldName: 'lastUpdatedByUserLoginId',
+                    dataType: GRID_FILED_TYPE.TEXT
+                }
+            ]);
+
+            gridProvider.setRows(programList);
+            gridView.setColumns([
+                createColumn('id', COLUMN_TYPE.DATA, 70).editable(false).header('id').build(),
+                createColumn('programName', COLUMN_TYPE.DATA, 120).editable(false).header('프로그램명').build(),
+                createColumn('url', COLUMN_TYPE.DATA, 200).alignLeft().editable(false).header('URL').build(),
+                createColumn('createdAt', COLUMN_TYPE.DATA, 100).editable(false).header('생성일').build(),
+                createColumn('updatedAt', COLUMN_TYPE.DATA, 100).editable(false).header('수정일').build(),
+                createColumn('lastUpdatedByUserLoginId', COLUMN_TYPE.DATA, 120).editable(false).header('수정자ID').build(),
+            ]);
+
+            this.gridView = gridView;
+            this.gridProvider = gridProvider;
+        }
+
+        /**
+         * @return {Promise<{programList: Program[], programCount: number}>}
+         */
+        async #getProgramData() {
+            //데이터를 가져온다.
+            const programPageResult = await getPrograms();
+            const programList = programMapping(programPageResult.getResult());
+            const programCount = programPageResult.getTotalCount();
+
+            return {programList, programCount}
+        }
+
+    }
+
+    class EditForm {
+        FORM_STATE = {
+            'CLEAR': 'clear',
+            'EDIT': 'edit',
+        }
+        form;
+        grid;
+        status;
+
+        /**
+         *
+         * @param {Element} target
+         * @param {ProgramGrid} grid
+         */
+        constructor(target, grid) {
+            this.form = qs(target, '#programEditForm');
+            this.grid = grid;
+            this.clear();
+            this.setNewMode();
+        }
+
+        clear() {
+            this.status = this.FORM_STATE.CLEAR;
+            qsAll(this.form, 'input[type="text"]').forEach(input => input.value = '');
+            qsAll(this.form, 'input[type="button"]').forEach(button => button.remove());
+        }
+
+        setNewMode() {
+            this.clear();
+            const btnArea = qs(this.form, '.rightBtnArea');
+            const addBtn = this.#createAddBtn();
+            btnArea.appendChild(addBtn);
+        }
+
+        setEditMode(program) {
+            this.status = this.FORM_STATE.EDIT;
+            this.clear();
+            this.#setProramValue(program);
+            const editBtn = this.#createEditBtn();
+        }
+
+        #createAddBtn() {
+            const btn = createEl('input', {id: 'addBtn', type: 'button', value: '추가'});
+            btn.addEventListener('click', () => {
+                const programName = qs(this.form, '#programName').value;
+                const url = qs(this.form, '#url').value;
+                //TODO: api js로 분리
+                FETCH.post("/program", {programName, url})
+                    .then(async response => {
+                        infoAlert("저장되었습니다.");
+                        this.grid.refreshGrid();
+                    }).catch(e => {
+                        if(e instanceof FetchError) {
+                            if(e.status === HTTP_STATUS.CONFLICT) {
+                                errorAlert('이미 등록된 URL입니다.');
+                                const fieldFetchError = new FieldFetchError(this.form, e);
+                                fieldFetchError.clearMessage(...qsAll(this.form, '#url'));
+                                fieldFetchError.bindingMessage();
+                            }
+                        } else {
+                            errorAlert("저장에 실패하였습니다. 잠시 후 다시 시도해주세요.");
+                            throw e;
+                        }
+                })
+            });
+            return btn;
+        }
+
+        #createEditBtn() {
+            const btn = createEl('input', {id: 'editBtn', type: 'button', value: '저장'});
+            btn.addEventListener('click', () => {
+                const id = qs(this.form, '#id').value;
+                const programName = qs(this.form, '#programName').value;
+                const url = qs(this.form, '#url').value;
+                //TODO: api js로 분리
+                FETCH.patch("/program/" + id, {id, programName, url})
+                    .then(response => {
+                        infoAlert("수정되었습니다.");
+                        this.grid.refresh();
+                    }).catch(e => {
+                    debugger;
+                    errorAlert("수정에 실패하였습니다. 잠시 후 다시 시도해주세요.");
+                    throw e;
+                })
+            });
+            return btn;
+        }
+
+        /**
+         * @param {Program} program
+         */
+        #setProramValue(program) {
+            const form = this.form;
+            const id = qs(form, '#id');
+            const programName = qs(form, '#programName');
+            const url = qs(form, '#url');
+            const createdAt = qs(form, '#createdAt');
+            const updatedAt = qs(form, '#updatedAt');
+            const lastUpdatedByUserLoginId = qs(form, '#lastUpdatedByUserLoginId');
+
+            id.value = program.getId();
+            programName.value = program.getProgramName();
+            url.value = program.getUrl();
+            createdAt.value = program.getCreatedAt();
+            updatedAt.value = program.getUpdatedAt();
+            lastUpdatedByUserLoginId.value = program.getLastUpdatedByUserLoginId();
+        }
+    }
+
+    /**
+     * @return {Promise<PageResult>}
+     */
+    async function getPrograms() {
+        try {
+            return await fetchProgram(['updatedAt'], ["DESC"]);
+        } catch (e) {
+            console.error(tag, e);
+            errorAlert("프로그램을 가져오는데 실패하였습니다.");
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const container = qs(document, '#content');
+
+        const addBtn = qs(container, '#addBtn');
+        // const delBtn = qs(container, '#delBtn');
+        // const saveBtn = qs(container, '#saveBtn');
+
+        const grid = new ProgramGrid();
+        await grid.init();
+
+        const editForm = new EditForm(container, grid);
+
+        grid.gridView.onCellClicked = (grid, clickData) => {
+            const rowData = grid.getDataSource().getJsonRow(clickData.dataRow);
+            const program = new Program(rowData);
+            editForm.setEditMode(program);
+        }
+    });
+</script>
+
+</html>

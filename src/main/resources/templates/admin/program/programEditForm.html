@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div id="content" class="programContent">
+    <div class="detail">
+        <form name="programForm" th:onsubmit="saveForm()">
+            <input type="hidden" id="id" name="id"/>
+            <table>
+                <tr>
+                    <th>
+                        프로그램명
+                    </th>
+                    <td colspan="5">
+                        <input type="text" id="programName" name="programName"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th>URL</th>
+                    <td colspan="5">
+                        <input type="text" id="url" name="url"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th>생성일</th>
+                    <td>
+                        <span th:name="createdAt"></span>
+                    </td>
+                    <th>수정일</th>
+                    <td>
+                        <span th:name="updatedAt"></span>
+                    </td>
+                    <th>수정자</th>
+                    <td>
+                        <span th:name="lastUpdatedByUserLoginId"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <div class="rightBtnArea">
+                            <button id="saveBtn">저장</button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <script th:type="module">
+        document.addEventListener('DOMContentLoaded', async () => {
+
+        });
+    </script>
+</div>
+
+</html>

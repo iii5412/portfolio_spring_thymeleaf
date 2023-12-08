@@ -9,41 +9,64 @@ const tag = '[common]'
  * @return {HTTP_STATUS}
  */
 const checkContentUrlStatus = async url => {
-    try {
-        await FETCH.get(url);
-        return true;
-    } catch(e) {
-        if(e instanceof FetchError) {
-
-            switch(e.status) {
-                case HTTP_STATUS.UNAUTHORIZED :
-                    errorAlert("인증을 확인해주세요.");
-                    goLoginPage();
-                    break;
-                case HTTP_STATUS.FORBIDDEN :
-                    errorAlert("권한이 없습니다.");
-                    break;
-            }
-        }
-    }
+    await FETCH.getCheck(url);
+    return true;
 }
 
-const loadContent = async url => {
-    if(!await checkContentUrlStatus(url))
+/**
+ * @param {Menu} menu
+ * @return {HTMLElement}
+ */
+const createContentHeader = (menu) => {
+    const headerDiv = createEl('div');
+    const titleDiv = createEl('div');
+    const refreshDiv = createEl('div');
+    const h = createEl('h3', {innerText: menu.getMenuName()});
+    const a = createEl('a', {innerText: '새로고침'});
+
+    headerDiv.classList.add('contentHeader');
+    titleDiv.classList.add('title');
+    refreshDiv.classList.add('refresh');
+
+    titleDiv.appendChild(h);
+    refreshDiv.appendChild(a);
+
+    a.addEventListener('click', (event) => {
+        event.preventDefault();
+        loadContent(menu);
+    })
+
+    headerDiv.appendChild(titleDiv);
+    headerDiv.appendChild(refreshDiv);
+    return headerDiv;
+}
+/**
+ * @param {Menu} menu
+ * @return {Promise<void>}
+ */
+const loadContent = async menu => {
+    if(!menu.getProgramUrl()) {
+        errorAlert('연결된 URL이 없습니다.');
+        return;
+    }
+
+    if(!await checkContentUrlStatus(menu.getProgramUrl()))
         return;
 
     const iframe = createEl('iframe');
     iframe.border = 'none';
-    iframe.style.width = '100%';
-    iframe.src = url;
+    iframe.src = menu.getProgramUrl();
 
-    const contentArea = qs(document, '.content');
+    const headerDiv = createContentHeader(menu);
+
+    const contentArea = qs(document, '#ifr_content');
     contentArea.innerHTML = '';
+    contentArea.appendChild(headerDiv);
     contentArea.appendChild(iframe);
 
     iframe.onerror = (e) => {
         errorAlert('프로그램 로드에 실패하였습니다.');
-        throw new Error(e);
+        throw new Error(e.message);
     }
 }
 

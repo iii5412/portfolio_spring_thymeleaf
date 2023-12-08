@@ -20,6 +20,9 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import static com.portfolio.main.config.security.SecurityConfig.PERMIT_ALL_URLS;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
@@ -29,10 +32,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager
             , MyUserDetailsService userDetailsService
             , String secretKeyString) {
-//        super(authenticationManager, ((request, response, authException) -> {
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//            response.sendRedirect("/loginPage");
-//        }));
         super(authenticationManager);
         this.userDetailsService = userDetailsService;
         this.secretKeyString = secretKeyString;
@@ -41,11 +40,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException, ExpiredJwtException {
         try {
-
-            if(request.getRequestURI().equals("/loginPage")){
-                chain.doFilter(request, response);
-                return;
-            }
+//            if("/loginPage".equals(request.getRequestURI())){
+//                chain.doFilter(request, response);
+//                return;
+//            }
 
             final String tokenFromRequest = TokenUtil.getTokenFromRequest(request);
 
@@ -57,8 +55,15 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             Authentication authentication = getAuthentication(tokenFromRequest);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (ExpiredJwtException e) {
-            this.getAuthenticationEntryPoint().commence(request, response, new AuthenticationServiceException("Token expired", e));
-            return;
+            if (!Arrays.asList(PERMIT_ALL_URLS).contains(request.getRequestURI())) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                chain.doFilter(request, response);
+                return;
+            } else {
+                SecurityContextHolder.clearContext();
+                chain.doFilter(request, response);
+                return;
+            }
         }
         chain.doFilter(request, response);
     }
@@ -73,7 +78,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
 
             if (loginId != null) {
-                return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null, userDetails.getAuthorities());
+//                return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null, userDetails.getAuthorities());
+                return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             }
         }
         return null;

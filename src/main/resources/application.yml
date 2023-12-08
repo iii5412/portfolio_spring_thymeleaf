@@ -1,4 +1,13 @@
+jwt:
+  secretKey: 4m6UYcQkl6OiU9pNH2VtCazv6el5ncm3bs7dJDfmd1k=
+
+locale:
+  timezone: Asia/Seoul
+
 spring:
+#  jackson:
+#    date-format: yyyy-MM-dd HH:mm:ss
+#    time-zone: Asia/Seoul
   datasource:
     #    url: jdbc:h2:tcp://localhost/~/todolist
     #    username: sa

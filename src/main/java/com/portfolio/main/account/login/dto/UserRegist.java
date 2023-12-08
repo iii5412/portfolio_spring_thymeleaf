@@ -27,7 +27,7 @@ public class UserRegist {
         validate();
     }
 
-    public boolean validate() {
+    public void validate() {
         final InvalidRegistUser invalidRegistUser = new InvalidRegistUser();
 
         if(!StringUtils.hasText(this.loginId))
@@ -47,10 +47,8 @@ public class UserRegist {
             invalidRegistUser.addValidation("loginPw2", "비밀번호가 일치하지 않습니다.");
         }
 
-        if(!invalidRegistUser.getValidation().isEmpty())
+        if(invalidRegistUser.hasErrors())
             throw invalidRegistUser;
-
-        return true;
     }
 
     private boolean isEqualPasswords() {

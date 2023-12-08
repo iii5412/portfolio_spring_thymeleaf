@@ -19,8 +19,8 @@
             <label for="loginPw">비밀번호</label>
             <input type="password" id="loginPw" name="loginPw">
         </div>
-        <input type="button" id="loginBtn" value="로그인" />
-        <input type="button" id="signUpBtn" value="회원가입" />
+        <input type="button" id="loginBtn" value="로그인"/>
+        <input type="button" id="signUpBtn" value="회원가입"/>
     </div>
 </div>
 <script th:type="module">
@@ -28,33 +28,44 @@
     import {login} from "/js/apis/auth/auth.js";
     import {goSignupPage} from "/js/common/route.js";
     import {FetchError} from "/js/error/fetchError.js";
-    const loginBtn = qs(document, '#loginBtn');
-    const signUpBtn = qs(document, '#signUpBtn');
 
-    loginBtn.addEventListener('click', () => {
-        const loginId = qs(document, '#loginId').value;
-        const loginPw = qs(document, '#loginPw').value;
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginBtn = qs(document, '#loginBtn');
+        const signUpBtn = qs(document, '#signUpBtn');
+        const loginId = qs(document, '#loginId');
+        const loginPw = qs(document, '#loginPw');
 
-        login(loginId, loginPw)
-            .then(async response => {
-                if (response.ok) {
+        loginId.focus();
+
+        /**
+         * @param {string} loginId
+         * @param {string} loginPw
+         */
+        const doLogin = (loginId, loginPw) => {
+            login(loginId, loginPw)
+                .then(response => {
                     location.href = "/";
-                } else {
-                    if (response.status === 400) {
-                        const responseJson = await response.json();
-                        throw new FetchError(responseJson.code, responseJson.message);
-                    }
-                }
-            })
-            .catch(e => {
-                if(e instanceof FetchError)
-                    alert(e.serverMessage);
-                else
-                    alert('오류가 발생하였습니다.');
-            });
+                })
+                .catch(e => {
+                    if (e instanceof FetchError)
+                        alert(e.serverMessage);
+                    else
+                        alert('오류가 발생하였습니다.');
+                });
+        }
+
+
+        loginBtn.addEventListener('click', () => {
+            doLogin(loginId.value, loginPw.value);
+        });
+
+        loginPw.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                doLogin(loginId.value, loginPw.value);
+            }
+        })
+
+        signUpBtn.addEventListener('click', goSignupPage);
     });
-
-    signUpBtn.addEventListener('click', goSignupPage);
-
 </script>
 </html>

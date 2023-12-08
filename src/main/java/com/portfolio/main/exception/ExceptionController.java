@@ -1,5 +1,6 @@
 package com.portfolio.main.exception;
 
+import com.portfolio.main.controller.api.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -34,4 +35,6 @@ public class ExceptionController {
 
         return ResponseEntity.status(statusCode).body(errorResponse);
     }
+
+
 }

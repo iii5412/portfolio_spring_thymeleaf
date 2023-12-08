@@ -32,3 +32,7 @@ body {
 .row {
     display: flex;
 }
+
+.hidden {
+    display: none;
+}

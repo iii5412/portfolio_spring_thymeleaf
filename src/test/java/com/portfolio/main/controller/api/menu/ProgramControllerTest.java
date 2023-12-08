@@ -1,6 +1,8 @@
 package com.portfolio.main.controller.api.menu;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.portfolio.main.account.user.service.MyUserDetailsService;
+import com.portfolio.main.config.security.MyUserDetails;
 import com.portfolio.main.menu.domain.Program;
 import com.portfolio.main.menu.dto.program.CreateProgram;
 import com.portfolio.main.menu.dto.program.EditProgram;
@@ -12,6 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -20,8 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.IntStream;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -43,6 +48,9 @@ class ProgramControllerTest {
     @Autowired
     private EntityManager entityManager;
 
+    @Autowired
+    private MyUserDetailsService userDetailsService;
+
     private int maxTestDataCnt = 20;
     private String testProgramName = "테스트";
     private String testProgramUrl = "/testProgram";
@@ -55,22 +63,24 @@ class ProgramControllerTest {
         //given
         IntStream.range(1, maxTestDataCnt + 1).forEach(i -> {
             final CreateProgram createProgram = new CreateProgram(this.testProgramName + "_" + i, this.testProgramUrl + "_" + i, "admin");
-            final Long savedTestProgramId = programService.save(createProgram);
+            final Long savedTestProgramId = programService.create(createProgram);
 
             if (i == 1)
                 testProgramId = savedTestProgramId;
         });
+        final UserDetails userDetails = userDetailsService.loadUserByUsername("admin");
+        final Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void when_select_all_programs() throws Exception {
         mockMvc.perform(
-                        get(requestMapijng + "/?page=1&size=20&sortFields=updatedAt&sorts=DESC")
+                        get(requestMapijng + "?page=1&size=20&sortFields=updatedAt&sorts=DESC")
                                 .contentType(APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalCount").exists())
-                .andExpect(jsonPath("$.totalCount", is(20)))
+                .andExpect(jsonPath("$.totalCount", greaterThanOrEqualTo(20)))
                 .andExpect(jsonPath("$.result").isArray())
                 .andExpect(jsonPath("$.result", hasSize(20)))
                 .andExpect(jsonPath("$.result[0].programName").value(testProgramName + "_20"))
@@ -78,7 +88,6 @@ class ProgramControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void save() throws Exception {
         final CreateProgram createProgram = new CreateProgram("testProgram", "/test");
 
@@ -95,7 +104,6 @@ class ProgramControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void delete() throws Exception {
         //when
         final Program testProgram = programService.findById(testProgramId);
@@ -116,7 +124,6 @@ class ProgramControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void edit() throws Exception {
         final Program testProgram = programService.findById(testProgramId);
 

@@ -6,16 +6,28 @@ const HTTP_STATUS = {
     UNAUTHORIZED: 401,
     FORBIDDEN: 403,
     NOT_FOUND: 404,
+    CONFLICT: 409,
 }
 
 class Fetch {
-
-    checkResponseStatus(response) {
-        const status = response.status;
-        if (status !== HTTP_STATUS.OK) {
-            throw new FetchError(status, response.statusText);
-        }
-        return true;
+    getCheck(url) {
+        return fetch(url, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(async response => {
+            if(response.ok)
+                return true;
+            else {
+                const responseJson = await response.json();
+                throw new FetchError(responseJson);
+            }
+        })
+            .catch(error => {
+                throw error;
+            });
     }
 
     get(url, headers = {}) {
@@ -27,9 +39,13 @@ class Fetch {
                 ...headers
             }
         })
-            .then(response => {
-                if (this.checkResponseStatus(response))
-                    return response;
+            .then(async response => {
+                const responseJson = await response.json();
+                if (response.ok) {
+                    return responseJson;
+                } else {
+                    throw new FetchError(responseJson);
+                }
             })
             .catch(error => {
                 throw error;
@@ -52,9 +68,71 @@ class Fetch {
             init.body = data;
 
         return fetch(url, init)
-            .then(response => {
-                if (this.checkResponseStatus(response))
-                    return response;
+            .then(async response => {
+                const responseJson = await response.json();
+                if (response.ok) {
+                    return responseJson;
+                } else {
+                    throw new FetchError(responseJson)
+                }
+            })
+            .catch(error => {
+                throw error;
+            });
+    }
+
+    patch(url, data, headers = {}) {
+        const init = {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                ...headers
+            },
+        };
+
+        if (init.headers["Content-Type"] === 'application/json')
+            init.body = JSON.stringify(data);
+        else
+            init.body = data;
+
+        return fetch(url, init)
+            .then(async response => {
+                const responseJson = await response.json();
+                if (response.ok) {
+                    return responseJson;
+                } else {
+                    throw new FetchError(responseJson)
+                }
+            })
+            .catch(error => {
+                throw error;
+            });
+    }
+
+    delete(url, data, headers = {}) {
+        const init = {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                ...headers
+            },
+        };
+
+        if (init.headers["Content-Type"] === 'application/json')
+            init.body = JSON.stringify(data);
+        else
+            init.body = data;
+
+        return fetch(url, init)
+            .then(async response => {
+                const responseJson = await response.json();
+                if (response.ok) {
+                    return responseJson;
+                } else {
+                    throw new FetchError(responseJson)
+                }
             })
             .catch(error => {
                 throw error;

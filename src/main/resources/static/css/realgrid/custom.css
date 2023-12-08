@@ -1,0 +1,12 @@
+.rg-grid .rg-data-cell.right-column {
+    text-align: right;
+}
+
+.rg-grid .rg-data-cell.left-column {
+    text-align: left;
+}
+
+.rg-grid .editable-column {
+    font-weight: bold;
+    background-color: #84e8f4;
+}

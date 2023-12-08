@@ -9,20 +9,19 @@ import com.portfolio.main.menu.domain.Program;
 import com.portfolio.main.menu.dto.program.CreateProgram;
 import com.portfolio.main.menu.dto.program.EditProgram;
 import com.portfolio.main.menu.dto.program.SearchProgram;
+import com.portfolio.main.menu.exception.DuplicatedProgramUrlException;
 import com.portfolio.main.menu.exception.ProgramNotFoundException;
 import com.portfolio.main.menu.repository.ProgramRepository;
 import com.portfolio.main.util.page.PageResult;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.buf.UEncoder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -46,12 +45,16 @@ public class ProgramService {
         return programRepository.selectProgram(searchProgram, pageable);
     }
 
-    public Long save(CreateProgram createProgram) {
+    public Long create(CreateProgram createProgram) {
         final User createUser = userDetailsService.findUserByLoginId(createProgram.getCreateUserLoginId());
         final Program program = new Program(createProgram.getProgramName(), createProgram.getUrl(), createUser);
+        try {
+            final Program savedProgram = programRepository.save(program);
+            return savedProgram.getId();
+        } catch (DataIntegrityViolationException e) {
+            throw new DuplicatedProgramUrlException();
+        }
 
-        final Program savedProgram = programRepository.save(program);
-        return savedProgram.getId();
     }
 
     public void delete(Long programId) {
@@ -63,7 +66,7 @@ public class ProgramService {
         final User modifier = userDetailsService.findUserByLoginId(editProgram.getEditUserLoginId());
 
         Role role = null;
-        if(StringUtils.hasText(editProgram.getRoleCode()))
+        if (StringUtils.hasText(editProgram.getRoleCode()))
             role = roleRepository.findByRoleCode(RoleCode.valueOf(editProgram.getRoleCode()));
 
 

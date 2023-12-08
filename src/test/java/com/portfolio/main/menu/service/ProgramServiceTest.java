@@ -41,7 +41,7 @@ class ProgramServiceTest {
         //given
         IntStream.range(1, testProgramMaxCnt + 1).forEach(i -> {
             final CreateProgram createProgram = new CreateProgram(this.testProgramName + "_" + i, this.testProgramUrl + "_" + i, testUserId);
-            final Long testProgramId = programService.save(createProgram);
+            final Long testProgramId = programService.create(createProgram);
             if (i == 1) {
                 testProgram = programService.findById(testProgramId);
             }

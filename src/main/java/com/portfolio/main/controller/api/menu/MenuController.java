@@ -1,6 +1,7 @@
 package com.portfolio.main.controller.api.menu;
 
 import com.portfolio.main.controller.api.menu.response.MenuResponse;
+import com.portfolio.main.controller.api.response.SuccResponse;
 import com.portfolio.main.menu.domain.Menu;
 import com.portfolio.main.menu.dto.menu.CreateMenu;
 import com.portfolio.main.menu.dto.menu.EditMenu;
@@ -60,8 +61,8 @@ public class MenuController {
     }
 
     @DeleteMapping("/{menuId}")
-    public ResponseEntity<Void> delete(@PathVariable Long menuId) {
+    public ResponseEntity<?> delete(@PathVariable Long menuId) {
         menuService.deleteMenu(menuId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new SuccResponse());
     }
 }

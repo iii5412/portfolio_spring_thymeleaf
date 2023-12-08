@@ -6,14 +6,10 @@ const tag = "[api/program]";
 /**
  * @return {PageResult}
  */
-async function fetchProgram() {
+async function fetchProgram(sortFields = [], sorts = []) {
     try {
-        const response = await FETCH.get('/program');
-        if (response.ok) {
-            return new PageResult(await response.json());
-        } else {
-            throw new Error(response.statusText);
-        }
+        const responseJson = await FETCH.get(`/program?sortFields=${sortFields.join(',')}&sorts=${sorts.join(',')}`);
+        return new PageResult(responseJson);
     } catch (e) {
         throw e;
     }

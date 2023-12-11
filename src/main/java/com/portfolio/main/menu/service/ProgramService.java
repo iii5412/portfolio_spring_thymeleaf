@@ -42,7 +42,12 @@ public class ProgramService {
 
     public PageResult<Program> selectProgram(SearchProgram searchProgram) {
         PageRequest pageable = PageRequest.of(searchProgram.getPage() - 1, searchProgram.getSize(), searchProgram.getSort());
-        return programRepository.selectProgram(searchProgram, pageable);
+        return programRepository.selectProgram(searchProgram, pageable, true);
+    }
+
+    public PageResult<Program> selectManageProgram(SearchProgram searchProgram) {
+        PageRequest pageable = PageRequest.of(searchProgram.getPage() - 1, searchProgram.getSize(), searchProgram.getSort());
+        return programRepository.selectProgram(searchProgram, pageable, false);
     }
 
     public Long create(CreateProgram createProgram) {

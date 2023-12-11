@@ -51,6 +51,17 @@ public class ProgramController {
         return ResponseEntity.ok(programResponsePageResult);
     }
 
+    @GetMapping("/manage")
+    public ResponseEntity<PageResult<ProgramResponse>> getAllManageProgram(SearchProgram searchProgram) {
+        final PageResult<Program> programPageResult = programService.selectManageProgram(searchProgram);
+        final List<ProgramResponse> programResponses = programPageResult.getResult().stream().map(ProgramResponse::new).toList();
+        final PageResult<ProgramResponse> programResponsePageResult = PageResult.<ProgramResponse>builder()
+                .result(programResponses)
+                .totalCount(programPageResult.getTotalCount())
+                .build();
+        return ResponseEntity.ok(programResponsePageResult);
+    }
+
     @PostMapping("")
     public ResponseEntity<Long> create(
             @RequestBody CreateProgram createProgram
@@ -68,7 +79,7 @@ public class ProgramController {
     }
 
     @PatchMapping("/{programId}")
-    public ResponseEntity<Long> edit(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long programId, @RequestBody EditProgram editProgram) {
+    public ResponseEntity<Long> edit(@PathVariable Long programId, @RequestBody EditProgram editProgram) {
         editProgram.setEditUserLoginId(userDetails.getUsername());
         programService.edit(programId, editProgram);
         return ResponseEntity.ok(programId);

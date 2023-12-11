@@ -33,6 +33,9 @@ public class Program {
     @Column(name = "updated_at", insertable = false, updatable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "is_immutable", insertable = false, updatable = false)
+    private boolean isImmutable;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "last_updated_by", referencedColumnName = "id")
     private User lastUpdatedByUser;

@@ -84,7 +84,7 @@
 </body>
 <script th:type="module">
     import {qs, qsAll, createEl, FETCH, HTTP_STATUS} from "/js/common/util.js";
-    import {fetchProgram} from "/js/apis/menu/program.js";
+    import {fetchManageProgram} from "/js/apis/menu/program.js";
     import {errorAlert, infoAlert} from "/js/common/alert.js";
     import {programMapping, Program} from "/js/program/program.js";
     import {GRID_FILED_TYPE} from "/js/realgrid/gridUtil.js";
@@ -108,7 +108,6 @@
         }
 
         async refreshGrid() {
-            debugger;
             const {programList, programCount} = await this.#getProgramData();
             this.gridProvider.setRows(programList);
             this.gridView.refresh();
@@ -220,17 +219,23 @@
         }
 
         setNewMode() {
-            this.clear();
             const btnArea = qs(this.form, '.rightBtnArea');
             const addBtn = this.#createAddBtn();
+
+            this.clear();
             btnArea.appendChild(addBtn);
         }
 
         setEditMode(program) {
+            const btnArea = qs(this.form, '.rightBtnArea');
+            const editBtn = this.#createEditBtn();
+            const delBtn = this.#createDelBtn();
+
             this.status = this.FORM_STATE.EDIT;
             this.clear();
             this.#setProramValue(program);
-            const editBtn = this.#createEditBtn();
+            btnArea.appendChild(editBtn);
+            btnArea.appendChild(delBtn);
         }
 
         #createAddBtn() {
@@ -240,7 +245,7 @@
                 const url = qs(this.form, '#url').value;
                 //TODO: api js로 분리
                 FETCH.post("/program", {programName, url})
-                    .then(async response => {
+                    .then(() => {
                         infoAlert("저장되었습니다.");
                         this.grid.refreshGrid();
                     }).catch(e => {
@@ -268,12 +273,37 @@
                 const url = qs(this.form, '#url').value;
                 //TODO: api js로 분리
                 FETCH.patch("/program/" + id, {id, programName, url})
-                    .then(response => {
+                    .then(() => {
                         infoAlert("수정되었습니다.");
-                        this.grid.refresh();
+                        this.grid.refreshGrid();
                     }).catch(e => {
-                    debugger;
-                    errorAlert("수정에 실패하였습니다. 잠시 후 다시 시도해주세요.");
+                    if(e instanceof FetchError) {
+                        if(e.status === HTTP_STATUS.CONFLICT) {
+                            errorAlert('이미 등록된 URL입니다.');
+                            const fieldFetchError = new FieldFetchError(this.form, e);
+                            fieldFetchError.clearMessage(...qsAll(this.form, '#url'));
+                            fieldFetchError.bindingMessage();
+                        }
+                    } else {
+                        errorAlert("수정에 실패하였습니다. 잠시 후 다시 시도해주세요.");
+                        throw e;
+                    }
+                });
+            });
+            return btn;
+        }
+
+        #createDelBtn() {
+            const btn = createEl('input', {id: 'editBtn', type: 'button', value: '삭제'});
+            btn.addEventListener('click', () => {
+                const id = qs(this.form, '#id').value;
+                //TODO: api js로 분리
+                FETCH.delete("/program/" + id)
+                    .then(() => {
+                        infoAlert("삭제되었습니다.");
+                        this.grid.refreshGrid();
+                    }).catch(e => {
+                    errorAlert("삭제에 실패하였습니다. 잠시 후 다시 시도해주세요.");
                     throw e;
                 })
             });
@@ -306,7 +336,7 @@
      */
     async function getPrograms() {
         try {
-            return await fetchProgram(['updatedAt'], ["DESC"]);
+            return await fetchManageProgram(['updatedAt'], ["DESC"]);
         } catch (e) {
             console.error(tag, e);
             errorAlert("프로그램을 가져오는데 실패하였습니다.");

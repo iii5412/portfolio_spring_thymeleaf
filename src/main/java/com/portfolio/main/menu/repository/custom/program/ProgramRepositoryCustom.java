@@ -6,7 +6,7 @@ import com.portfolio.main.util.page.PageResult;
 import org.springframework.data.domain.Pageable;
 
 public interface ProgramRepositoryCustom {
-    PageResult<Program> selectProgram(SearchProgram searchProgram, Pageable pageable);
+    PageResult<Program> selectProgram(SearchProgram searchProgram, Pageable pageable, boolean existImmutable);
 
     void deleteProgram(Long programId);
 }

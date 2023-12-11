@@ -31,7 +31,7 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom {
     }
 
     @Override
-    public PageResult<Program> selectProgram(SearchProgram searchProgram, Pageable pageable) {
+    public PageResult<Program> selectProgram(SearchProgram searchProgram, Pageable pageable, boolean existImmutable) {
         final QProgram qProgram = QProgram.program;
         final QRole qRole = QRole.role;
         final BooleanBuilder whereBuilder = new BooleanBuilder();
@@ -44,6 +44,9 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom {
 
         if (StringUtils.hasText(searchProgram.getUrl()))
             whereBuilder.and(qProgram.url.contains(searchProgram.getUrl()));
+
+        if(!existImmutable)
+            whereBuilder.and(qProgram.isImmutable.eq(false));
 
         final JPAQuery<Program> query = queryFactory
                 .selectFrom(qProgram)

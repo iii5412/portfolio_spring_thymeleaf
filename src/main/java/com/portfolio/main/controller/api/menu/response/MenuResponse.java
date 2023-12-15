@@ -32,7 +32,7 @@ public class MenuResponse {
     private List<MenuResponse> subMenus;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "${locale.timezone}")
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "${locale.timezone}")
     private LocalDateTime updatedAt;
@@ -46,7 +46,7 @@ public class MenuResponse {
         this.menuName = menu.getMenuName();
         this.menuType = menu.getMenuType();
         this.orderNum = menu.getOrderNum();
-        this.createAt = menu.getCreateAt();
+        this.createdAt = menu.getCreatedAt();
         this.updatedAt = menu.getUpdatedAt();
 
         if (menu.hasSubMenus())

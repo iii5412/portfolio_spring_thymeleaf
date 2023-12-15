@@ -12,7 +12,7 @@ public class ProgramManageController {
 
     @GetMapping("/programManage")
     public String programManage() {
-        return "/admin/program/programManage";
+        return "/admin/programManage";
     }
 
 }

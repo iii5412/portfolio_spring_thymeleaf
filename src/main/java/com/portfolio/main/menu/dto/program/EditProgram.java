@@ -7,16 +7,16 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EditProgram {
+    private Long id;
     private String programName;
     private String url;
     private String editUserLoginId;
-    private String roleCode;
 
     @Builder
-    public EditProgram(String programName, String url, String editUserLoginId, String roleCode) {
+    public EditProgram(Long id, String programName, String url, String editUserLoginId) {
+        this.id = id;
         this.programName = programName;
         this.url = url;
         this.editUserLoginId = editUserLoginId;
-        this.roleCode = roleCode;
     }
 }

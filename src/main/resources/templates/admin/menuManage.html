@@ -1,14 +1,35 @@
 <!DOCTYPE html>
-<html
-        xmlns:th="http://www.thymeleaf.org"
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        layout:decorate="~{fragments/layout}"
->
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{/css/common.css}"/>
+<link rel="stylesheet" href="@{/js/realgrid/realgrid.2.7.2/realgrid-style.css}"
+      th:href="@{/js/realgrid/realgrid.2.7.2/realgrid-sky-blue.css}"/>
+<link rel="stylesheet" th:href="@{/css/realgrid/custom.css}"/>
+<script src="/js/realgrid/realgrid.2.7.2/realgrid-lic.js"></script>
+<script src="/js/realgrid/realgrid.2.7.2/realgrid.2.7.2.min.js"></script>
+<script src="/js/realgrid/realgrid.2.7.2/libs/jszip.min.js"></script>
+
+<style>
+
+</style>
+
 <body>
-<div>
-    <div layout:fragment="content">
-        MenuManage
+<div id="content" class="ifrm-content">
+    <div id="grid" style="height: 470px;">
+
     </div>
 </div>
 </body>
-</html>
+<script th:type="module">
+    import {getAllRolesFlat} from "/js/apis/account/role.js";
+    import {qs, lpad} from "/js/common/util.js";
+    import {createColumn, COLUMN_TYPE, createField} from "/js/realgrid/gridUtil.js";
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const roles = await getAllRolesFlat();
+        const container = qs(document, '#content');
+        const gridContainer = qs(container, '#grid');
+
+
+    })
+
+</script>

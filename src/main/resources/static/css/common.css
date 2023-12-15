@@ -36,3 +36,19 @@ body {
 .hidden {
     display: none;
 }
+
+.ifrm-content {
+    padding: 5px;
+}
+
+/*
+    pagination
+ */
+.pagination-container {
+    text-align: center;
+    padding: 10px;
+}
+
+.pagination-container .pagination-button.on {
+    font-weight: bold;
+}

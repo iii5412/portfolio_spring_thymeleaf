@@ -14,10 +14,12 @@ spring:
     #    password:
     #    driver-class-name: org.h2.Driver
     #    url: jdbc:mysql://mysql:3306/tododb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    url: jdbc:mysql://host.docker.internal:3306/portfolio_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+#    url: jdbc:mysql://host.docker.internal:3306/portfolio_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    url: jdbc:p6spy:mysql://host.docker.internal:3306/portfolio_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
     username: appuser
     password: appuser
-    driver-class-name: com.mysql.cj.jdbc.Driver
   thymeleaf:
     cache: false
     #Pageable 기본 설정
@@ -33,6 +35,13 @@ spring:
         format_sql: true
         show_sql: true
         use_sql_comments: true
+
+mybatis:
+  type-aliases-package: com.portfolio.main
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
 
 jpa:
   hibernate:
@@ -51,7 +60,9 @@ logging:
     root: DEBUG
     org.springframework.web: DEBUG
     org.springframework.security: DEBUG
-    org.hibernate.orm.jdbc.bind: trace
+    org.hibernate.orm.jdbc.bind: DEBUG
+#    org.mybatis: DEBUG
+#    org.apache.ibatis: DEBUG
 #    org.hibernate:
 #      SQL: DEBUG
 #      type: trace

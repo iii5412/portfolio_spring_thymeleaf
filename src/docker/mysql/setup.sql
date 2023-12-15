@@ -75,12 +75,8 @@ create table program
     created_at      timestamp default CURRENT_TIMESTAMP not null comment '생성일',
     updated_at      timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '수정일',
     last_updated_by int                                 null comment '마지막으로 수정한 사용자의 ID',
-    role_id         int                                 null comment '권한 ID',
     constraint url_unique
-        unique (url) comment 'URL은 고유해야 합니다.',
-    constraint fk_program_role
-        foreign key (role_id) references role (id)
-            on update cascade on delete set null
+        unique (url) comment 'URL은 고유해야 합니다.'
 );
 
 #

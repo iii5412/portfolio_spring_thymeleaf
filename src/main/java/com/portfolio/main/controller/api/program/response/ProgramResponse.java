@@ -13,8 +13,7 @@ public class ProgramResponse {
     private Long id;
     private String programName;
     private String url;
-    private String role;
-    
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "${locale.timezone}")
     private LocalDateTime createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "${locale.timezone}")

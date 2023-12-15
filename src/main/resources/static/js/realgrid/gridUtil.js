@@ -21,6 +21,34 @@ function createColumn(name, type, width) {
     return new Column(name, type, width);
 }
 
+function createField(fieldName) {
+    return new Field(fieldName);
+}
+
+
+class Field {
+    field = {};
+
+    constructor(fieldName) {
+        this.field.fieldName = fieldName;
+    }
+
+    text() {
+        this.field.dataType = GRID_FILED_TYPE.TEXT;
+        return this;
+    }
+
+    number() {
+        this.field.dataType = GRID_FILED_TYPE.NUMBER;
+        return this;
+    }
+
+    end() {
+        return this.field;
+    }
+}
+
+
 class Column {
     col = {};
 
@@ -29,14 +57,10 @@ class Column {
         Object.assign(this.col, {name, fieldName, type, width});
     }
 
-    and() {
-        return this;
-    }
-
     #addStyleName(styleName) {
         const styleNames = this.col.styleName ? this.col.styleName.split(' ') : [];
 
-        if(!styleNames.find(_styleName => _styleName === styleName))
+        if (!styleNames.find(_styleName => _styleName === styleName))
             styleNames.push(styleName);
 
         this.col.styleName = styleNames.join(' ');
@@ -44,12 +68,12 @@ class Column {
     }
 
     #addHeaderStyleName(styleName) {
-        if(!this.col.hasOwnProperty('header'))
+        if (!this.col.hasOwnProperty('header'))
             return this;
 
         const styleNames = this.col.header.styleName ? this.col.header.styleName.split(' ') : [];
 
-        if(!styleNames.find(_styleName => _styleName === styleName))
+        if (!styleNames.find(_styleName => _styleName === styleName))
             styleNames.push(styleName);
 
         this.col.header.styleName = styleNames;
@@ -63,12 +87,18 @@ class Column {
         return this;
     }
 
-    alignLeft(){
+    alignLeft() {
         this.#addStyleName('left-column');
         return this;
     }
+
     editable(editable) {
         this.col.editable = editable;
+        return this;
+    }
+
+    visible(visible) {
+        this.col.visible = visible;
         return this;
     }
 
@@ -83,8 +113,8 @@ class Column {
             (this.col.hasOwnProperty('editable') && this.col.editable)
     }
 
-    build() {
-        if(this.#isEditableColumn()) {
+    end() {
+        if (this.#isEditableColumn()) {
             this.#addHeaderStyleName('editable-column');
         }
         return this.col;
@@ -92,4 +122,4 @@ class Column {
 }
 
 
-export {GRID_FILED_TYPE, createColumn, COLUMN_TYPE, ROW_STATE}
+export {GRID_FILED_TYPE, createColumn, COLUMN_TYPE, ROW_STATE, createField}

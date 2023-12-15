@@ -46,7 +46,7 @@ public class Menu {
     private User lastModifiedByUser;
 
     @Column(name = "created_at", insertable = false, updatable = false)
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at", insertable = false, updatable = false)
     private LocalDateTime updatedAt;

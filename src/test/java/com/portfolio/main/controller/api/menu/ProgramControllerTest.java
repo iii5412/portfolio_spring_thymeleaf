@@ -2,7 +2,6 @@ package com.portfolio.main.controller.api.menu;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.portfolio.main.account.user.service.MyUserDetailsService;
-import com.portfolio.main.config.security.MyUserDetails;
 import com.portfolio.main.menu.domain.Program;
 import com.portfolio.main.menu.dto.program.CreateProgram;
 import com.portfolio.main.menu.dto.program.EditProgram;
@@ -18,7 +17,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +52,7 @@ class ProgramControllerTest {
     private int maxTestDataCnt = 20;
     private String testProgramName = "테스트";
     private String testProgramUrl = "/testProgram";
-    private String requestMapijng = "/program";
+    private String requestMapping = "/program";
     private Long testProgramId;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -76,7 +74,7 @@ class ProgramControllerTest {
     @Test
     void when_select_all_programs() throws Exception {
         mockMvc.perform(
-                        get(requestMapijng + "?page=1&size=20&sortFields=updatedAt&sorts=DESC")
+                        get(requestMapping + "?page=1&size=20&sortFields=updatedAt&sorts=DESC")
                                 .contentType(APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalCount").exists())
@@ -94,7 +92,7 @@ class ProgramControllerTest {
         final String createProgramString = objectMapper.writeValueAsString(createProgram);
 
         mockMvc.perform(
-                        post(requestMapijng + "/")
+                        post(requestMapping)
                                 .contentType(APPLICATION_JSON)
                                 .characterEncoding(StandardCharsets.UTF_8)
                                 .content(createProgramString)
@@ -110,7 +108,7 @@ class ProgramControllerTest {
 
         //then
         mockMvc.perform(
-                        MockMvcRequestBuilders.delete(requestMapijng + "/" + testProgram.getId())
+                        MockMvcRequestBuilders.delete(requestMapping + "/" + testProgram.getId())
                                 .contentType(APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
@@ -128,16 +126,16 @@ class ProgramControllerTest {
         final Program testProgram = programService.findById(testProgramId);
 
         final EditProgram editProgram = EditProgram.builder()
+                .id(testProgram.getId())
                 .programName("editProgram")
                 .url("editUrl")
-                .roleCode("ROLE_USER")
                 .build();
 
         final String editProgramString = objectMapper.writeValueAsString(editProgram);
 
         //then
         mockMvc.perform(
-                        patch(requestMapijng + "/" + testProgram.getId())
+                        patch(requestMapping + "/")
                                 .contentType(APPLICATION_JSON)
                                 .characterEncoding(StandardCharsets.UTF_8)
                                 .content(editProgramString)
@@ -152,7 +150,6 @@ class ProgramControllerTest {
 
         assertEquals("editProgram", editedProgram.getProgramName());
         assertEquals("editUrl", editedProgram.getUrl());
-        assertEquals("ROLE_USER", editedProgram.getRole().getRoleCode().name());
     }
 
 

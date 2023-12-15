@@ -2,6 +2,7 @@ package com.portfolio.main.controller.api.menu;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.portfolio.main.account.user.service.MyUserDetailsService;
 import com.portfolio.main.menu.domain.Menu;
 import com.portfolio.main.menu.dto.menu.CreateMenu;
 import com.portfolio.main.menu.dto.menu.EditMenu;
@@ -13,6 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -41,31 +46,31 @@ class MenuControllerTest {
     private String token = "";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-
+    @Autowired
+    private MyUserDetailsService userDetailsService;
 
     @Test
     void when_select_all_menus() throws Exception {
         mockMvc.perform(
-                        get(requestMapijng + "/")
+                        get(requestMapijng)
                                 .contentType(APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andDo(print());
     }
 
     @Test
-    @WithMockUser(username = "user1", roles = {"USER"})
     void when_selectMenu_not_admin() throws Exception {
+        setAuthenticationUser();
         mockMvc.perform(
                         get(requestMapijng + "/manage?page=1&size=20")
                                 .contentType(APPLICATION_JSON)
-                ).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/loginPage"))
+                ).andExpect(status().isForbidden())
                 .andDo(print());
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void when_selectMenu() throws Exception {
+        setAuthenticationAdmin();
         mockMvc.perform(
                         get(requestMapijng + "/manage?page=1&size=20")
                                 .contentType(APPLICATION_JSON)
@@ -75,8 +80,8 @@ class MenuControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void save() throws Exception {
+        setAuthenticationAdmin();
         final CreateMenu createMenu = new CreateMenu("테스트 부모", MenuType.FOLDER, 2L, "admin");
         final String createMenuJson = objectMapper.writeValueAsString(createMenu);
 
@@ -90,8 +95,8 @@ class MenuControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void deleteMenu() throws Exception {
+        setAuthenticationAdmin();
         final CreateMenu createMenu = new CreateMenu("테스트 부모", MenuType.FOLDER, 2L, "admin");
         final Long savedId = menuService.saveMenu(createMenu);
 
@@ -106,8 +111,8 @@ class MenuControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void editMenu() throws Exception {
+        setAuthenticationAdmin();
         final Long testMenuId = 2L;
         final Menu testTargetMenu = menuService.findById(testMenuId);
         final EditMenu editMenu = new EditMenu(testTargetMenu.getUpperMenu().getId(), "테스트", MenuType.FOLDER, 99L, null);
@@ -128,5 +133,23 @@ class MenuControllerTest {
     }
 
 
+    private void setAuthenticationAdmin() {
+        setUserAuthentication("admin");
+    }
+
+    private void setAuthenticationUser() {
+        setUserAuthentication("user");
+    }
+
+    private void setUserAuthentication(String type) {
+        String loginId = "admin";
+
+        if(!type.equals("admin"))
+            loginId = "testUser";
+
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginId);
+        final Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
 
 }

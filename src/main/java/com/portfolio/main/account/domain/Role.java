@@ -1,6 +1,6 @@
 package com.portfolio.main.account.domain;
 
-import com.portfolio.main.account.user.service.RoleCode;
+import com.portfolio.main.account.role.service.RoleCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -38,5 +38,13 @@ public class Role {
 
     @OneToMany(mappedBy = "upperRole", cascade = CascadeType.ALL)
     private List<Role> childRoles = new ArrayList<>();
+
+    public boolean hasUpperRole() {
+        return this.upperRole != null;
+    }
+
+    public boolean hasChildRoles() {
+        return !this.childRoles.isEmpty();
+    }
 
 }

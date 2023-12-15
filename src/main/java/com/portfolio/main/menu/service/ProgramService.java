@@ -1,10 +1,8 @@
 package com.portfolio.main.menu.service;
 
-import com.portfolio.main.account.domain.Role;
 import com.portfolio.main.account.domain.User;
-import com.portfolio.main.account.user.repository.RoleRepository;
+import com.portfolio.main.account.role.repository.RoleRepository;
 import com.portfolio.main.account.user.service.MyUserDetailsService;
-import com.portfolio.main.account.user.service.RoleCode;
 import com.portfolio.main.menu.domain.Program;
 import com.portfolio.main.menu.dto.program.CreateProgram;
 import com.portfolio.main.menu.dto.program.EditProgram;
@@ -19,7 +17,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -28,7 +25,6 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 public class ProgramService {
-    private final RoleRepository roleRepository;
     private final ProgramRepository programRepository;
     private final MyUserDetailsService userDetailsService;
 
@@ -66,16 +62,11 @@ public class ProgramService {
         programRepository.deleteProgram(programId);
     }
 
-    public void edit(Long programId, EditProgram editProgram) {
-        final Program targetProgram = programRepository.findById(programId).orElseThrow(ProgramNotFoundException::new);
+    public void edit(EditProgram editProgram) {
+        final Program targetProgram = programRepository.findById(editProgram.getId()).orElseThrow(ProgramNotFoundException::new);
         final User modifier = userDetailsService.findUserByLoginId(editProgram.getEditUserLoginId());
 
-        Role role = null;
-        if (StringUtils.hasText(editProgram.getRoleCode()))
-            role = roleRepository.findByRoleCode(RoleCode.valueOf(editProgram.getRoleCode()));
-
-
-        targetProgram.edit(editProgram, role, modifier);
+        targetProgram.edit(editProgram, modifier);
         programRepository.save(targetProgram);
     }
 }

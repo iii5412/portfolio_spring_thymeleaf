@@ -53,7 +53,7 @@ class Menu {
 
     constructor({id, menuName, menuType, orderNum, subMenus = [], upperMenuId = null
                     , programId = null, programUrl = null
-                    , lastModifiedByLoginId, createAt, updatedAt
+                    , lastModifiedByLoginId, createdAt, updatedAt
                 }) {
         if(!id)
             throw tag + "id가 없는 Menu가 있습니다.";
@@ -68,7 +68,7 @@ class Menu {
         this.programId = programId;
         this.programUrl = programUrl;
         this.lastModifiedByLoginId = lastModifiedByLoginId;
-        this.createAt = createAt;
+        this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 }

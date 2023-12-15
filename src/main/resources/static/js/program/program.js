@@ -1,12 +1,7 @@
 class Program {
 
-    constructor({id, programName, url, createdAt, updatedAt, lastUpdatedByUserLoginId}) {
-        this.id = id;
-        this.programName = programName;
-        this.url = url;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.lastUpdatedByUserLoginId = lastUpdatedByUserLoginId;
+    constructor({id, programName, url, createdAt, updatedAt, lastUpdatedByUserLoginId, roleCode}) {
+        Object.assign(this, {id, programName, url, createdAt, updatedAt, lastUpdatedByUserLoginId, roleCode});
     }
 
     getId() {
@@ -31,6 +26,10 @@ class Program {
 
     getLastUpdatedByUserLoginId() {
         return this.lastUpdatedByUserLoginId;
+    }
+
+    getRoleCode() {
+        return this.roleCode;
     }
 }
 

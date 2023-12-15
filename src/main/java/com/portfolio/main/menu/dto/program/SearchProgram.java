@@ -20,8 +20,8 @@ public class SearchProgram extends PageDto {
         this.id = id;
         this.programName = programName;
         this.url = url;
-        this.setPage(page == null ? 0 : page);
-        this.setSize(size == null ? 0 : size);
+        this.setPage(page);
+        this.setSize(size);
 
         if (sortFields != null && !sortFields.isEmpty())
             this.setSortFields(sortFields);

@@ -1,6 +1,6 @@
 package com.portfolio.main.menu.service;
 
-import com.portfolio.main.account.user.service.RoleCode;
+import com.portfolio.main.account.role.service.RoleCode;
 import com.portfolio.main.menu.domain.Program;
 import com.portfolio.main.menu.dto.program.CreateProgram;
 import com.portfolio.main.menu.dto.program.EditProgram;
@@ -110,12 +110,12 @@ class ProgramServiceTest {
     @Test
     void editProgram() {
         final EditProgram editProgram = EditProgram.builder()
+                .id(testProgram.getId())
                 .programName("editProgram")
                 .url("/editProgram")
                 .editUserLoginId("admin")
-                .roleCode("ROLE_ADMIN")
                 .build();
-        programService.edit(testProgram.getId(),editProgram);
+        programService.edit(editProgram);
 
         entityManager.flush();
         entityManager.clear();
@@ -125,7 +125,6 @@ class ProgramServiceTest {
         assertEquals("editProgram", editedProgram.getProgramName());
         assertEquals("/editProgram", editedProgram.getUrl());
         assertEquals("admin", editedProgram.getLastUpdatedByUser().getLoginId());
-        assertEquals(RoleCode.ROLE_ADMIN.name(), editedProgram.getRole().getRoleCode().name());
 
     }
 }

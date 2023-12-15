@@ -13,6 +13,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -33,7 +34,6 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom {
     @Override
     public PageResult<Program> selectProgram(SearchProgram searchProgram, Pageable pageable, boolean existImmutable) {
         final QProgram qProgram = QProgram.program;
-        final QRole qRole = QRole.role;
         final BooleanBuilder whereBuilder = new BooleanBuilder();
 
         if (searchProgram.getId() != null)
@@ -50,7 +50,6 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom {
 
         final JPAQuery<Program> query = queryFactory
                 .selectFrom(qProgram)
-                .leftJoin(qProgram.role, qRole).fetchJoin()
                 .where(whereBuilder)
                 .orderBy(QuerydslUtils.getAllOrderSpecifiers(qProgram, pageable).toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
@@ -72,6 +71,16 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom {
                 .execute();
 
         entityManager.clear();
+    }
+
+    @Override
+    public Program findByUrl(String url) {
+        final QProgram qProgram = QProgram.program;
+
+        return queryFactory
+                .selectFrom(qProgram)
+                .where(qProgram.url.eq(url))
+                .fetchOne();
     }
 
 //    private <T> List<OrderSpecifier> getAllOrderSpecifiers(EntityPathBase<T> entityPath, Pageable pageable) {

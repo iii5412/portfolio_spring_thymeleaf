@@ -12,25 +12,18 @@ import java.util.stream.IntStream;
 @Getter
 @Setter
 public class PageDto {
-    private int page;
-    private int size;
+    private Integer page;
+    private Integer size;
     private List<String> sortFields;
     private List<Sort.Direction> sorts;
 
-    public void setPage(int page) {
-        if(page == 0)
-            this.page = 1;
-        else
-            this.page = page;
+    public void setPage(Integer page) {
+        this.page = (page == null || page < 1) ? 1 : page;
     }
 
-    public void setSize(int size) {
-        if(size == 0)
-            this.size = 10;
-        else
-            this.size = size;
+    public void setSize(Integer size) {
+        this.size = (size == null || size < 1) ? 10 : size;
     }
-
     // 정렬 정보를 기반으로 Sort 객체를 생성하는 메소드
     public Sort getSort() {
         if (sortFields == null || sortFields.isEmpty()) {

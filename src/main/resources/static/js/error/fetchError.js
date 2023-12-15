@@ -3,6 +3,10 @@ import {HTTP_STATUS} from "/js/common/util.js";
 import {errorAlert} from "/js/common/alert.js";
 import {goLoginPage} from "/js/common/route.js";
 
+/**
+ * 가져오기 작업 중에 발생하는 오류를 나타냅니다.
+ * @extends Error
+ */
 class FetchError extends Error {
     status;
     serverMessage = "";
@@ -26,6 +30,9 @@ class FetchError extends Error {
     }
 }
 
+/**
+ * 필드에 대한 데이터를 가져올 때 발생하는 오류를 나타냅니다.
+ */
 class FieldFetchError {
     status;
     serverMessage;

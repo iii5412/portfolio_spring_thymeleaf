@@ -7,26 +7,40 @@ import com.portfolio.main.config.security.jwt.filters.JwtAuthorizationFilter;
 import com.portfolio.main.config.security.jwt.filters.JwtTokenRefreshFilter;
 import com.portfolio.main.config.security.jwt.provider.JwtAuthenticationProvider;
 import com.portfolio.main.controller.api.response.ErrorResponse;
+import com.portfolio.main.menu.domain.Program;
+import com.portfolio.main.menu.repository.ProgramRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Supplier;
 
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
     private final MyUserDetailsService userDetailsService;
-
     public static final String[] PERMIT_ALL_URLS = {"/", "/error/**", "/account/login", "/account/signup", "/signup", "/loginPage", "/menu"};
 
     @Autowired
@@ -53,13 +67,13 @@ public class SecurityConfig {
                             .requestMatchers(PERMIT_ALL_URLS).permitAll()
                             .anyRequest().authenticated();
                 })
-                .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-//                .addFilter(new JwtAuthorizationFilter(authenticationManager(), userDetailsService, secretKeyString))
+                .addFilterBefore(new JwtAuthenticationFilter(secretKeyString), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(new JwtAuthorizationFilter(authenticationManager(), userDetailsService, secretKeyString), JwtAuthenticationFilter.class)
                 .addFilterAfter(
                         new JwtTokenRefreshFilter(),
                         JwtAuthorizationFilter.class
                 )
+//                .addFilterAfter(new AuthorizationFilter(customAuthorizationManager()), JwtAuthorizationFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint((request, response, authException) -> {
                     final ErrorResponse errorResponse = ErrorResponse.builder()

@@ -70,7 +70,7 @@ public class MenuService {
 
     public void deleteMenu(Long menuId) throws MenuNotFoundException, CannotDeleteMenuWithSubmenusException {
         final Menu targetMenu = menuRepository.findById(menuId).orElseThrow(MenuNotFoundException::new);
-        if (targetMenu.getSubMenus().size() > 0) {
+        if (!targetMenu.getSubMenus().isEmpty()) {
             throw new CannotDeleteMenuWithSubmenusException();
         }
 

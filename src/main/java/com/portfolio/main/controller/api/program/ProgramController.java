@@ -2,6 +2,7 @@ package com.portfolio.main.controller.api.program;
 
 import com.portfolio.main.config.security.MyUserDetails;
 import com.portfolio.main.controller.api.program.response.ProgramResponse;
+import com.portfolio.main.controller.api.request.IdRequest;
 import com.portfolio.main.controller.api.response.SuccResponse;
 import com.portfolio.main.menu.domain.Program;
 import com.portfolio.main.menu.dto.program.CreateProgram;
@@ -47,6 +48,8 @@ public class ProgramController {
         final PageResult<ProgramResponse> programResponsePageResult = PageResult.<ProgramResponse>builder()
                 .result(programResponses)
                 .totalCount(programPageResult.getTotalCount())
+                .page(searchProgram.getPage())
+                .size(searchProgram.getSize())
                 .build();
         return ResponseEntity.ok(programResponsePageResult);
     }
@@ -58,6 +61,8 @@ public class ProgramController {
         final PageResult<ProgramResponse> programResponsePageResult = PageResult.<ProgramResponse>builder()
                 .result(programResponses)
                 .totalCount(programPageResult.getTotalCount())
+                .page(searchProgram.getPage())
+                .size(searchProgram.getSize())
                 .build();
         return ResponseEntity.ok(programResponsePageResult);
     }
@@ -72,17 +77,17 @@ public class ProgramController {
         return ResponseEntity.ok(savedId);
     }
 
-    @DeleteMapping("/{programId}")
-    public ResponseEntity<?> delete(@PathVariable Long programId) {
-        programService.delete(programId);
+    @DeleteMapping("")
+    public ResponseEntity<?> delete(@RequestBody IdRequest idRequest) {
+        programService.delete(idRequest.getId());
         return ResponseEntity.ok(new SuccResponse());
     }
 
-    @PatchMapping("/{programId}")
-    public ResponseEntity<Long> edit(@PathVariable Long programId, @RequestBody EditProgram editProgram) {
+    @PatchMapping("")
+    public ResponseEntity<Long> edit(@RequestBody EditProgram editProgram) {
         editProgram.setEditUserLoginId(userDetails.getUsername());
-        programService.edit(programId, editProgram);
-        return ResponseEntity.ok(programId);
+        programService.edit(editProgram);
+        return ResponseEntity.ok(editProgram.getId());
     }
 
 

@@ -24,13 +24,14 @@
     import {qs, lpad} from "/js/common/util.js";
     import {createColumn, COLUMN_TYPE, createField} from "/js/realgrid/gridUtil.js";
 
+
     function createTreeId(data = []) {
         const getTreeId = (_data, allData) => {
             let treeId = [];
             if (_data.hasUpper()) {
-                const upperRole = allData.find(data => data.id === _data.getUpperId());
-                if (upperRole) {
-                    const upperTreeId = getTreeId(upperRole);
+                const upper = allData.find(data => data.id === _data.getUpperId());
+                if (upper) {
+                    const upperTreeId = upper.hasOwnProperty('treeId') ? upper.treeId : getTreeId(upper);
                     const upperTreeIdArr = upperTreeId.split(".");
                     treeId = treeId.concat(upperTreeIdArr);
                 }
@@ -72,6 +73,7 @@
             createColumn('upperId', COLUMN_TYPE.DATA, 70).editable(false).visible(false).header('upperId').end()
         ]);
         const treeRoles = createTreeId(roles);
+
         treeRoles
                 .forEach(role => {
                     role.treeName = `${role.getRoleName()} [${role.getRoleCode()}]`;
@@ -87,18 +89,4 @@
 
     })
 
-    function setTreeData() {
-
-        const rows = [];
-        roles.forEach(role => {
-            let treeId = lpad(role.getId(), 3, '0');
-            const treeName = role.getRoleName();
-
-            if (role.getUpperId()) {
-                treeId = role.getUpperId() + '.' + treeId;
-            }
-
-            rows.push(Object.assign(role, {treeId, treeName}));
-        })
-    }
 </script>

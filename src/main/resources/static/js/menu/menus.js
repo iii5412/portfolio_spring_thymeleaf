@@ -1,6 +1,6 @@
 import {createEl} from "/js/common/util.js";
 import {loadContent} from "/js/common/common.js";
-import {fetchMenu} from "/js/apis/menu/menu.js";
+import {fetchAllMenu} from "/js/apis/menu/menu.js";
 import {Menu} from "/js/menu/menu.js";
 import {FetchError} from "/js/error/fetchError.js";
 import {errorAlert} from "/js/common/alert.js";
@@ -24,8 +24,7 @@ export default class Menus {
 
     async init() {
         try {
-            const menuData = await fetchMenu();
-            this.menus = this.createMenuFromMenuData(menuData);
+            this.menus = await fetchAllMenu();
             this.#createTopMenu();
         } catch (e) {
             if(e instanceof FetchError) {
@@ -37,23 +36,23 @@ export default class Menus {
         }
     }
 
-    /**
-     * @param {Object[]} menuData
-     * @return {Menu[]}
-     */
-    createMenuFromMenuData(menuData = []) {
-        const result = [];
-        menuData.forEach(data => {
-            const menu = new Menu(data);
-            result.push(menu);
-            if(data.subMenus){
-                const subMenus = this.createMenuFromMenuData(data.subMenus);
-                menu.setSubMenus(subMenus);
-            }
-        })
-
-        return result;
-    }
+    // /**
+    //  * @param {Object[]} menuData
+    //  * @return {Menu[]}
+    //  */
+    // createMenuFromMenuData(menuData = []) {
+    //     const result = [];
+    //     menuData.forEach(data => {
+    //         const menu = new Menu(data);
+    //         result.push(menu);
+    //         if(data.subMenus){
+    //             const subMenus = this.createMenuFromMenuData(data.subMenus);
+    //             menu.setSubMenus(subMenus);
+    //         }
+    //     })
+    //
+    //     return result;
+    // }
 
     addUl(parent, options = {}) {
         const ul = createEl('ul', options);

@@ -1,7 +1,7 @@
 package com.portfolio.main.account.user.service;
 
 import com.portfolio.main.account.domain.Role;
-import com.portfolio.main.account.role.repository.mapperDto.RoleMapperDto;
+import com.portfolio.main.account.role.dto.mapperdto.RoleMapperDto;
 import com.portfolio.main.account.role.service.RoleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +22,13 @@ class RoleServiceTest {
 
     @Test
     void findAllRolesFlat() {
-        final List<RoleMapperDto> all = roleService.findAllRolesFlat();
+        final List<RoleMapperDto> all = roleService.findAllFlat();
         assertFalse(all.isEmpty());
     }
 
     @Test
     void findAllRoles() {
-        final List<Role> allRoles = roleService.findAllRoles();
+        final List<Role> allRoles = roleService.findAll();
         assertEquals(1, allRoles.size());
     }
 }

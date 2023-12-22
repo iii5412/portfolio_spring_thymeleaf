@@ -4,6 +4,7 @@ services:
   mysql:
     container_name: portfolio_mysql
     image: mysql:8.0.2
+    init: true
     environment:
       MYSQL_ROOT_PASSWORD: 6212
       MYSQL_DATABASE: portfolio_db

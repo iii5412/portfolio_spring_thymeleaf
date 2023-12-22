@@ -1,7 +1,7 @@
 package com.portfolio.main.controller.api.role.response;
 
 import com.portfolio.main.account.domain.Role;
-import com.portfolio.main.account.role.repository.mapperDto.RoleMapperDto;
+import com.portfolio.main.account.role.dto.mapperdto.RoleMapperDto;
 import lombok.Getter;
 import lombok.Setter;
 

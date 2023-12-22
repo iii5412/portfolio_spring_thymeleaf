@@ -5,19 +5,38 @@ const tag = '[menu]';
 class Menu {
 
     static MENU_TYPE = {
-        FOLDER : 'FOLDER',
+        FOLDER: 'FOLDER',
         PROGRAM: 'PROGRAM'
     }
 
-    hasSubMenus(){
+    constructor({
+                    id, menuName, menuType, orderNum, subMenus = [], upperMenuId = null
+                    , programId = null, programUrl = null
+                    , lastModifiedByLoginId, createdAt, updatedAt
+                }) {
+        if (!id)
+            throw tag + "id가 없는 Menu가 있습니다.";
+
+        Object.assign(this, {
+            id, menuName, menuType, orderNum, subMenus, upperMenuId
+            , programId, programUrl
+            , lastModifiedByLoginId, createdAt, updatedAt
+        })
+    }
+
+    hasSubMenus() {
         return this.subMenus.length > 0
+    }
+
+    hasUpper() {
+        return !!this.getUpperId();
     }
 
     getMenuId() {
         return this.id;
     }
 
-    getUpperMenuId(){
+    getUpperId() {
         return this.upperMenuId;
     }
 
@@ -35,7 +54,7 @@ class Menu {
     /**
      * @return {boolean}
      */
-    isProgramMenu(){
+    isProgramMenu() {
         return this.menuType === Menu.MENU_TYPE.PROGRAM;
     }
 
@@ -51,26 +70,6 @@ class Menu {
         return this.programUrl;
     }
 
-    constructor({id, menuName, menuType, orderNum, subMenus = [], upperMenuId = null
-                    , programId = null, programUrl = null
-                    , lastModifiedByLoginId, createdAt, updatedAt
-                }) {
-        if(!id)
-            throw tag + "id가 없는 Menu가 있습니다.";
-
-
-        this.id = id;
-        this.menuName = menuName;
-        this.menuType = menuType;
-        this.orderNum = orderNum;
-        this.subMenus = subMenus;
-        this.upperMenuId = upperMenuId;
-        this.programId = programId;
-        this.programUrl = programUrl;
-        this.lastModifiedByLoginId = lastModifiedByLoginId;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
 }
 
 function menuMapping(data = []) {

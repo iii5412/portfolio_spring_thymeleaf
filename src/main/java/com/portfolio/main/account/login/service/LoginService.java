@@ -7,6 +7,7 @@ import com.portfolio.main.account.login.dto.JwtResponse;
 import com.portfolio.main.account.login.dto.UserRegist;
 import com.portfolio.main.account.login.exception.InvalidLoginId;
 import com.portfolio.main.account.login.exception.InvalidLoginPassword;
+import com.portfolio.main.account.role.exception.NotFoundRoleException;
 import com.portfolio.main.account.role.repository.RoleRepository;
 import com.portfolio.main.account.user.repository.UserRepository;
 import com.portfolio.main.account.user.service.MyUserDetailsService;
@@ -54,7 +55,7 @@ public class LoginService {
                 .username(userRegist.getUsername())
                 .build();
 
-        final Role role = roleRepository.findByRoleCode(RoleCode.ROLE_USER);
+        final Role role = roleRepository.findByRoleCode(RoleCode.ROLE_USER).orElseThrow(NotFoundRoleException::new);
         final UserRole userRole = new UserRole(user, role);
 
         user.addUserRole(userRole);

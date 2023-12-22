@@ -4,20 +4,33 @@ import com.portfolio.main.common.PageDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.Sort;
+
+import java.util.List;
 
 @Getter
 @Setter
 public class SearchMenu extends PageDto {
     private Long id;
-    private Long upperId;
     private String menuName;
-    private Long orderNum;
+    private String roleCode;
 
     @Builder
-    public SearchMenu(Long id, Long upperId, String menuName, Long orderNum) {
+    public SearchMenu(Long id, String menuName, Integer page, Integer size, List<String> sortFields, List<Sort.Direction> sort) {
         this.id = id;
-        this.upperId = upperId;
         this.menuName = menuName;
-        this.orderNum = orderNum;
+        this.roleCode = roleCode;
+        this.setPage(page);
+        this.setSize(size);
+
+        if (sortFields != null && !sortFields.isEmpty())
+            this.setSortFields(sortFields);
+        else
+            this.setSortFields(List.of("updatedAt"));
+
+        if (sort != null)
+            this.setSorts(sort);
+        else
+            this.setSorts(List.of(Sort.Direction.ASC));
     }
 }

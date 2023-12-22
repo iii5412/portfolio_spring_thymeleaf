@@ -4,6 +4,10 @@ import com.portfolio.main.config.security.jwt.JwtAuthenticationToken;
 import com.portfolio.main.config.security.jwt.util.TokenUtil;
 import io.jsonwebtoken.*;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -13,6 +17,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static com.portfolio.main.config.security.SecurityConfig.PERMIT_ALL_URLS;
 
@@ -44,6 +50,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     return;
                 }
             }
+        } else {
+            final Authentication guestAuthentication = createGuestAuthentication();
+            SecurityContextHolder.getContext().setAuthentication(guestAuthentication);
         }
 
         chain.doFilter(request, response);
@@ -52,6 +61,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void validExpiredToken(String token) {
         final JwtParser jwtParser = Jwts.parserBuilder().setSigningKey(TokenUtil.getSecretKeyStringToEncodingUTF8Bytes(secretKeyString)).build();
         final Jws<Claims> claimsJws = jwtParser.parseClaimsJws(token);
+    }
+
+    private Authentication createGuestAuthentication() {
+        final List<GrantedAuthority> guestAuthorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_GUEST"));
+        return new AnonymousAuthenticationToken("guestUserKey", "guest", guestAuthorities);
     }
 
 }

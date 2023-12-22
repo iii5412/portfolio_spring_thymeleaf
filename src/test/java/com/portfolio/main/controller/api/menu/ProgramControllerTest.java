@@ -2,12 +2,15 @@ package com.portfolio.main.controller.api.menu;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.portfolio.main.account.user.service.MyUserDetailsService;
+import com.portfolio.main.config.security.jwt.JwtAuthenticationToken;
+import com.portfolio.main.controller.TestAuth;
 import com.portfolio.main.menu.domain.Program;
 import com.portfolio.main.menu.dto.program.CreateProgram;
 import com.portfolio.main.menu.dto.program.EditProgram;
 import com.portfolio.main.menu.exception.ProgramNotFoundException;
 import com.portfolio.main.menu.service.ProgramService;
 import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +50,7 @@ class ProgramControllerTest {
     private EntityManager entityManager;
 
     @Autowired
-    private MyUserDetailsService userDetailsService;
+    private TestAuth testAuth;
 
     private int maxTestDataCnt = 20;
     private String testProgramName = "테스트";
@@ -55,6 +58,8 @@ class ProgramControllerTest {
     private String requestMapping = "/program";
     private Long testProgramId;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private String token = "";
 
     @BeforeEach
     void setup() {
@@ -66,9 +71,8 @@ class ProgramControllerTest {
             if (i == 1)
                 testProgramId = savedTestProgramId;
         });
-        final UserDetails userDetails = userDetailsService.loadUserByUsername("admin");
-        final Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        token = testAuth.setUserAdminAndGetToken();
     }
 
     @Test
@@ -76,6 +80,7 @@ class ProgramControllerTest {
         mockMvc.perform(
                         get(requestMapping + "?page=1&size=20&sortFields=updatedAt&sorts=DESC")
                                 .contentType(APPLICATION_JSON)
+                                .cookie(new Cookie(JwtAuthenticationToken.TOKEN_NAME, token))
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalCount").exists())
                 .andExpect(jsonPath("$.totalCount", greaterThanOrEqualTo(20)))
@@ -94,6 +99,7 @@ class ProgramControllerTest {
         mockMvc.perform(
                         post(requestMapping)
                                 .contentType(APPLICATION_JSON)
+                                .cookie(new Cookie(JwtAuthenticationToken.TOKEN_NAME, token))
                                 .characterEncoding(StandardCharsets.UTF_8)
                                 .content(createProgramString)
                 )
@@ -110,6 +116,7 @@ class ProgramControllerTest {
         mockMvc.perform(
                         MockMvcRequestBuilders.delete(requestMapping + "/" + testProgram.getId())
                                 .contentType(APPLICATION_JSON)
+                                .cookie(new Cookie(JwtAuthenticationToken.TOKEN_NAME, token))
                 )
                 .andExpect(status().isOk())
                 .andDo(print());
@@ -137,6 +144,7 @@ class ProgramControllerTest {
         mockMvc.perform(
                         patch(requestMapping + "/")
                                 .contentType(APPLICATION_JSON)
+                                .cookie(new Cookie(JwtAuthenticationToken.TOKEN_NAME, token))
                                 .characterEncoding(StandardCharsets.UTF_8)
                                 .content(editProgramString)
                 )

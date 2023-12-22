@@ -70,7 +70,7 @@ public class Menu {
     }
 
     public boolean hasSubMenus() {
-        return this.subMenus.size() > 0;
+        return !this.subMenus.isEmpty();
     }
 
     public boolean hasUpperMenu() {
@@ -96,7 +96,9 @@ public class Menu {
     public void removeSubMenu(Menu removeSubMenu) {
         this.subMenus.remove(removeSubMenu);
     }
-
+    public void clearSubMenu() {
+        this.subMenus.clear();
+    }
     public void edit(EditMenu editMenu, Menu upperMenu, Program program, User editUser) {
         this.menuName = editMenu.getMenuName();
         this.menuType = editMenu.getMenuType();

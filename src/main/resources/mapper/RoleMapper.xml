@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.portfolio.main.account.role.repository.RoleMapper">
-    <select id="findAllRoles" resultType="com.portfolio.main.account.role.repository.mapperDto.RoleMapperDto">
+    <select id="findRoles" resultType="com.portfolio.main.account.role.dto.mapperdto.RoleMapperDto">
         WITH RECURSIVE role_hierarchy (id, role_code, role_name, created_at, updated_at, upper_id, Level) AS
                            (
                                SELECT id, role_code, role_name, created_at, updated_at, upper_id, 1 AS Level
@@ -14,6 +14,17 @@
                            )
         SELECT id, role_code, role_name, created_at, updated_at, upper_id, Level
         FROM role_hierarchy
+        <where>
+            <if test="level != null">
+                and level <![CDATA[ <= ]]> #{level}
+            </if>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="roleCode != null">
+                and role_code = #{roleCode}
+            </if>
+        </where>
         ORDER BY ID, UPPER_ID ASC, Level ASC
     </select>
 </mapper>

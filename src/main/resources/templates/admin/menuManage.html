@@ -15,20 +15,78 @@
 <body>
 <div id="content" class="ifrm-content">
     <div id="grid" style="height: 470px;">
-
     </div>
 </div>
 </body>
 <script th:type="module">
-    import {getAllRolesFlat} from "/js/apis/account/role.js";
-    import {qs, lpad} from "/js/common/util.js";
+    import {fetchAllMenuFlat} from "/js/apis/menu/menu.js";
+    import {qs} from "/js/common/util.js";
     import {createColumn, COLUMN_TYPE, createField} from "/js/realgrid/gridUtil.js";
 
+    function setTreeId(data = []) {
+        const getTreeId = (_data, allData) => {
+            let treeId = [];
+            if (_data.hasUpper()) {
+                const upper = allData.find(data => data.id === _data.getUpperId());
+                if (upper) {
+                    const upperTreeId = upper.hasOwnProperty('treeId') ? upper.treeId : getTreeId(upper);
+                    const upperTreeIdArr = upperTreeId.split(".");
+                    treeId = treeId.concat(upperTreeIdArr);
+                }
+            }
+            treeId.push(_data.getId());
+            return treeId.map(tid => lpad(tid, 3, '0')).join(".");
+        }
+
+        data.forEach(d => {
+            d.treeId = getTreeId(d, data);
+        });
+
+        return data;
+    }
+
+    function setTreeName(data = [], fetchTreeName = (d) => {return ''}) {
+        data.forEach(d => {
+            d.treeName = fetchTreeName(d);
+        })
+        return data;
+    }
+
+
     document.addEventListener('DOMContentLoaded', async () => {
-        const roles = await getAllRolesFlat();
+        const menus = await fetchAllMenuFlat();
         const container = qs(document, '#content');
         const gridContainer = qs(container, '#grid');
+        const treeProvider = new RealGrid.LocalTreeDataProvider();
+        const treeView = new RealGrid.TreeView(gridContainer);
 
+        treeProvider.setFields([
+            createField('treeId').text().end(),
+            createField('treeName').text().end(),
+            createField('id').number().end(),
+            createField('menuName').text().end()
+        ]);
+
+        treeView.setColumn([
+                createColumn('treeId', COLUMN_TYPE.DATA, 100).editable(false).visible(false).header('treeId').end(),
+                createColumn('treeName', COLUMN_TYPE.DATA, 250).editable(false).header('메뉴명').end(),
+                createColumn('id', COLUMN_TYPE.DATA, 100).editable(false).visible(false).header('id').end(),
+                createColumn('menuName', COLUMN_TYPE.DATA, 100).editable(false).visible(false).header('menuName').end()
+        ]);
+
+        const treeMenus = setTreeId(menus);
+        console.log(`menus => ${menus}`);
+        console.log(`treeMenus => ${treeMenus}`);
+        const treeMenusTreeName = setTreeName(treeMenus, (m) => m.getMenuName());
+        console.log(`treeMenusTreeName => ${treeMenusTreeName}`);
+
+        treeProvider.setRows(treeRoles, "treeId", false, null, 'iconField');
+        treeView.setDataSource(treeProvider);
+
+        treeView.displayOptions.fitStyle = 'evenFill';
+        treeView.displayOptions.emptyMessage = '표시할 데이타가 없습니다.';
+        treeView.treeOptions.expanderIconStyle = "square"//기본 "triangle"
+        treeView.treeOptions.defaultIcon = 4;
 
     })
 

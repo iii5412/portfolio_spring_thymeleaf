@@ -1,12 +1,16 @@
 package com.portfolio.main.menu.service;
 
+import com.portfolio.main.account.role.service.RoleCode;
+import com.portfolio.main.controller.TestAuth;
 import com.portfolio.main.menu.domain.Menu;
 import com.portfolio.main.menu.dto.menu.CreateMenu;
 import com.portfolio.main.menu.dto.menu.EditMenu;
+import com.portfolio.main.menu.dto.menu.MenuDto;
 import com.portfolio.main.menu.dto.menu.SearchMenu;
 import com.portfolio.main.menu.dto.program.CreateProgram;
 import com.portfolio.main.menu.exception.CannotDeleteMenuWithSubmenusException;
 import com.portfolio.main.menu.exception.MenuNotFoundException;
+import com.portfolio.main.util.page.PageResult;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,37 +26,39 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 class MenuServiceTest {
-    private String testModifiedBy = "test";
+    private String testModifiedBy = "testUser";
     @Autowired
     private MenuService menuService;
     @Autowired
     private ProgramService programService;
     @Autowired
+    private TestAuth testAuth;
+    @Autowired
     private EntityManager entityManager;
 
     @Test
     void findAll() {
-        final List<Menu> allMenu = menuService.findAllWithProgram();
+        testAuth.setUserGuest();
+        final List<MenuDto> allMenu = menuService.findAllMenusByUserRole();
         assertEquals(1, allMenu.size());
-        assertEquals(3, allMenu.get(0).getSubMenus().size());
+        assertEquals(1, allMenu.get(0).getSubMenus().size());
     }
 
     @Test
     void selectMenu() {
-        final SearchMenu searchMenu = SearchMenu.builder().menuName("메뉴").build();
-        final List<Menu> menus = menuService.selectMenu(searchMenu);
-        assertEquals(1, menus.size());
-        assertEquals(1, menus.get(0).getSubMenus().size());
+        final SearchMenu searchMenu = SearchMenu.builder().id(2L).build();
+        final List<MenuDto> menuDtos = menuService.selectMenu(searchMenu);
+        assertEquals(2, menuDtos.size());
     }
 
     @Test
     void saveTopFolderMenu() {
         //given
-        final CreateMenu createMenu = new CreateMenu("폴더메뉴", MenuType.FOLDER, 1L, testModifiedBy);
+        final CreateMenu createMenu = new CreateMenu("폴더메뉴", MenuType.FOLDER, 1L, RoleCode.ROLE_ADMIN, testModifiedBy);
 
         //when
         final Long savedMenuId = menuService.saveMenu(createMenu);
-        final Menu savedMenu = menuService.findById(savedMenuId);
+        final MenuDto savedMenu = menuService.findById(savedMenuId);
 
         //then
         assertEquals("폴더메뉴", savedMenu.getMenuName());
@@ -66,18 +72,18 @@ class MenuServiceTest {
         String newChildMenuName = "테스트메뉴";
 
         //given
-        final List<Menu> menus = menuService.selectMenu(SearchMenu.builder().menuName(paretnMenuName).build());
-        final Menu parentMenu = menus.get(0);
+        final PageResult<MenuDto> menus = menuService.selectMenuWithPageable(SearchMenu.builder().menuName(paretnMenuName).build());
+        final MenuDto parentMenu = menus.getResult().get(0);
         assertEquals(parentMenu.getId(), 1L);
-        final CreateMenu createMenu = new CreateMenu(parentMenu.getId(), newChildMenuName, MenuType.PROGRAM, 3L, testModifiedBy);
+        final CreateMenu createMenu = new CreateMenu(parentMenu.getId(), newChildMenuName, MenuType.PROGRAM,  3L, RoleCode.ROLE_ADMIN, testModifiedBy);
 
         //when
         menuService.saveMenu(createMenu);
 
         //then
-        final Menu findParentMenu = menuService.selectMenu(SearchMenu.builder().menuName(paretnMenuName).build()).get(0);
-        final Optional<Menu> findSavedMenu = findParentMenu.getSubMenus().stream().filter(menu -> menu.getMenuName().equals(newChildMenuName)).findFirst();
-
+        final PageResult<MenuDto> menuPageResult = menuService.selectMenuWithPageable(SearchMenu.builder().menuName(paretnMenuName).build());
+        final MenuDto findParentMenu = menuPageResult.getResult().get(0);
+        final Optional<MenuDto> findSavedMenu = findParentMenu.getSubMenus().stream().filter(menu -> menu.getMenuName().equals(newChildMenuName)).findFirst();
 
         assertTrue(findSavedMenu.isPresent());
     }
@@ -85,20 +91,18 @@ class MenuServiceTest {
     @Test
     void whenDeleteMenuWithSubmenus_thenExceptionIsThrown() {
         String targetMenuName = "환경설정";
-        final List<Menu> menus = menuService.selectMenu(SearchMenu.builder().menuName(targetMenuName).build());
-        final Menu targetMenu = menus.get(0);
+        final PageResult<MenuDto> menus = menuService.selectMenuWithPageable(SearchMenu.builder().menuName(targetMenuName).build());
+        final MenuDto targetMenu = menus.getResult().get(0);
         assertEquals(targetMenu.getId(), 1L);
 
-        assertThrows(CannotDeleteMenuWithSubmenusException.class, () -> {
-            menuService.deleteMenu(targetMenu.getId());
-        });
+        assertThrows(CannotDeleteMenuWithSubmenusException.class, () -> menuService.deleteMenu(targetMenu.getId()));
     }
 
     @Test
     void deleteMenu() {
         //given
-        final Long saved_2_lvl_menuId = menuService.saveMenu(new CreateMenu(1L, "테스트2레벨", MenuType.FOLDER, 3L, testModifiedBy));
-        final Long saved_3_lvl_menuId = menuService.saveMenu(new CreateMenu(saved_2_lvl_menuId, "테스트3레벨", MenuType.PROGRAM, 0L, testModifiedBy));
+        final Long saved_2_lvl_menuId = menuService.saveMenu(new CreateMenu(1L, "테스트2레벨", MenuType.FOLDER, 3L, RoleCode.ROLE_ADMIN, testModifiedBy));
+        final Long saved_3_lvl_menuId = menuService.saveMenu(new CreateMenu(saved_2_lvl_menuId, "테스트3레벨", MenuType.PROGRAM, 0L, RoleCode.ROLE_ADMIN, testModifiedBy));
 
         //when
         menuService.deleteMenu(saved_3_lvl_menuId);
@@ -110,20 +114,20 @@ class MenuServiceTest {
     @Test
     void editMenu() {
         //given
-        final Long savedTestParentMenuId = menuService.saveMenu(new CreateMenu("테스트", MenuType.FOLDER, 2L, "admin"));
-        final List<Menu> menus = menuService.selectMenu(SearchMenu.builder().id(2L).build());
+        final Long savedTestParentMenuId = menuService.saveMenu(new CreateMenu("테스트", MenuType.FOLDER, 2L, RoleCode.ROLE_ADMIN, "admin"));
+        final List<MenuDto> menuDtos = menuService.selectMenu(SearchMenu.builder().id(2L).build());
         final Long savedTestProgramId = programService.create(new CreateProgram("테스트_프로그램", "/testProgram", "admin"));
-        final Menu targetMenu = menus.get(0);
-        final EditMenu editMenu = new EditMenu(savedTestParentMenuId, "사용자관리2", MenuType.PROGRAM, 99L, savedTestProgramId);
+        final MenuDto targetMenu = menuDtos.get(0);
+        final EditMenu editMenu = new EditMenu(targetMenu.getId(), savedTestParentMenuId, "사용자관리2", MenuType.PROGRAM, 99L, savedTestProgramId, RoleCode.ROLE_ADMIN, "admin");
 
         //when
-        menuService.edit(targetMenu.getId(), editMenu);
+        menuService.edit(editMenu);
 
         entityManager.flush();
         entityManager.clear();
 
         //then
-        final Menu editedMenu = menuService.findById(targetMenu.getId());
+        final MenuDto editedMenu = menuService.findById(targetMenu.getId());
         assertEquals(savedTestParentMenuId, editMenu.getUpperId());
         assertEquals("테스트_프로그램", editedMenu.getProgram().getProgramName());
         assertEquals(savedTestProgramId, editedMenu.getProgram().getId());

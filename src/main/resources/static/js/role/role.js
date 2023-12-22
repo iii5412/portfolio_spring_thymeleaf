@@ -1,8 +1,8 @@
 class Role {
     childRoles = [];
 
-    constructor({id, upperId, roleCode, roleName, createdAt, updatedAt}) {
-        Object.assign(this, {id, upperId, roleCode, roleName, createdAt, updatedAt});
+    constructor({id, upperRoleId, roleCode, roleName, createdAt, updatedAt}) {
+        Object.assign(this, {id, upperRoleId, roleCode, roleName, createdAt, updatedAt});
     }
 
     getId() {
@@ -10,7 +10,7 @@ class Role {
     }
 
     getUpperId() {
-        return this.upperId;
+        return this.upperRoleId;
     }
 
     getRoleCode() {
@@ -30,7 +30,11 @@ class Role {
     }
 
     hasUpper() {
-        return !!this.upperId;
+        return !!this.upperRoleId;
+    }
+
+    isLastLevel() {
+        return this.hasUpper() && !this.hasChildRoles();
     }
 
     setChildRoles(childRoles = []) {

@@ -50,15 +50,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             Authentication authentication = getAuthentication(tokenFromRequest);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (ExpiredJwtException e) {
-//            if (!Arrays.asList(PERMIT_ALL_URLS).contains(request.getRequestURI())) {
-//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//                chain.doFilter(request, response);
-//                return;
-//            } else {
-//                SecurityContextHolder.clearContext();
-//                chain.doFilter(request, response);
-//                return;
-//            }
             chain.doFilter(request, response);
             return;
         }
@@ -75,7 +66,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
 
             if (loginId != null) {
-//                return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null, userDetails.getAuthorities());
                 return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             }
         }

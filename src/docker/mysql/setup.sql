@@ -30,6 +30,17 @@ create table if not exists portfolio_db.user_role (
 ) comment 'users와 role 사이의 다대다 테이블';
 
 
+create table if not exists portfolio_db.menu_role (
+                             menu_id int NOT NULL,
+                             role_id int NOT NULL,
+                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                             PRIMARY KEY (menu_id, role_id),
+                             KEY fk_menu_role_menu (menu_id),
+                             KEY fk_menu_role_role (role_id),
+                             CONSTRAINT fk_menu_role_menu FOREIGN KEY (menu_id) REFERENCES menu (id) ON DELETE CASCADE ON UPDATE CASCADE,
+                             CONSTRAINT fk_menu_role_role FOREIGN KEY (role_id) REFERENCES role (id) ON DELETE CASCADE ON UPDATE CASCADE
+) comment 'menu와 role 사이의 다대다 테이블';
+
 create table if not exists portfolio_db.user_login_history
 (
     id          bigint auto_increment

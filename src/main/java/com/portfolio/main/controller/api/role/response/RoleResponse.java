@@ -2,7 +2,7 @@ package com.portfolio.main.controller.api.role.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.portfolio.main.account.domain.Role;
-import com.portfolio.main.account.role.repository.mapperDto.RoleMapperDto;
+import com.portfolio.main.account.role.dto.mapperdto.RoleMapperDto;
 import com.portfolio.main.account.role.service.RoleCode;
 import lombok.Getter;
 import lombok.Setter;

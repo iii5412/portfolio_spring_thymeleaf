@@ -3,6 +3,7 @@ package com.portfolio.main.controller.api.menu.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.portfolio.main.menu.domain.Menu;
 import com.portfolio.main.menu.domain.Program;
+import com.portfolio.main.menu.dto.menu.MenuDto;
 import com.portfolio.main.menu.service.MenuType;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,6 +37,28 @@ public class MenuResponse {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "${locale.timezone}")
     private LocalDateTime updatedAt;
+
+    public MenuResponse(MenuDto menuDto) {
+
+        if (menuDto.hasUpperMenu())
+            this.upperMenuId = menuDto.getUpperMenuId();
+
+        this.id = menuDto.getId();
+        this.menuName = menuDto.getMenuName();
+        this.menuType = menuDto.getMenuType();
+        this.orderNum = menuDto.getOrderNum();
+        this.createdAt = menuDto.getCreatedAt();
+        this.updatedAt = menuDto.getUpdatedAt();
+
+        if (menuDto.hasSubMenus())
+            this.subMenus = menuDto.getSubMenus().stream().map(MenuResponse::new).toList();
+
+        if (menuDto.hasProgram()) {
+            final Program program = menuDto.getProgram();
+            this.programId = program.getId();
+            this.programUrl = program.getUrl();
+        }
+    }
 
     public MenuResponse(Menu menu) {
 

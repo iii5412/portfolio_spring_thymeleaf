@@ -1,13 +1,21 @@
 package com.portfolio.main.menu.repository.custom.menu;
 
+import com.portfolio.main.account.domain.QRole;
+import com.portfolio.main.account.role.service.RoleCode;
 import com.portfolio.main.menu.domain.Menu;
 import com.portfolio.main.menu.domain.QMenu;
+import com.portfolio.main.menu.domain.QMenuRole;
 import com.portfolio.main.menu.domain.QProgram;
 import com.portfolio.main.menu.dto.menu.SearchMenu;
+import com.portfolio.main.util.page.PageResult;
+import com.portfolio.main.util.page.QuerydslUtils;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -26,28 +34,64 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
     }
 
     @Override
-    public List<Menu> selectMenuWithProgram() {
-        QMenu qMenu = QMenu.menu;
-        QProgram qProgram = QProgram.program;
-
-        final List<Menu> result = queryFactory.selectFrom(qMenu)
-                .leftJoin(qMenu.program, qProgram).fetchJoin()
-//                .where(createWhereBuilder(searchMenu))
-                .fetch();
-        return result;
+    public List<Menu> selectMenu() {
+        final JPAQuery<Menu> menuJPAQuery = menuJPAQuery();
+        return menuJPAQuery.fetch();
     }
 
-    private BooleanBuilder createWhereBuilder(SearchMenu searchMenu) {
-        final BooleanBuilder whereBuilder = new BooleanBuilder();
-        QMenu qMenu = QMenu.menu;
+    @Override
+    public List<Menu> selectMenuByRoleCode(RoleCode roleCode) {
+        final QMenu qMenu = QMenu.menu;
+        final QRole qRole = QRole.role;
+        final QMenuRole qMenuRole = QMenuRole.menuRole;
+        final QProgram qProgram = QProgram.program;
 
-        if(searchMenu.getId() != null)
-            whereBuilder.and(qMenu.id.eq(searchMenu.getId()));
+        final JPAQuery<Menu> menuJPAQuery = menuJPAQuery();
+
+        return menuJPAQuery
+                .join(qMenuRole).on(qMenuRole.menu.eq(qMenu))
+                .join(qMenuRole).on(qMenuRole.role.eq(qRole))
+                .where(qRole.roleCode.eq(roleCode))
+                .fetch();
+    }
+
+
+    @Override
+    public PageResult<Menu> selectMenuWithPageable(SearchMenu searchMenu, Pageable pageable) {
+        final QMenu qMenu = QMenu.menu;
+        final QProgram qProgram = QProgram.program;
+        final BooleanBuilder whereBuilder = new BooleanBuilder();
 
         if(StringUtils.hasText(searchMenu.getMenuName()))
             whereBuilder.and(qMenu.menuName.contains(searchMenu.getMenuName()));
 
-        return whereBuilder;
+        if(searchMenu.getId() != null)
+            whereBuilder.and(qMenu.id.eq(searchMenu.getId()));
+
+        final JPAQuery<Menu> query = queryFactory.selectFrom(qMenu)
+                .leftJoin(qMenu.program, qProgram).fetchJoin()
+                .where(whereBuilder)
+                .orderBy(QuerydslUtils.getAllOrderSpecifiers(qMenu, pageable).toArray(OrderSpecifier[]::new))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
+
+        final List<Menu> results = query.fetch();
+        final Long totalCount = QuerydslUtils.fetchTotalCount(queryFactory, qMenu, whereBuilder);
+
+        return PageResult.<Menu>builder()
+                .result(results)
+                .totalCount(totalCount)
+                .build();
+
+    }
+
+    private JPAQuery<Menu> menuJPAQuery() {
+        QMenu qMenu = QMenu.menu;
+        QProgram qProgram = QProgram.program;
+
+        return queryFactory
+                .selectFrom(qMenu)
+                .leftJoin(qMenu.program, qProgram).fetchJoin();
     }
 
 }

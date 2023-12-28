@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.portfolio.main.account.role.repository.RoleMapper">
-    <select id="findRoles" resultType="com.portfolio.main.account.role.dto.mapperdto.RoleMapperDto">
+<mapper namespace="com.portfolio.main.infrastructure.repository.mapper.role.RoleMapper">
+    <select id="findRoles" resultType="com.portfolio.main.infrastructure.repository.mapper.role.dto.RoleMapperDto">
         WITH RECURSIVE role_hierarchy (id, role_code, role_name, created_at, updated_at, upper_id, Level) AS
                            (
                                SELECT id, role_code, role_name, created_at, updated_at, upper_id, 1 AS Level

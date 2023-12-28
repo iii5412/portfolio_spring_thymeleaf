@@ -193,7 +193,7 @@ class Fetch {
 /**
  * 제공된 대상 요소 내에서 지정된 선택자와 일치하는 첫 번째 요소를 찾아 반환합니다.
  *
- * @param {Element} target - 일치하는 요소를 검색할 요소입니다.
+ * @param {Document | Element} target - 일치하는 요소를 검색할 요소입니다.
  * @param {string} selector - 일치하는 요소를 찾는 데 사용되는 CSS 선택기입니다.
  * @returns {Element} - 제공된 대상 요소 내에서 지정된 선택기와 일치하는 첫 번째 요소이거나, 일치하는 항목이 없으면 null입니다.
  */

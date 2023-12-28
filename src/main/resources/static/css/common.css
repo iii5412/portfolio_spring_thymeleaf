@@ -52,3 +52,12 @@ body {
 .pagination-container .pagination-button.on {
     font-weight: bold;
 }
+
+.readonly {
+    pointer-events: none; /* 마우스 이벤트 비활성화 */
+    background-color: #f3f3f3; /* 읽기 전용처럼 보이는 배경색 */
+    color: #6c757d; /* 읽기 전용처럼 보이는 텍스트 색상 */
+    border: 1px solid #ced4da; /* 경계선 스타일 */
+    cursor: not-allowed; /* 커서를 '금지' 모양으로 변경 */
+}
+

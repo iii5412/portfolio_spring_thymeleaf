@@ -40,19 +40,9 @@
     import {goMainPage} from "/js/common/route.js";
     import {FieldFetchError} from "/js/error/fetchError.js";
     import {FetchError} from "/js/error/fetchError.js";
+    import {succAlert, errorAlert} from "/js/common/alert.js";
 
     const contentDiv = qs(document, '.content');
-    // const fieldError = new FieldError(contentDiv);
-
-    // qsAll(contentDiv, 'input[type="text"]').forEach(input => {
-    //     input.addEventListener('keyup', (e) => {
-    //         if (e.target.value.length > 0)
-    //             fieldError.clearMessage(input);
-    //         else
-    //             fieldError.showMessage(input.id, '입력해주세요.');
-    //     });
-    // });
-
     const signupBtn = qs(contentDiv, '#signupBtn');
     signupBtn.addEventListener('click', () => {
         const loginId = qs(contentDiv, '#loginId').value;
@@ -61,18 +51,25 @@
         const loginPw2 = qs(contentDiv, '#loginPw2').value;
 
         FETCH.post('/account/signup', {loginId, username, loginPw1, loginPw2})
-            .then(async response => {
-                alert('회원가입이 완료되었습니다.');
-                goMainPage();
+            .then(async () => {
+                succAlert('회원가입이 완료되었습니다.')
+                        .then((result) => {
+                            if (result.isConfirmed) {
+                                goMainPage();
+                            }
+                        });
             })
             .catch(e => {
-
                 if (e instanceof FetchError) {
-                    const fieldFetchError = new FieldFetchError(contentDiv, e);
-                    fieldFetchError.clearMessage(...qsAll(contentDiv, 'input[type="text"], input[type="password"]'));
-                    fieldFetchError.bindingMessage();
+                    if(Object.keys(e.validation).length > 0) {
+                        const fieldFetchError = new FieldFetchError(contentDiv, e);
+                        fieldFetchError.clearMessage(...qsAll(contentDiv, 'input[type="text"], input[type="password"]'));
+                        fieldFetchError.bindingMessage();
+                    } else {
+                        errorAlert(e.message);
+                    }
                 } else {
-                    alert('회원가입 도중 오류가 발생하였습니다.');
+                    errorAlert('오류가 발생하였습니다.');
                     throw e;
                 }
             });

@@ -14,7 +14,7 @@ const checkContentUrlStatus = async url => {
 }
 
 /**
- * @param {Menu} menu
+ * @param {MainMenu} menu
  * @return {HTMLElement}
  */
 const createContentHeader = (menu) => {
@@ -41,7 +41,7 @@ const createContentHeader = (menu) => {
     return headerDiv;
 }
 /**
- * @param {Menu} menu
+ * @param {MainMenu} menu
  * @return {Promise<void>}
  */
 const loadContent = async menu => {

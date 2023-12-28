@@ -28,6 +28,7 @@
     import {login} from "/js/apis/account/auth.js";
     import {goSignupPage} from "/js/common/route.js";
     import {FetchError} from "/js/error/fetchError.js";
+    import {errorAlert} from "/js/common/alert.js";
 
     document.addEventListener('DOMContentLoaded', () => {
         const loginBtn = qs(document, '#loginBtn');
@@ -48,9 +49,9 @@
                 })
                 .catch(e => {
                     if (e instanceof FetchError)
-                        alert(e.serverMessage);
+                        errorAlert(e.serverMessage);
                     else
-                        alert('오류가 발생하였습니다.');
+                        errorAlert('오류가 발생하였습니다.');
                 });
         }
 

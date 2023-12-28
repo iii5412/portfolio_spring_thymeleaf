@@ -54,8 +54,6 @@
         const treeProvider = new RealGrid.LocalTreeDataProvider();
         const treeView = new RealGrid.TreeView(gridContainer);
 
-        console.log(roles);
-
         treeProvider.setFields([
             createField('treeId').text().end(),
             createField('treeName').text().end(),
@@ -73,6 +71,10 @@
             createColumn('upperId', COLUMN_TYPE.DATA, 70).editable(false).visible(false).header('upperId').end()
         ]);
         const treeRoles = createTreeId(roles);
+
+        console.dir(treeRoles);
+
+        console.dir(typeof treeRoles);
 
         treeRoles
                 .forEach(role => {

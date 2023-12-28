@@ -26,8 +26,8 @@
                 goLoginPage();
             })
         if (logoutBtn)
-            logoutBtn.addEventListener('click', () => {
-                logout();
+            logoutBtn.addEventListener('click', async () => {
+                await logout();
             });
         if(signupBtn)
             signupBtn.addEventListener('click', goSignupPage);

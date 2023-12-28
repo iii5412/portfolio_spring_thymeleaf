@@ -1,12 +1,11 @@
 import {createEl} from "/js/common/util.js";
 import {loadContent} from "/js/common/common.js";
-import {fetchAllMenu} from "/js/apis/menu/menu.js";
-import {Menu} from "/js/menu/menu.js";
+import {fetchMenusByUserRole} from "/js/apis/menu/menu.js";
 import {FetchError} from "/js/error/fetchError.js";
 import {errorAlert} from "/js/common/alert.js";
 export default class Menus {
     /**
-     * @type {Menu[]}
+     * @type {MainMenu[]}
      */
     menus = [];
     topMenuArea;
@@ -24,7 +23,7 @@ export default class Menus {
 
     async init() {
         try {
-            this.menus = await fetchAllMenu();
+            this.menus = await fetchMenusByUserRole();
             this.#createTopMenu();
         } catch (e) {
             if(e instanceof FetchError) {
@@ -35,24 +34,6 @@ export default class Menus {
             }
         }
     }
-
-    // /**
-    //  * @param {Object[]} menuData
-    //  * @return {Menu[]}
-    //  */
-    // createMenuFromMenuData(menuData = []) {
-    //     const result = [];
-    //     menuData.forEach(data => {
-    //         const menu = new Menu(data);
-    //         result.push(menu);
-    //         if(data.subMenus){
-    //             const subMenus = this.createMenuFromMenuData(data.subMenus);
-    //             menu.setSubMenus(subMenus);
-    //         }
-    //     })
-    //
-    //     return result;
-    // }
 
     addUl(parent, options = {}) {
         const ul = createEl('ul', options);
@@ -69,16 +50,16 @@ export default class Menus {
     /**
      *
      * @param {HTMLUListElement} parent
-     * @param {Menu} menu
+     * @param {MainMenu} mainMenu
      */
-    addTopLi(parent, menu) {
-        let menuName = menu.getMenuName();
+    addTopLi(parent, mainMenu) {
+        let menuName = mainMenu.getMenuName();
         return this.addLi(parent, {href: '#', innerText: menuName});
     }
 
     /**
      * @param {HTMLUListElement | HTMLLIElement} parentElement
-     * @param {Menu[]} subMenus
+     * @param {MainMenu[]} subMenus
      */
     #createSubMenu(parentElement, subMenus) {
         const subMenuDiv = createEl('div');
@@ -96,21 +77,21 @@ export default class Menus {
     }
 
     /**
-     * @param {Menu} menu
-     * @return {Menu|null}
+     * @param {MainMenu} menu
+     * @return {MainMenu|null}
      */
     #findFirstProgramSubMenu(menu) {
-        if(!menu.hasSubMenus())
+        if(!menu.hasChildren())
             return null;
 
         let firstProgramMenu;
 
-        let programMenu = menu.getSubMenus().find(subMenu => subMenu.isProgramMenu());
+        let programMenu = menu.getChildren().find(subMenu => subMenu.isProgramMenu());
 
         if(programMenu)
             return programMenu;
 
-        menu.getSubMenus().forEach(subMenu => {
+        menu.getChildren().forEach(subMenu => {
             if(!programMenu)
                 programMenu = this.#findFirstProgramSubMenu(subMenu);
         })
@@ -122,8 +103,8 @@ export default class Menus {
         const ul = this.addUl(this.topMenuArea);
         this.menus.forEach(menu => {
             const li = this.addTopLi(ul, menu);
-            if(menu.hasSubMenus()) {
-                this.#createSubMenu(li, menu.getSubMenus());
+            if(menu.hasChildren()) {
+                this.#createSubMenu(li, menu.getChildren());
             }
         });
     }

@@ -45,59 +45,61 @@
     }
 </style>
 <body>
-<div id="content" class="ifrm-content programContent">
-    <div class="left">
-        <div>
-            <div id="searchForm" class="searchForm">
-                <div>
-                    <select id="searchType" name="searchType">
-                        <option value="">전체</option>
-                        <option value="id">ID</option>
-                        <option value="programName">프로그램명</option>
-                        <option value="url">URL</option>
-                    </select>
-                    <input type="text" id="searchInput" name="searchInput" value=""/>
-                    <input type="button" id="searchBtn" value="검색" />
+<div id="content" class="ifrm-content">
+    <div class="programContent">
+        <div class="left">
+            <div>
+                <div id="searchForm" class="searchForm">
+                    <div>
+                        <select id="searchType" name="searchType">
+                            <option value="">전체</option>
+                            <option value="id">ID</option>
+                            <option value="programName">프로그램명</option>
+                            <option value="url">URL</option>
+                        </select>
+                        <input type="text" id="searchInput" name="searchInput" value=""/>
+                        <input type="button" id="searchBtn" value="검색" />
+                    </div>
                 </div>
             </div>
-        </div>
-        <div id="grid" style="height: 470px;">
-        </div>
-        <div class="pagination">
-        </div>
-    </div>
-    <div class="right">
-        <div id="programEditForm" name="programEditForm">
-            <input type="text" class="hidden" name="id" id="id"/>
-            <div class="grid-container">
-                <div class="grid-header">프로그램명</div>
-                <div class="grid-cell">
-                    <input type="text" style="width: 100%;" name="programName" id="programName"/>
-                    <div class="field-error-message" data-target="programName"></div>
-                </div>
-
-                <div class="grid-header">URL</div>
-                <div class="grid-cell">
-                    <input type="text" style="width: 100%;" name="url" id="url"/>
-                </div>
-
-                <div class="grid-header">생성일</div>
-                <div class="grid-cell">
-                    <input type="text" style="width: 100%;" name="createdAt" id="createdAt" disabled/>
-                </div>
-
-                <div class="grid-header">수정일</div>
-                <div class="grid-cell">
-                    <input type="text" style="width: 100%;" name="updatedAt" id="updatedAt" disabled/>
-                </div>
-
-                <div class="grid-header">수정자</div>
-                <div class="grid-cell">
-                    <input type="text" style="width: 100%;" name="lastUpdatedByUserLoginId"
-                           id="lastUpdatedByUserLoginId" disabled/>
-                </div>
+            <div id="grid" style="height: 470px;">
             </div>
-            <div class="rightBtnArea">
+            <div class="pagination">
+            </div>
+        </div>
+        <div class="right">
+            <div id="programEditForm" name="programEditForm">
+                <input type="text" class="hidden" name="id" id="id"/>
+                <div class="grid-container">
+                    <div class="grid-header">프로그램명</div>
+                    <div class="grid-cell">
+                        <input type="text" style="width: 100%;" name="programName" id="programName"/>
+                        <div class="field-error-message" data-target="programName"></div>
+                    </div>
+
+                    <div class="grid-header">URL</div>
+                    <div class="grid-cell">
+                        <input type="text" style="width: 100%;" name="url" id="url"/>
+                    </div>
+
+                    <div class="grid-header">생성일</div>
+                    <div class="grid-cell">
+                        <input type="text" style="width: 100%;" name="createdAt" id="createdAt" disabled/>
+                    </div>
+
+                    <div class="grid-header">수정일</div>
+                    <div class="grid-cell">
+                        <input type="text" style="width: 100%;" name="updatedAt" id="updatedAt" disabled/>
+                    </div>
+
+                    <div class="grid-header">수정자</div>
+                    <div class="grid-cell">
+                        <input type="text" style="width: 100%;" name="lastUpdatedByUserLoginId"
+                               id="lastUpdatedByUserLoginId" disabled/>
+                    </div>
+                </div>
+                <div class="rightBtnArea">
+                </div>
             </div>
         </div>
     </div>

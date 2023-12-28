@@ -4,26 +4,146 @@
 <link rel="stylesheet" href="@{/js/realgrid/realgrid.2.7.2/realgrid-style.css}"
       th:href="@{/js/realgrid/realgrid.2.7.2/realgrid-sky-blue.css}"/>
 <link rel="stylesheet" th:href="@{/css/realgrid/custom.css}"/>
-<script src="/js/realgrid/realgrid.2.7.2/realgrid-lic.js"></script>
-<script src="/js/realgrid/realgrid.2.7.2/realgrid.2.7.2.min.js"></script>
-<script src="/js/realgrid/realgrid.2.7.2/libs/jszip.min.js"></script>
+<script th:src="@{/js/realgrid/realgrid.2.7.2/realgrid-lic.js}"></script>
+<script th:src="@{/js/realgrid/realgrid.2.7.2/realgrid.2.7.2.min.js}"></script>
+<script th:src="@{/js/realgrid/realgrid.2.7.2/libs/jszip.min.js}"></script>
 
 <style>
+    .menuContent {
+        display: flex;
+    }
 
+    .menuContent .left {
+        flex: 1;
+    }
+
+    .menuContent .right {
+        flex: 1;
+    }
+
+    .menuContent .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        grid-gap: 10px; /* 셀 사이의 간격 */
+        padding: 10px;
+    }
+
+    .menuContent .grid-header {
+        background-color: #f2f2f2;
+        padding: 10px;
+        text-align: left;
+    }
+
+    .menuContent .grid-cell {
+        grid-column: span 1; /* 기본적으로 한 열 차지 */
+        padding: 10px;
+    }
 </style>
 
 <body>
 <div id="content" class="ifrm-content">
-    <div id="grid" style="height: 470px;">
+    <div class="menuContent">
+        <div class="left">
+            <div id="grid" style="height: 470px;">
+            </div>
+        </div>
+        <div class="right">
+            <div id="menuEditForm">
+                <input th:type="text" id="id" name="id">
+                <div class="grid-container">
+                    <div class="grid-header">
+                        <label for="menuName">메뉴명</label>
+                    </div>
+                    <div class="grid-cell">
+                        <input type="text" name="menuName" id="menuName">
+                        <div class="field-error-message" data-target="menuName"></div>
+                    </div>
+                    <div class="grid-header">
+                        <label for="upperMenuName">상위메뉴</label>
+                    </div>
+                    <div class="grid-cell">
+                        <input type="text" name="upperId" id="upperId" class="readonly" readonly>
+                        <input type="text" name="upperMenuName" id="upperMenuName" class="readonly" readonly>
+                        <input th:type="button" id="findUpperMenuBtn" value="돋보기" />
+                        <div class="field-error-message" data-target="upperId"></div>
+                        <div class="field-error-message" data-target="upperMenuName"></div>
+                    </div>
+                    <div class="grid-header">
+                        <label for="menuType">메뉴타입</label>
+                    </div>
+                    <div class="grid-cell">
+                        <select id="menuType" name="menuType">
+                            <option value="">선택하세요</option>
+                            <option value="FOLDER">폴더</option>
+                            <option value="PROGRAM">프로그램</option>
+                        </select>
+                        <div class="field-error-message" data-target="menuType"></div>
+                    </div>
+                    <div class="grid-header">
+                        <label for="programName">프로그램</label>
+                    </div>
+                    <div class="grid-cell">
+                        <input type="text" name="programId" id="programId" class="readonly" readonly>
+                        <input type="text" name="programName" id="programName" class="readonly" readonly>
+                        <input th:type="button" id="findProgramBtn" value="돋보기" />
+                        <div class="field-error-message" data-target="programId"></div>
+                        <div class="field-error-message" data-target="programName"></div>
+                    </div>
+                    <div class="grid-header">
+                        <label for="orderNum">순서</label>
+                    </div>
+                    <div class="grid-cell">
+                        <select id="orderNum" name="orderNum">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                        </select>
+                        <div class="field-error-message" data-target="orderNum"></div>
+                    </div>
+                    <div class="grid-header">
+                        <label for="lastModifiedByLoginId">수정자</label>
+                    </div>
+                    <div class="grid-cell">
+                        <input th:type="text" id="lastModifiedByLoginId" name="lastModifiedByLoginId" class="readonly" readonly>
+                    </div>
+                    <div class="grid-header">
+                        <label for="updatedAt">수정일</label>
+                    </div>
+                    <div class="grid-cell">
+                        <input th:type="text" id="updatedAt" name="updatedAt" class="readonly" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 </body>
 <script th:type="module">
-    import {fetchAllMenuFlat} from "/js/apis/menu/menu.js";
-    import {qs} from "/js/common/util.js";
+    import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/+esm';
+    import {fetchAllMenus, fetchMenuById} from "/js/apis/menu/menu.js";
+    import {qs, lpad} from "/js/common/util.js";
     import {createColumn, COLUMN_TYPE, createField} from "/js/realgrid/gridUtil.js";
+    import {infoAlert} from "/js/common/alert.js";
 
     function setTreeId(data = []) {
+
+        const getFlatData = (data = []) => {
+            let result = [];
+            data.forEach(d => {
+                result.push(d);
+                if(d.hasChildren()) {
+                    result = result.concat(getFlatData(d.getChildren()));
+                }
+            })
+            return result;
+        }
+
         const getTreeId = (_data, allData) => {
             let treeId = [];
             if (_data.hasUpper()) {
@@ -38,11 +158,13 @@
             return treeId.map(tid => lpad(tid, 3, '0')).join(".");
         }
 
-        data.forEach(d => {
-            d.treeId = getTreeId(d, data);
-        });
 
-        return data;
+        const flatData = getFlatData(data);
+        flatData.forEach(d => {
+            d.treeId = getTreeId(d, flatData);
+        })
+
+        return flatData;
     }
 
     function setTreeName(data = [], fetchTreeName = (d) => {return ''}) {
@@ -52,14 +174,48 @@
         return data;
     }
 
+    class EditForm {
+        container;
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        const menus = await fetchAllMenuFlat();
-        const container = qs(document, '#content');
-        const gridContainer = qs(container, '#grid');
-        const treeProvider = new RealGrid.LocalTreeDataProvider();
-        const treeView = new RealGrid.TreeView(gridContainer);
+        /**
+         *
+         * @param {Element} container
+         */
+        constructor(container) {
+            this.container = container;
+        }
 
+        async setEditMode(id) {
+            const menu = await fetchMenuById(id);
+            qs(this.container, '#id').value = menu.getId();
+            qs(this.container, '#menuName').value = menu.getMenuName();
+            qs(this.container, '#upperId').value = menu.getUpperId();
+            qs(this.container, '#upperMenuName').value = menu.getUpperMenuName();
+            qs(this.container, '#menuType').value = menu.getMenuType();
+            qs(this.container, '#programId').value = menu.getProgramId();
+            qs(this.container, '#programName').value = menu.getProgramName();
+            qs(this.container, '#orderNum').value = menu.getOrderNum();
+            qs(this.container, '#lastModifiedByLoginId').value = menu.getLastModifiedByLoginId();
+            qs(this.container, '#updatedAt').value = menu.getUpdatedAt();
+        }
+
+    }
+
+    function showUpperMenuDialog() {
+        Swal.fire({
+            title: 'title',
+            html: `
+                <div id='dialog'>
+                    body
+                </div>
+            `,
+            didOpen: () => {
+                infoAlert("didOpen")
+            }
+        })
+    }
+
+    function drawGrid(treeView, treeProvider) {
         treeProvider.setFields([
             createField('treeId').text().end(),
             createField('treeName').text().end(),
@@ -67,27 +223,50 @@
             createField('menuName').text().end()
         ]);
 
-        treeView.setColumn([
-                createColumn('treeId', COLUMN_TYPE.DATA, 100).editable(false).visible(false).header('treeId').end(),
-                createColumn('treeName', COLUMN_TYPE.DATA, 250).editable(false).header('메뉴명').end(),
-                createColumn('id', COLUMN_TYPE.DATA, 100).editable(false).visible(false).header('id').end(),
-                createColumn('menuName', COLUMN_TYPE.DATA, 100).editable(false).visible(false).header('menuName').end()
+        treeView.setColumns([
+            createColumn('treeId', COLUMN_TYPE.DATA, 100).editable(false).visible(false).header('treeId').end(),
+            createColumn('treeName', COLUMN_TYPE.DATA, 250).editable(false).visible(true).header('메뉴명').end(),
+            createColumn('id', COLUMN_TYPE.DATA, 100).editable(false).visible(false).header('id').end(),
+            createColumn('menuName', COLUMN_TYPE.DATA, 100).editable(false).visible(false).header('menuName').end()
         ]);
 
         const treeMenus = setTreeId(menus);
-        console.log(`menus => ${menus}`);
-        console.log(`treeMenus => ${treeMenus}`);
         const treeMenusTreeName = setTreeName(treeMenus, (m) => m.getMenuName());
-        console.log(`treeMenusTreeName => ${treeMenusTreeName}`);
 
-        treeProvider.setRows(treeRoles, "treeId", false, null, 'iconField');
+        treeProvider.setRows(treeMenusTreeName, "treeId", false, null, 'iconField');
         treeView.setDataSource(treeProvider);
 
         treeView.displayOptions.fitStyle = 'evenFill';
         treeView.displayOptions.emptyMessage = '표시할 데이타가 없습니다.';
         treeView.treeOptions.expanderIconStyle = "square"//기본 "triangle"
         treeView.treeOptions.defaultIcon = 4;
+    }
 
-    })
+    document.addEventListener('DOMContentLoaded', async () => {
+        const menus = await fetchAllMenus();
+        const container = qs(document, '#content');
+        const gridContainer = qs(container, '#grid');
+        const treeProvider = new RealGrid.LocalTreeDataProvider();
+        const treeView = new RealGrid.TreeView(gridContainer);
+        const editForm = new EditForm(qs(document, '#menuEditForm'));
+
+        drawGrid(treeView, treeProvider);
+        treeView.onCellClicked = (grid, clickData) => {
+            if(clickData.cellType === 'gridEmpty')
+                return false;
+            const {id} = grid.getDataSource().getJsonRow(clickData.dataRow);
+
+            editForm.setEditMode(id);
+        };
+
+        qs(container, '#findUpperMenuBtn').addEventListener('click', () => {
+            showUpperMenuDialog();
+        })
+
+
+
+    });
+
+
 
 </script>

@@ -1,5 +1,7 @@
 package com.portfolio.main.application.menu.dto;
 
+import com.portfolio.main.application.login.dto.UserDto;
+import com.portfolio.main.application.program.dto.ProgramDto;
 import com.portfolio.main.domain.model.account.User;
 import com.portfolio.main.domain.model.menu.Menu;
 import com.portfolio.main.domain.model.menu.Program;
@@ -8,7 +10,9 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 public class MenuDto {
@@ -16,9 +20,9 @@ public class MenuDto {
     private MenuDto upperMenu;
     private MenuType menuType;
     private Long orderNum;
-    private Program program;
+    private ProgramDto program;
     private String menuName;
-    private User lastModifiedByUser;
+    private UserDto lastModifiedByUser;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<MenuDto> subMenus = new ArrayList<>();
@@ -34,20 +38,28 @@ public class MenuDto {
         this.orderNum = menu.getOrderNum();
 
         if(menu.hasProgram())
-            this.program = menu.getProgram();
+            this.program = new ProgramDto(menu.getProgram());
 
         this.menuName = menu.getMenuName();
-        this.lastModifiedByUser = menu.getLastModifiedByUser();
+        this.lastModifiedByUser = new UserDto(menu.getLastModifiedByUser());
         this.createdAt = menu.getCreatedAt();
         this.updatedAt = menu.getUpdatedAt();
     }
 
-    public void setSubMenus(List<Menu> subMenus) {
-        this.subMenus = subMenus.stream().map(MenuDto::new).toList();
+    public MenuDto (MenuDto menuDto) {
+        this.id = menuDto.id;
+        this.upperMenu = menuDto.getUpperMenu();
+        this.menuType = menuDto.getMenuType();
+        this.orderNum = menuDto.getOrderNum();
+        this.program = menuDto.getProgram();
+        this.menuName = menuDto.getMenuName();
+        this.lastModifiedByUser = menuDto.getLastModifiedByUser();
+        this.createdAt = menuDto.getCreatedAt();
+        this.updatedAt = menuDto.getUpdatedAt();
     }
 
-    public void addSubMenu(Menu menu) {
-        this.subMenus.add(new MenuDto(menu));
+    public void setSubMenus(List<MenuDto> subMenus) {
+        this.subMenus = subMenus;
     }
 
     public boolean hasUpperMenu() {
@@ -60,5 +72,26 @@ public class MenuDto {
 
     public boolean hasProgram() {
         return this.program != null;
+    }
+
+    public boolean isFolder() {
+        return this.menuType.equals(MenuType.FOLDER);
+    }
+
+    public void clearSubMenu() {
+        this.subMenus.clear();
+    }
+
+    public void addSubMenu(MenuDto subMenu){
+        this.subMenus.add(subMenu);
+        this.subMenus.sort(Comparator.comparing(MenuDto::getOrderNum));
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if(obj == null || getClass() != obj.getClass()) return false;
+        final MenuDto menu = (MenuDto) obj;
+        return Objects.equals(id, menu.getId());
     }
 }

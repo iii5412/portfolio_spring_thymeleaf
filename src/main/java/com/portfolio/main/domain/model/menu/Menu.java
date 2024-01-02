@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,6 +55,17 @@ public class Menu {
     @OneToMany(mappedBy = "upperMenu", cascade = CascadeType.ALL)
     private List<Menu> subMenus = new ArrayList<>();
 
+    public Menu(Long id, Menu upperMenu, String menuName, MenuType menuType, Long orderNum, Program program, User lastModifiedByUser, List<Menu> subMenus) {
+        this.id = id;
+        this.upperMenu = upperMenu;
+        this.menuName = menuName;
+        this.menuType = menuType;
+        this.orderNum = orderNum;
+        this.program = program;
+        this.lastModifiedByUser = lastModifiedByUser;
+        this.subMenus = subMenus;
+    }
+
     public Menu(String menuName, MenuType menuType, Long orderNum, User lastModifiedBy) {
         this.menuName = menuName;
         this.menuType = menuType;
@@ -63,6 +75,7 @@ public class Menu {
 
     public void addSubMenu(Menu subMenu){
         this.subMenus.add(subMenu);
+        this.subMenus.sort(Comparator.comparing(Menu::getOrderNum));
     }
 
     public void changeSubMenus(List<Menu> subMenus) {
@@ -81,9 +94,6 @@ public class Menu {
         return this.program != null;
     }
 
-    public boolean isFolder() {
-        return this.menuType.equals(MenuType.FOLDER);
-    }
 
     public void setUpperMenu(Menu newUpperMenu) {
         if(this.upperMenu != null && !this.upperMenu.equals(newUpperMenu)){
@@ -100,20 +110,9 @@ public class Menu {
     public void removeSubMenu(Menu removeSubMenu) {
         this.subMenus.remove(removeSubMenu);
     }
+
     public void clearSubMenu() {
         this.subMenus.clear();
-    }
-    public void edit(EditMenu editMenu, Menu upperMenu, Program program, User editUser) {
-        this.menuName = editMenu.getMenuName();
-        this.menuType = editMenu.getMenuType();
-        this.orderNum = editMenu.getOrderNum();
-        this.lastModifiedByUser = editUser;
-
-        if(!Objects.equals(this.upperMenu, upperMenu))
-            setUpperMenu(upperMenu);
-
-        if(!Objects.equals(this.program, program))
-            this.program = program;
     }
 
     @Override
@@ -127,5 +126,14 @@ public class Menu {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public void edit(String menuName, MenuType menuType, Long orderNum, Menu upperMenu, Program program, User editUser) {
+        this.menuName = menuName;
+        this.menuType = menuType;
+        this.orderNum = orderNum;
+        this.lastModifiedByUser = editUser;
+        this.program = program;
+        setUpperMenu(upperMenu);
     }
 }

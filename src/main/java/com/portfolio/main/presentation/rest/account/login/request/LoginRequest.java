@@ -1,4 +1,4 @@
-package com.portfolio.main.application.login.dto;
+package com.portfolio.main.presentation.rest.account.login.request;
 
 import lombok.Getter;
 import lombok.Setter;

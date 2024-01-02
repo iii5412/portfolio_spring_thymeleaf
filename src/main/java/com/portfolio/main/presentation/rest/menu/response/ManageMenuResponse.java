@@ -2,6 +2,7 @@ package com.portfolio.main.presentation.rest.menu.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.portfolio.main.application.menu.dto.MenuDto;
+import com.portfolio.main.application.program.dto.ProgramDto;
 import com.portfolio.main.domain.model.menu.Program;
 import com.portfolio.main.domain.model.menu.type.MenuType;
 import lombok.Getter;
@@ -55,7 +56,7 @@ public class ManageMenuResponse {
             this.subMenus = menuDto.getSubMenus().stream().map(ManageMenuResponse::new).toList();
 
         if (menuDto.hasProgram()) {
-            final Program program = menuDto.getProgram();
+            final ProgramDto program = menuDto.getProgram();
             this.programId = program.getId();
             this.programName = program.getProgramName();
         }

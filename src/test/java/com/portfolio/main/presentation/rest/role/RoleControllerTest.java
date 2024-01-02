@@ -1,6 +1,9 @@
 package com.portfolio.main.presentation.rest.role;
 
+import com.portfolio.main.infrastructure.config.security.jwt.JwtAuthenticationToken;
 import com.portfolio.main.infrastructure.config.security.service.MyUserDetailsService;
+import com.portfolio.main.presentation.rest.TestAuth;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,18 +31,23 @@ class RoleControllerTest {
 
     @Autowired
     private MyUserDetailsService userDetailsService;
+
+    @Autowired
+    private TestAuth testAuth;
     private final String requestMapping = "/role";
+
+    private String token = "";
 
     @BeforeEach
     void setup(){
-        final UserDetails userDetails = userDetailsService.loadUserByUsername("admin");
-        final Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        token = testAuth.setUserAdminAndGetToken();
+
     }
 
     @Test
     void findAllRoles() throws Exception {
-        mockMvc.perform(get(requestMapping))
+        mockMvc.perform(get(requestMapping)
+                        .cookie(new Cookie(JwtAuthenticationToken.TOKEN_NAME, token)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].childRoles").isArray())

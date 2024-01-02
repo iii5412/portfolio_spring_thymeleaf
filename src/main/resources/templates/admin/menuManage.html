@@ -94,6 +94,7 @@
                     </div>
                     <div class="grid-cell">
                         <select id="orderNum" name="orderNum">
+                            <option value="">선택하세요</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -119,6 +120,8 @@
                         <input th:type="text" id="updatedAt" name="updatedAt" class="readonly" readonly>
                     </div>
                 </div>
+                <div class="rightBtnArea">
+                </div>
             </div>
         </div>
     </div>
@@ -126,10 +129,11 @@
 </body>
 <script th:type="module">
     import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/+esm';
-    import {fetchAllMenus, fetchMenuById} from "/js/apis/menu/menu.js";
-    import {qs, lpad} from "/js/common/util.js";
+    import {fetchAllMenus, fetchMenuById, fetchFolderMenus} from "/js/apis/menu/menu.js";
+    import {qs, qsAll, lpad, createEl} from "/js/common/util.js";
     import {createColumn, COLUMN_TYPE, createField} from "/js/realgrid/gridUtil.js";
     import {infoAlert} from "/js/common/alert.js";
+    import {fetchAllProgram} from "/js/apis/menu/program.js";
 
     function setTreeId(data = []) {
 
@@ -176,16 +180,28 @@
 
     class EditForm {
         container;
-
+        btnArea;
         /**
          *
          * @param {Element} container
          */
         constructor(container) {
             this.container = container;
+            this.btnArea = qs(container, '.rightBtnArea');
+            this.#setNewMode();
+        }
+
+        #setNewMode() {
+            this.clear();
+            this.#createNewBtn();
         }
 
         async setEditMode(id) {
+            this.clear();
+            this.#createEditBtn();
+            this.#createDelBtn();
+            this.#createNewModeBtn();
+
             const menu = await fetchMenuById(id);
             qs(this.container, '#id').value = menu.getId();
             qs(this.container, '#menuName').value = menu.getMenuName();
@@ -199,23 +215,63 @@
             qs(this.container, '#updatedAt').value = menu.getUpdatedAt();
         }
 
+        clear() {
+            this.#clearForm();
+            this.#clearBtn();
+        }
+
+        #clearForm() {
+            qsAll(this.container, 'input[type="text"]').forEach(input => input.value = "");
+            qsAll(this.container, 'select').forEach(select => select.value = "");
+        }
+
+        #clearBtn() {
+            qsAll(this.btnArea, 'input[type="button"]').forEach(button => button.remove());
+        }
+
+        #createNewBtn() {
+            const btn = createEl('input', {id: 'addBtn', type: 'button', value: '추가'});
+            btn.addEventListener('click', async () => {
+
+            })
+            this.btnArea.appendChild(btn);
+        }
+
+        #createNewModeBtn() {
+            const btn = createEl('input', {id: 'newBtn', type: 'button', value: '신규'});
+            btn.addEventListener('click', () => {
+                this.#setNewMode();
+            });
+            this.btnArea.appendChild(btn);
+        }
+
+        #createEditBtn() {
+            const btn = createEl('input', {id: 'editBtn', type: 'button', value: '저장'});
+            btn.addEventListener('click', async () => {
+
+            })
+            this.btnArea.appendChild(btn);
+        }
+
+        #createDelBtn() {
+            const btn = createEl('input', {id: 'delBtn', type: 'button', value: '삭제'});
+            btn.addEventListener('click', async () => {
+
+            })
+            this.btnArea.appendChild(btn);
+        }
+
+
+
     }
 
-    function showUpperMenuDialog() {
-        Swal.fire({
-            title: 'title',
-            html: `
-                <div id='dialog'>
-                    body
-                </div>
-            `,
-            didOpen: () => {
-                infoAlert("didOpen")
-            }
-        })
-    }
-
-    function drawGrid(treeView, treeProvider) {
+    /**
+     *
+     * @param {ManageMenu[]} menus
+     * @param treeView
+     * @param treeProvider
+     */
+    function drawGrid(menus = [], treeView, treeProvider) {
         treeProvider.setFields([
             createField('treeId').text().end(),
             createField('treeName').text().end(),
@@ -250,7 +306,107 @@
         const treeView = new RealGrid.TreeView(gridContainer);
         const editForm = new EditForm(qs(document, '#menuEditForm'));
 
-        drawGrid(treeView, treeProvider);
+        const showUpperMenuDialog = () => {
+            const swal = Swal;
+            swal.fire({
+                title: '상위메뉴',
+                html: `
+                <div id="dialog">
+                    <table>
+                        <tr>
+                            <th>ID</th>
+                            <th>메뉴명</th>
+                            <th></th>
+                        </tr>
+                    </table>
+                </div>
+            `,
+                didOpen: async () => {
+                    const folderMenus = await fetchFolderMenus();
+                    const dialogContainer = qs(document, '#dialog');
+                    const table = qs(dialogContainer, 'table');
+                    /**
+                     * @param {HTMLTableElement} table
+                     * @param {FolderMenu} folderMenu
+                     * @return {string}
+                     */
+                    const addTr = (table, folderMenu) => {
+                        const inputBtn = createEl('input', {type: 'button', value: '선택'});
+                        const tr = createEl('tr');
+                        const idTd = createEl('td', {innerText: folderMenu.getId()});
+                        const menuNameTd = createEl('td', {innerText: folderMenu.getMenuName()});
+                        const btnTd = createEl('td');
+
+                        inputBtn.addEventListener('click', () => {
+                            qs(container, '#upperId').value = folderMenu.getId();
+                            qs(container, '#upperMenuName').value = folderMenu.getMenuName();
+                            swal.close();
+                        })
+
+                        btnTd.append(inputBtn);
+                        tr.append(idTd, menuNameTd, btnTd)
+                        table.append(tr);
+                    }
+                    folderMenus.forEach(fm => {
+                        addTr(table, fm);
+                    });
+                }
+            })
+        }
+        const showProgramListDialog = () => {
+            const swal = Swal;
+            swal.fire({
+                title: '프로그램목록',
+                showCloseButton: true,
+                showConfirmButton: false,
+                html: `
+                <div id="dialog">
+                    <table>
+                        <tr>
+                            <th>ID</th>
+                            <th>프로그램명</th>
+                            <th>url</th>
+                            <th></th>
+                        </tr>
+                    </table>
+                </div>
+            `,
+                didOpen: async () => {
+                    const programs = await fetchAllProgram();
+                    const dialogContainer = qs(document, '#dialog');
+                    const table = qs(dialogContainer, 'table');
+                    /**
+                     * @param {HTMLTableElement} table
+                     * @param {Program} program
+                     * @return {string}
+                     */
+                    const addTr = (table, program) => {
+                        const inputBtn = createEl('input', {type: 'button', value: '선택'});
+                        const tr = createEl('tr');
+                        const idTd = createEl('td', {innerText: program.getId()});
+                        const nameTd = createEl('td', {innerText: program.getProgramName()});
+                        const urlTd = createEl('td', {innerText: program.getUrl()});
+                        const btnTd = createEl('td');
+
+                        inputBtn.addEventListener('click', () => {
+                            qs(container, '#programId').value = program.getId();
+                            qs(container, '#programName').value = program.getProgramName();
+                            swal.close();
+                        })
+
+                        btnTd.append(inputBtn);
+                        tr.append(idTd, nameTd, urlTd, btnTd);
+                        table.append(tr);
+                    }
+                    programs.forEach(fm => {
+                        addTr(table, fm);
+                    });
+                }
+            })
+        }
+
+
+        drawGrid(menus, treeView, treeProvider);
         treeView.onCellClicked = (grid, clickData) => {
             if(clickData.cellType === 'gridEmpty')
                 return false;
@@ -259,9 +415,9 @@
             editForm.setEditMode(id);
         };
 
-        qs(container, '#findUpperMenuBtn').addEventListener('click', () => {
-            showUpperMenuDialog();
-        })
+        qs(container, '#findUpperMenuBtn').addEventListener('click', showUpperMenuDialog);
+
+        qs(container, '#findProgramBtn').addEventListener('click', showProgramListDialog);
 
 
 

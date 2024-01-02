@@ -1,5 +1,6 @@
 package com.portfolio.main.infrastructure.spring.interceptor.account;
 
+import com.portfolio.main.application.login.dto.UserDto;
 import com.portfolio.main.domain.model.account.User;
 import com.portfolio.main.domain.model.account.UserLoginHistory;
 import com.portfolio.main.domain.repository.account.UserLoginHistoryRepository;
@@ -30,12 +31,12 @@ public class LoginHistoryInterceptor implements HandlerInterceptor {
         final String requestURI = request.getRequestURI();
         String token = getToekn(request);
 
-        final User user = getUser(token);
+        final UserDto userDto = getUser(token);
 
         if ("/account/login".equals(requestURI)) {
-            saveLoginHistory(request, user);
+            saveLoginHistory(request, userDto);
         } else {
-            saveLogoutHistory(request, user);
+            saveLogoutHistory(request, userDto);
         }
     }
 
@@ -55,20 +56,20 @@ public class LoginHistoryInterceptor implements HandlerInterceptor {
         }
     }
 
-    private User getUser(String token) {
+    private UserDto getUser(String token) {
         final JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(token);
         final JwtAuthenticationToken authenticate = (JwtAuthenticationToken) jwtAuthenticationProvider.authenticate(jwtAuthenticationToken);
         final MyUserDetails userDetails = (MyUserDetails) authenticate.getPrincipal();
         return userDetails.getUser();
     }
 
-    private void saveLoginHistory(HttpServletRequest request, User user) {
-        final UserLoginHistory userLoginHistory = new UserLoginHistory(user.getLoginId(), LoginActionType.LOGIN, RequestUtils.getClientIP(request), RequestUtils.getClientDeviceInfo(request));
+    private void saveLoginHistory(HttpServletRequest request, UserDto userDto) {
+        final UserLoginHistory userLoginHistory = new UserLoginHistory(userDto.getLoginId(), LoginActionType.LOGIN, RequestUtils.getClientIP(request), RequestUtils.getClientDeviceInfo(request));
         userLoginHistoryRepository.save(userLoginHistory);
     }
 
-    private void saveLogoutHistory(HttpServletRequest request, User user) {
-        final UserLoginHistory userLoginHistory = new UserLoginHistory(user.getLoginId(), LoginActionType.LOGOUT, RequestUtils.getClientIP(request), RequestUtils.getClientDeviceInfo(request));
+    private void saveLogoutHistory(HttpServletRequest request, UserDto userDto) {
+        final UserLoginHistory userLoginHistory = new UserLoginHistory(userDto.getLoginId(), LoginActionType.LOGOUT, RequestUtils.getClientIP(request), RequestUtils.getClientDeviceInfo(request));
         userLoginHistoryRepository.save(userLoginHistory);
     }
 }

@@ -1,8 +1,8 @@
 package com.portfolio.main.presentation.rest.role;
 
-import com.portfolio.main.domain.model.account.Role;
-import com.portfolio.main.infrastructure.repository.mapper.role.dto.RoleMapperDto;
-import com.portfolio.main.domain.service.role.RoleService;
+import com.portfolio.main.application.role.dto.RoleDto;
+import com.portfolio.main.application.role.dto.RoleLevelDto;
+import com.portfolio.main.application.role.service.RoleApplicationService;
 import com.portfolio.main.presentation.rest.role.response.RoleCodeNameResponse;
 import com.portfolio.main.presentation.rest.role.response.RoleResponse;
 import org.springframework.http.ResponseEntity;
@@ -18,29 +18,29 @@ import java.util.List;
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class RoleController {
 
-    private final RoleService roleService;
+    private final RoleApplicationService roleApplicationService;
 
-    public RoleController(RoleService roleService) {
-        this.roleService = roleService;
+    public RoleController(RoleApplicationService roleApplicationService) {
+        this.roleApplicationService = roleApplicationService;
     }
 
     @GetMapping("")
     public ResponseEntity<List<RoleResponse>> getAllRoles() {
-        final List<Role> allRoles = roleService.findAll();
+        final List<RoleDto> allRoles = roleApplicationService.findAll();
         final List<RoleResponse> responses = allRoles.stream().map(RoleResponse::new).toList();
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/flat")
     public ResponseEntity<List<RoleResponse>> getAllRolesFlat() {
-        final List<RoleMapperDto> allRolesFlat = roleService.findAllFlat();
+        final List<RoleLevelDto> allRolesFlat = roleApplicationService.findAllFlat();
         final List<RoleResponse> responses = allRolesFlat.stream().map(RoleResponse::new).toList();
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/roleCodeNames")
     public ResponseEntity<List<RoleCodeNameResponse>> getAllRolesCodeNames() {
-        final List<RoleMapperDto> allRoles = roleService.findAllFlat();
+        final List<RoleLevelDto> allRoles = roleApplicationService.findAllFlat();
         final List<RoleCodeNameResponse> responses = allRoles.stream().map(RoleCodeNameResponse::new).toList();
 
         return ResponseEntity.ok(responses);

@@ -1,7 +1,8 @@
 import {qs} from "/js/common/util.js";
-import {fetchManageProgram} from "/js/apis/menu/program.js";
-import {programMapping} from "/js/program/program.js";
+import {fetchManageProgram, programMapping} from "/js/apis/menu/program.js";
 import {COLUMN_TYPE, createColumn, createField} from "/js/realgrid/gridUtil.js";
+
+const tag = '[ProgramGrid]';
 
 export default class ProgramGrid {
     searchParam = {};
@@ -28,7 +29,7 @@ export default class ProgramGrid {
     }
 
     async refreshGrid() {
-        this.search();
+        await this.search();
     }
 
     /**

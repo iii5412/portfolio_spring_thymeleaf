@@ -6,7 +6,8 @@
 <link rel="stylesheet" th:href="@{/css/realgrid/custom.css}"/>
 <script src="/js/realgrid/realgrid.2.7.2/realgrid-lic.js"></script>
 <script src="/js/realgrid/realgrid.2.7.2/realgrid.2.7.2.min.js"></script>
-<script src="/js/realgrid.2.7.2/libs/jszip.min.js"></script>
+<script src="/js/realgrid/realgrid.2.7.2/libs/jszip.min.js"></script>
+
 
 <style>
     .programContent {
@@ -109,7 +110,7 @@
     import {qs, qsAll, createEl, HTTP_STATUS} from "/js/common/util.js";
     import {fetchDeleteProgram, fetchSaveProgram, fetchEditProgram} from "/js/apis/menu/program.js";
     import {errorAlert, infoAlert} from "/js/common/alert.js";
-    import {Program} from "/js/program/program.js";
+    import Program from "/js/program/Program.js";
     import {FetchError, FieldFetchError} from "/js/error/fetchError.js";
     import Pagination from "/js/common/Pagination.js";
     import ProgramGrid from "/js/program/ProgramGrid.js";
@@ -185,14 +186,14 @@
 
         #createAddBtn() {
             const btn = createEl('input', {id: 'addBtn', type: 'button', value: '추가'});
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', async () => {
                 const programName = qs(this.form, '#programName').value;
                 const url = qs(this.form, '#url').value;
 
                 try {
-                    fetchSaveProgram({programName, url});
+                    await fetchSaveProgram({programName, url});
                     infoAlert("저장되었습니다.");
-                    this.grid.refreshGrid();
+                    await this.grid.refreshGrid();
                     this.setNewMode();
                 } catch (e) {
                     if(e instanceof FetchError) {
@@ -213,15 +214,15 @@
 
         #createEditBtn() {
             const btn = createEl('input', {id: 'editBtn', type: 'button', value: '저장'});
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', async () => {
                 const id = qs(this.form, '#id').value;
                 const programName = qs(this.form, '#programName').value;
                 const url = qs(this.form, '#url').value;
 
                 try {
-                    fetchEditProgram({id, programName, url})
+                    await fetchEditProgram({id, programName, url})
                     infoAlert("수정되었습니다.");
-                    this.grid.refreshGrid();
+                    await this.grid.refreshGrid();
                     this.setNewMode();
                 } catch(e) {
                     if(e instanceof FetchError) {
@@ -239,15 +240,14 @@
             });
             return btn;
         }
-
         #createDelBtn() {
             const btn = createEl('input', {id: 'editBtn', type: 'button', value: '삭제'});
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', async () => {
                 try {
                     const id = qs(this.form, '#id').value;
-                    fetchDeleteProgram(id);
+                    await fetchDeleteProgram(id);
                     infoAlert("삭제되었습니다.");
-                    this.grid.refreshGrid();
+                    await this.grid.refreshGrid();
                     this.setNewMode();
                 } catch (e) {
                     errorAlert("삭제에 실패하였습니다. 잠시 후 다시 시도해주세요.");

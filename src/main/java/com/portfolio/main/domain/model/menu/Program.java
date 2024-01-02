@@ -49,9 +49,9 @@ public class Program {
         return id;
     }
 
-    public void edit(EditProgram editProgram, User user) {
-        this.programName = editProgram.getProgramName();
-        this.url = editProgram.getUrl();
+    public void edit(String programName, String url, User user) {
+        this.programName = programName;
+        this.url = url;
         this.lastUpdatedByUser = user;
     }
 

@@ -1,6 +1,9 @@
 package com.portfolio.main.presentation.rest;
 
+import com.portfolio.main.application.login.dto.UserDto;
+import com.portfolio.main.application.login.service.UserQueryService;
 import com.portfolio.main.domain.model.account.User;
+import com.portfolio.main.domain.service.account.UserService;
 import com.portfolio.main.infrastructure.config.security.service.MyUserDetailsService;
 import com.portfolio.main.infrastructure.config.security.jwt.provider.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +27,14 @@ public class TestAuth {
     @Autowired
     private MyUserDetailsService userDetailsService;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserQueryService userQueryService;
+
     public static final String USER_ADMIN = "admin";
-    public static final String USER_USER = "testUser";
+    public static final String USER_USER = "user";
     public static final String USER_GUEST = "guest";
 
     public String setUserAdminAndGetToken() {
@@ -52,12 +61,16 @@ public class TestAuth {
         }
 
         if(!type.equals(USER_GUEST)) {
-            final User user = userDetailsService.validateUser(loginId, loginPw);
+            userService.validateLoginCredentials(loginId, loginPw);
+
+            final UserDto userDto = userQueryService.findByLoginId(loginId);
+
+
             final UserDetails userDetails = userDetailsService.loadUserByUsername(loginId);
             final Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            token = jwtProvider.createToken(user);
+            token = jwtProvider.createToken(userDto);
         } else {
             final List<GrantedAuthority> guestAuthorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_GUEST"));
             final AnonymousAuthenticationToken guestAuthentication = new AnonymousAuthenticationToken("guestUserKey", "guest", guestAuthorities);

@@ -1,4 +1,4 @@
-class Program {
+export default class Program {
 
     constructor({id, programName, url, createdAt, updatedAt, lastUpdatedByUserLoginId, roleCode}) {
         Object.assign(this, {id, programName, url, createdAt, updatedAt, lastUpdatedByUserLoginId, roleCode});
@@ -33,12 +33,3 @@ class Program {
     }
 }
 
-/**
- * @param {Object[]} data
- * @return {Program[]}
- */
-function programMapping(data = []) {
-    return data.map(d => new Program(d));
-}
-
-export {Program, programMapping}

@@ -1,6 +1,8 @@
 package com.portfolio.main.presentation.rest.role.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.portfolio.main.application.role.dto.RoleDto;
+import com.portfolio.main.application.role.dto.RoleLevelDto;
 import com.portfolio.main.domain.model.account.Role;
 import com.portfolio.main.infrastructure.repository.mapper.role.dto.RoleMapperDto;
 import com.portfolio.main.domain.model.account.type.RoleCode;
@@ -24,30 +26,30 @@ public class RoleResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "${locale.timezone}")
     private LocalDateTime updatedAt;
 
-    public RoleResponse(Role role) {
-        if (role.hasUpperRole()) {
-            this.upperRoleId = role.getUpperRole().getId();
+    public RoleResponse(RoleDto roleDto) {
+        if (roleDto.hasUpperRole()) {
+            this.upperRoleId = roleDto.getUpperId();
         }
 
-        this.id = role.getId();
-        this.roleCode = role.getRoleCode();
-        this.roleName = role.getRoleName();
+        this.id = roleDto.getId();
+        this.roleCode = roleDto.getRoleCode();
+        this.roleName = roleDto.getRoleName();
 
-        if (role.hasChildRoles()) {
-            this.childRoles = role.getChildRoles().stream().map(RoleResponse::new).toList();
+        if (roleDto.hasChildRoles()) {
+            this.childRoles = roleDto.getChildRoles().stream().map(RoleResponse::new).toList();
         }
 
-        this.createAt = role.getCreatedAt();
-        this.updatedAt = role.getUpdatedAt();
+        this.createAt = roleDto.getCreatedAt();
+        this.updatedAt = roleDto.getUpdatedAt();
     }
 
-    public RoleResponse(RoleMapperDto roleMapperDto) {
-        this.id = roleMapperDto.getId();
-        this.upperRoleId = roleMapperDto.getUpperId();
-        this.roleCode = RoleCode.valueOf(roleMapperDto.getRoleCode());
-        this.roleName = roleMapperDto.getRoleName();
-        this.createAt = roleMapperDto.getCreatedAt();
-        this.updatedAt = roleMapperDto.getUpdatedAt();
+    public RoleResponse(RoleLevelDto roleLevelDto) {
+        this.id = roleLevelDto.getId();
+        this.upperRoleId = roleLevelDto.getUpperId();
+        this.roleCode = roleLevelDto.getRoleCode();
+        this.roleName = roleLevelDto.getRoleName();
+        this.createAt = roleLevelDto.getCreatedAt();
+        this.updatedAt = roleLevelDto.getUpdatedAt();
     }
 
 }

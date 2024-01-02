@@ -1,6 +1,6 @@
 package com.portfolio.main.infrastructure.config.security.jwt.util;
 
-import com.portfolio.main.application.login.dto.JwtResponse;
+import com.portfolio.main.presentation.rest.account.login.response.JwtResponse;
 import com.portfolio.main.infrastructure.config.security.jwt.JwtAuthenticationToken;
 import com.portfolio.main.infrastructure.config.security.jwt.provider.JwtProvider;
 import com.portfolio.main.common.util.CookieUtils;

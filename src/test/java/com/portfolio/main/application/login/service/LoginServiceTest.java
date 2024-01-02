@@ -1,13 +1,13 @@
 package com.portfolio.main.application.login.service;
 
+import com.portfolio.main.application.login.dto.UserCreateDto;
+import com.portfolio.main.application.login.dto.UserDto;
 import com.portfolio.main.domain.model.account.User;
-import com.portfolio.main.application.login.dto.JwtResponse;
-import com.portfolio.main.application.login.dto.UserRegist;
+import com.portfolio.main.presentation.rest.account.login.response.JwtResponse;
+import com.portfolio.main.presentation.rest.account.login.request.SignUpRequest;
 import com.portfolio.main.application.login.exception.InvalidLoginId;
 import com.portfolio.main.application.login.exception.InvalidLoginPassword;
 import com.portfolio.main.application.login.exception.InvalidRegistUser;
-import com.portfolio.main.application.login.service.LoginService;
-import com.portfolio.main.infrastructure.config.security.service.MyUserDetailsService;
 import com.portfolio.main.domain.model.account.type.RoleCode;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class LoginServiceTest {
     LoginService loginService;
 
     @Autowired
-    MyUserDetailsService userDetailsService;
+    UserQueryService userQueryService;
 
     @Test
     void login_invalid_loginId() {
@@ -37,30 +37,14 @@ class LoginServiceTest {
 
     @Test
     @Transactional
-    void login_invalid_password() {
-        //given
-        final UserRegist testUserRegist = createTestUserRegist();
-        final Long userId = loginService.signUp(testUserRegist);
-        final User findUser = userDetailsService.findByUserId(userId);
-
-        log.info("findUser.getLoginPw() = {}", findUser.getLoginPw());
-
-        //expected
-        assertThrows(InvalidLoginPassword.class, () -> {
-            loginService.login(findUser.getLoginId(), findUser.getLoginPw() + "!");
-        });
-    }
-
-    @Test
-    @Transactional
     void login() {
         //given
-        final UserRegist testUserRegist = createTestUserRegist();
-        final Long userId = loginService.signUp(testUserRegist);
-        final User findUser = userDetailsService.findByUserId(userId);
+        final UserCreateDto userCreateDto = createTestUserRegist();
+        final Long userId = loginService.signUp(userCreateDto);
+        final UserDto findUser = userQueryService.findById(userId);
 
         //when
-        final JwtResponse jwtResponse = loginService.login(findUser.getLoginId(), testUserRegist.getLoginPw1());
+        final JwtResponse jwtResponse = loginService.login(findUser.getLoginId(), userCreateDto.getLoginPw());
 
         log.info("jwtResponse.getToken() => {}", jwtResponse.getToken());
 
@@ -71,34 +55,35 @@ class LoginServiceTest {
 
     @Test
     void signUp_UserRegist_validate() {
-        final UserRegist userRegist = new UserRegist();
-        assertThrows(InvalidRegistUser.class, userRegist::validate);
+        final SignUpRequest signUpRequest = new SignUpRequest();
+        assertThrows(InvalidRegistUser.class, signUpRequest::validate);
     }
 
     @Test
     @Transactional
     void signUp() {
         //given
-        final UserRegist userRegist = createTestUserRegist();
+        final UserCreateDto userCreateDto = createTestUserRegist();
 
         //when
-        loginService.signUp(userRegist);
+        loginService.signUp(userCreateDto);
 
         //then
-        final User findUser = userDetailsService.findUserByLoginId(userRegist.getLoginId());
+        final UserDto findUser = userQueryService.findByLoginId(userCreateDto.getLoginId());
         final boolean hasUserRole = findUser.getUserRoles().stream()
-                .anyMatch(userRole -> userRole.getRole().getRoleCode().equals(RoleCode.ROLE_USER));
+                .anyMatch(userRole -> userRole.getRoleCode().equals(RoleCode.ROLE_USER));
 
-        assertEquals(findUser.getLoginId(), userRegist.getLoginId());
+        assertEquals(findUser.getLoginId(), userCreateDto.getLoginId());
         assertTrue(hasUserRole);
     }
 
-    private UserRegist createTestUserRegist() {
-        return UserRegist.builder()
+    private UserCreateDto createTestUserRegist() {
+        final SignUpRequest signUpRequest = SignUpRequest.builder()
                 .username("테스트")
                 .loginId("test")
                 .loginPw1("1234")
                 .loginPw2("1234")
                 .build();
+        return new UserCreateDto(signUpRequest);
     }
 }

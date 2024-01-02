@@ -1,4 +1,4 @@
-package com.portfolio.main.application.login.dto;
+package com.portfolio.main.presentation.rest.account.login.request;
 
 import com.portfolio.main.application.login.exception.InvalidRegistUser;
 import lombok.Builder;
@@ -8,17 +8,17 @@ import org.springframework.util.StringUtils;
 
 @Setter
 @Getter
-public class UserRegist {
+public class SignUpRequest {
     private String loginId;
     private String username;
     private String loginPw1;
     private String loginPw2;
 
-    public UserRegist() {
+    public SignUpRequest() {
     }
 
     @Builder
-    public UserRegist(String loginId, String username, String loginPw1, String loginPw2) {
+    public SignUpRequest(String loginId, String username, String loginPw1, String loginPw2) {
         this.loginId = loginId;
         this.username = username;
         this.loginPw1 = loginPw1;

@@ -1,11 +1,12 @@
 package com.portfolio.main.application.program.service;
 
-import com.portfolio.main.application.program.service.ProgramApplicationService;
+import com.portfolio.main.application.program.dto.ProgramDto;
 import com.portfolio.main.domain.model.menu.Program;
 import com.portfolio.main.application.program.dto.CreateProgram;
 import com.portfolio.main.application.program.dto.EditProgram;
 import com.portfolio.main.application.program.dto.SearchProgram;
 import com.portfolio.main.common.util.page.PageResult;
+import com.portfolio.main.presentation.rest.TestAuth;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,10 +22,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Transactional
-class ProgramApplicationServiceTest {
+class ProgramManageServiceTest {
 
     @Autowired
-    private ProgramApplicationService programApplicationService;
+    private ProgramManageService programManageService;
+
+    @Autowired
+    private ProgramQueryService programQueryService;
 
     @Autowired
     private EntityManager entityManager;
@@ -32,18 +36,17 @@ class ProgramApplicationServiceTest {
     private final int testProgramMaxCnt = 20;
     private final String testProgramName = "테스트프로그램";
     private final String testProgramUrl = "/testProgram";
-    private Program testProgram;
-
-    private String testUserId = "user1";
+    private ProgramDto testProgram;
+    private String testUserId = TestAuth.USER_ADMIN;
 
     @BeforeEach
     void setupData() {
         //given
         IntStream.range(1, testProgramMaxCnt + 1).forEach(i -> {
             final CreateProgram createProgram = new CreateProgram(this.testProgramName + "_" + i, this.testProgramUrl + "_" + i, testUserId);
-            final Long testProgramId = programApplicationService.create(createProgram);
+            final Long testProgramId = programManageService.create(createProgram);
             if (i == 1) {
-                testProgram = programApplicationService.findById(testProgramId);
+                testProgram = programQueryService.findById(testProgramId);
             }
         });
     }
@@ -55,7 +58,7 @@ class ProgramApplicationServiceTest {
         final Long savedId = testProgram.getId();
 
         //when
-        final Program findProgram = programApplicationService.findById(savedId);
+        final ProgramDto findProgram = programQueryService.findById(savedId);
 
         //then
         assertEquals(testProgram.getUrl(), findProgram.getUrl());
@@ -64,11 +67,11 @@ class ProgramApplicationServiceTest {
     @Test
     void deleteProgramHasProgramId() {
         //when
-        programApplicationService.delete(testProgram.getId());
+        programManageService.delete(testProgram.getId());
 
         //then
         final SearchProgram searchProgram = SearchProgram.builder().size(20).build();
-        final PageResult<Program> programs = programApplicationService.selectProgram(searchProgram);
+        final PageResult<ProgramDto> programs = programQueryService.selectManageProgram(searchProgram);
 
         //expect
         assertEquals(19, programs.getResult().size());
@@ -78,7 +81,7 @@ class ProgramApplicationServiceTest {
     void selectAllProgram() {
         int size = 10;
         //when
-        final PageResult<Program> programs = programApplicationService.selectProgram(SearchProgram.builder().size(size).build());
+        final PageResult<ProgramDto> programs = programQueryService.selectManageProgram(SearchProgram.builder().size(size).build());
 
         //expect
         assertEquals(size, programs.getResult().size());
@@ -93,7 +96,7 @@ class ProgramApplicationServiceTest {
                 .sortFields(List.of("updatedAt"))
                 .build();
 
-        final PageResult<Program> programPageResult = programApplicationService.selectProgram(searchProgram);
+        final PageResult<ProgramDto> programPageResult = programQueryService.selectManageProgram(searchProgram);
 
         assertEquals(20, programPageResult.getResult().size());
     }
@@ -101,8 +104,8 @@ class ProgramApplicationServiceTest {
     @Test
     void selectProgramWithNameAndUrl() {
         final SearchProgram searchProgram = SearchProgram.builder().programName("1").url("3").build();
-        final PageResult<Program> programPageResult = programApplicationService.selectProgram(searchProgram);
-        final List<Program> result = programPageResult.getResult();
+        final PageResult<ProgramDto> programPageResult = programQueryService.selectManageProgram(searchProgram);
+        final List<ProgramDto> result = programPageResult.getResult();
 
         assertEquals(1, result.size());
     }
@@ -115,12 +118,12 @@ class ProgramApplicationServiceTest {
                 .url("/editProgram")
                 .editUserLoginId("admin")
                 .build();
-        programApplicationService.edit(editProgram);
+        programManageService.edit(editProgram);
 
         entityManager.flush();
         entityManager.clear();
 
-        final Program editedProgram = programApplicationService.findById(testProgram.getId());
+        final ProgramDto editedProgram = programQueryService.findById(testProgram.getId());
 
         assertEquals("editProgram", editedProgram.getProgramName());
         assertEquals("/editProgram", editedProgram.getUrl());

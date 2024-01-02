@@ -1,24 +1,19 @@
 import {FETCH, toQueryString} from "/js/common/util.js";
 import PageResult from "/js/common/PageResult.js";
 import RequiredValueError from "/js/error/RequiredValueError.js";
+import Program from "/js/program/Program.js";
 
 const tag = "[api/program]";
 const requstMapping = "/program";
+
 /**
  * 모든 프로그램을 가져옵니다.
- *
- * @param {object} searchParam - 프로그램에 대한 검색 기준입니다.
- * @param {number} page - 페이지 매김을 위한 페이지 번호입니다.
- * @param {number} size - 페이지당 가져올 프로그램 수입니다.
- * @param {string[]} sortFields - 프로그램을 정렬할 필드입니다.
- * @param {string[]} sorts - 각 필드의 정렬 방향입니다.
- * @return {Promise<PageResult>} - 가져온 프로그램을 포함하는 PageResult 개체로 확인되는 약속입니다.
- * @throws {Error} - 프로그램을 가져오는 중 오류가 발생한 경우.
+ * @return {Promise<Program[]>}
  */
-async function fetchAllProgram(searchParam = {}, page = 1, size = 10, sortFields = [], sorts = []) {
+async function fetchAllProgram() {
     try {
-        const responseJson = await FETCH.get(`${requstMapping}?${toQueryString(searchParam)}&page=${page}&size=${size}&sortFields=${sortFields.join(',')}&sorts=${sorts.join(',')}`);
-        return new PageResult(responseJson);
+        const response = await FETCH.get(`${requstMapping}`);
+        return programMapping(response);
     } catch (e) {
         throw e;
     }
@@ -76,4 +71,13 @@ function fetchDeleteProgram(id) {
         throw RequiredValueError('id');
     return FETCH.delete(`${requstMapping}`, {id});
 }
-export {fetchAllProgram, fetchManageProgram, fetchSaveProgram, fetchEditProgram, fetchDeleteProgram};
+
+/**
+ * @param {Object[]} data
+ * @return {Program[]}
+ */
+function programMapping(data = []) {
+    return data.map(d => new Program(d));
+}
+
+export {fetchAllProgram, fetchManageProgram, fetchSaveProgram, fetchEditProgram, fetchDeleteProgram, programMapping};

@@ -37,4 +37,12 @@ public class EditMenu {
         this.roleCode = editMenuRequest.getRoleCode();
         this.editUserLoginId = editUserLoginId;
     }
+
+    public boolean hasUpperId() {
+        return this.upperId != null;
+    }
+
+    public boolean hasProgramId() {
+        return this.programId != null;
+    }
 }

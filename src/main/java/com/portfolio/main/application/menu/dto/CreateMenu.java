@@ -35,5 +35,8 @@ public class CreateMenu {
         this.createUserLoginId = createUserLoginId;
     }
 
+    public boolean hasUpperId() {
+        return this.upperId != null;
+    }
 
 }

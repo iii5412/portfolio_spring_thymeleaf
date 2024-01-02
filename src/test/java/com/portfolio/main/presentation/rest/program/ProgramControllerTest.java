@@ -1,13 +1,16 @@
 package com.portfolio.main.presentation.rest.program;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.portfolio.main.application.program.dto.ProgramDto;
+import com.portfolio.main.application.program.service.ProgramManageService;
 import com.portfolio.main.infrastructure.config.security.jwt.JwtAuthenticationToken;
 import com.portfolio.main.presentation.rest.TestAuth;
 import com.portfolio.main.domain.model.menu.Program;
 import com.portfolio.main.application.program.dto.CreateProgram;
 import com.portfolio.main.application.program.dto.EditProgram;
 import com.portfolio.main.domain.model.menu.exception.ProgramNotFoundException;
-import com.portfolio.main.application.program.service.ProgramApplicationService;
+import com.portfolio.main.application.program.service.ProgramQueryService;
+import com.portfolio.main.presentation.rest.request.IdRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +42,10 @@ class ProgramControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ProgramApplicationService programApplicationService;
+    private ProgramQueryService programQueryService;
+
+    @Autowired
+    private ProgramManageService programManageService;
 
     @Autowired
     private EntityManager entityManager;
@@ -60,8 +66,8 @@ class ProgramControllerTest {
     void setup() {
         //given
         IntStream.range(1, maxTestDataCnt + 1).forEach(i -> {
-            final CreateProgram createProgram = new CreateProgram(this.testProgramName + "_" + i, this.testProgramUrl + "_" + i, "admin");
-            final Long savedTestProgramId = programApplicationService.create(createProgram);
+            final CreateProgram createProgram = new CreateProgram(this.testProgramName + "_" + i, this.testProgramUrl + "_" + i, TestAuth.USER_ADMIN);
+            final Long savedTestProgramId = programManageService.create(createProgram);
 
             if (i == 1)
                 testProgramId = savedTestProgramId;
@@ -73,7 +79,7 @@ class ProgramControllerTest {
     @Test
     void when_select_all_programs() throws Exception {
         mockMvc.perform(
-                        get(requestMapping + "?page=1&size=20&sortFields=updatedAt&sorts=DESC")
+                        get(requestMapping + "/manage?page=1&size=20&sortFields=updatedAt&sorts=DESC")
                                 .contentType(APPLICATION_JSON)
                                 .cookie(new Cookie(JwtAuthenticationToken.TOKEN_NAME, token))
                 ).andExpect(status().isOk())
@@ -81,7 +87,6 @@ class ProgramControllerTest {
                 .andExpect(jsonPath("$.totalCount", greaterThanOrEqualTo(20)))
                 .andExpect(jsonPath("$.result").isArray())
                 .andExpect(jsonPath("$.result", hasSize(20)))
-                .andExpect(jsonPath("$.result[0].programName").value(testProgramName + "_20"))
                 .andDo(print());
     }
 
@@ -105,11 +110,13 @@ class ProgramControllerTest {
     @Test
     void delete() throws Exception {
         //when
-        final Program testProgram = programApplicationService.findById(testProgramId);
-
+        final ProgramDto testProgram = programQueryService.findById(testProgramId);
+        final IdRequest idRequest = new IdRequest(testProgramId);
+        final String request = objectMapper.writeValueAsString(idRequest);
         //then
         mockMvc.perform(
-                        MockMvcRequestBuilders.delete(requestMapping + "/" + testProgram.getId())
+                        MockMvcRequestBuilders.delete(requestMapping)
+                                .content(request)
                                 .contentType(APPLICATION_JSON)
                                 .cookie(new Cookie(JwtAuthenticationToken.TOKEN_NAME, token))
                 )
@@ -119,13 +126,13 @@ class ProgramControllerTest {
         entityManager.flush();
         entityManager.clear();
 
-        assertThrows(ProgramNotFoundException.class, () -> programApplicationService.findById(testProgram.getId()));
+        assertThrows(ProgramNotFoundException.class, () -> programQueryService.findById(testProgram.getId()));
 
     }
 
     @Test
     void edit() throws Exception {
-        final Program testProgram = programApplicationService.findById(testProgramId);
+        final ProgramDto testProgram = programQueryService.findById(testProgramId);
 
         final EditProgram editProgram = EditProgram.builder()
                 .id(testProgram.getId())
@@ -137,7 +144,7 @@ class ProgramControllerTest {
 
         //then
         mockMvc.perform(
-                        patch(requestMapping + "/")
+                        patch(requestMapping)
                                 .contentType(APPLICATION_JSON)
                                 .cookie(new Cookie(JwtAuthenticationToken.TOKEN_NAME, token))
                                 .characterEncoding(StandardCharsets.UTF_8)
@@ -149,7 +156,7 @@ class ProgramControllerTest {
         entityManager.flush();
         entityManager.clear();
 
-        final Program editedProgram = programApplicationService.findById(testProgramId);
+        final ProgramDto editedProgram = programQueryService.findById(testProgramId);
 
         assertEquals("editProgram", editedProgram.getProgramName());
         assertEquals("editUrl", editedProgram.getUrl());

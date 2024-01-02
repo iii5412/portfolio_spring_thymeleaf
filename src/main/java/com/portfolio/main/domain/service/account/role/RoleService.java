@@ -1,4 +1,4 @@
-package com.portfolio.main.domain.service.role;
+package com.portfolio.main.domain.service.account.role;
 
 import com.portfolio.main.domain.model.account.Role;
 import com.portfolio.main.domain.model.account.exception.RoleNotFoundException;

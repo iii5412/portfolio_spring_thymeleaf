@@ -1,5 +1,6 @@
 package com.portfolio.main.infrastructure.config.security;
 
+import com.portfolio.main.application.login.dto.UserDto;
 import com.portfolio.main.domain.model.account.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,32 +10,32 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 public class MyUserDetails implements UserDetails {
-    private User user;
+    private UserDto userDto;
 
-    public MyUserDetails(User user) {
-        this.user = user;
+    public MyUserDetails(UserDto userDto) {
+        this.userDto = userDto;
     }
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getRoleCodes().stream()
+        return userDto.getRoleCodes().stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
 
-    public User getUser() {
-        return user;
+    public UserDto getUser() {
+        return userDto;
     }
 
     @Override
     public String getPassword() {
-        return user.getLoginPw();
+        return null;
     }
 
     @Override
     public String getUsername() {
-        return user.getLoginId();
+        return userDto.getLoginId();
     }
 
     @Override

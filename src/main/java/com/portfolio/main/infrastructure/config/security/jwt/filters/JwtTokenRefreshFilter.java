@@ -1,6 +1,6 @@
 package com.portfolio.main.infrastructure.config.security.jwt.filters;
 
-import com.portfolio.main.application.login.dto.JwtResponse;
+import com.portfolio.main.presentation.rest.account.login.response.JwtResponse;
 import com.portfolio.main.infrastructure.config.security.jwt.util.TokenUtil;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;

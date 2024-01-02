@@ -1,8 +1,9 @@
 package com.portfolio.main.presentation.rest.account.login;
 
-import com.portfolio.main.application.login.dto.JwtResponse;
-import com.portfolio.main.application.login.dto.LoginRequest;
-import com.portfolio.main.application.login.dto.UserRegist;
+import com.portfolio.main.application.login.dto.UserCreateDto;
+import com.portfolio.main.presentation.rest.account.login.request.SignUpRequest;
+import com.portfolio.main.presentation.rest.account.login.response.JwtResponse;
+import com.portfolio.main.presentation.rest.account.login.request.LoginRequest;
 import com.portfolio.main.application.login.service.LoginService;
 import com.portfolio.main.infrastructure.config.security.jwt.util.TokenUtil;
 import com.portfolio.main.presentation.rest.response.SuccResponse;
@@ -39,9 +40,9 @@ public class AccountController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody UserRegist userRegist) {
-        userRegist.validate();
-        loginService.signUp(userRegist);
+    public ResponseEntity<?> signup(@RequestBody SignUpRequest signUpRequest) {
+        signUpRequest.validate();
+        loginService.signUp(new UserCreateDto(signUpRequest));
         return ResponseEntity.ok(new SuccResponse());
     }
 }

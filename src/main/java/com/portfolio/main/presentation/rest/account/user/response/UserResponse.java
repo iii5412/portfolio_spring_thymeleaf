@@ -1,26 +1,27 @@
 package com.portfolio.main.presentation.rest.account.user.response;
 
-import com.portfolio.main.domain.model.account.User;
+import com.portfolio.main.application.login.dto.UserDto;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 public class UserResponse {
     private Long id;
     private String loginId;
-    private String username;
+    private String userName;
     private LocalDateTime createdAt;
-    private String roleNames;
+    private List<String> roleCodes;
 
-    public UserResponse(User user) {
-        this.id = user.getId();
-        this.loginId = user.getLoginId();
-        this.username = user.getUsername();
-        this.createdAt = user.getCreatedAt();
-        this.roleNames = String.join(", ", user.getRoleNames());
+    public UserResponse(UserDto userDto) {
+        this.id = userDto.getId();
+        this.loginId = userDto.getLoginId();
+        this.userName = userDto.getUserName();
+        this.createdAt = userDto.getCreatedAt();
+        this.roleCodes = userDto.getRoleCodes();
     }
 
 }

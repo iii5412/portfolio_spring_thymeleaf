@@ -3,7 +3,8 @@ package com.portfolio.main.presentation.rest.menu;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.portfolio.main.application.menu.dto.CreateMenu;
 import com.portfolio.main.application.menu.dto.MenuDto;
-import com.portfolio.main.application.menu.service.MenuApplicationService;
+import com.portfolio.main.application.menu.service.MenuManageService;
+import com.portfolio.main.application.menu.service.MenuQueryService;
 import com.portfolio.main.domain.model.account.type.RoleCode;
 import com.portfolio.main.domain.model.menu.exception.MenuNotFoundException;
 import com.portfolio.main.domain.model.menu.type.MenuType;
@@ -36,7 +37,10 @@ class MenuControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private MenuApplicationService menuApplicationService;
+    private MenuQueryService menuQueryService;
+
+    @Autowired
+    private MenuManageService menuManageService;
 
     @Autowired
     private TestAuth testAuth;
@@ -54,9 +58,9 @@ class MenuControllerTest {
 
     @Test
     void when_selectMenu_not_admin() throws Exception {
-        final String token = testAuth.setUserAdminAndGetToken();
+        final String token = testAuth.setUserUserAndGetToken();
         mockMvc.perform(
-                        get(requestMapijng + "/flat")
+                        get(requestMapijng + "/all")
                                 .contentType(APPLICATION_JSON)
                                 .cookie(new Cookie(JwtAuthenticationToken.TOKEN_NAME, token))
                 ).andExpect(status().isForbidden())
@@ -78,7 +82,7 @@ class MenuControllerTest {
     void when_selectMenu() throws Exception {
         final String token = testAuth.setUserAdminAndGetToken();
         mockMvc.perform(
-                        get(requestMapijng + "/flat")
+                        get(requestMapijng + "/all")
                                 .contentType(APPLICATION_JSON)
                                 .cookie(new Cookie(JwtAuthenticationToken.TOKEN_NAME, token))
                                 .characterEncoding(StandardCharsets.UTF_8)
@@ -106,7 +110,7 @@ class MenuControllerTest {
     void deleteMenu() throws Exception {
         final String token = testAuth.setUserAdminAndGetToken();
         final CreateMenu createMenu = new CreateMenu("테스트 부모", MenuType.FOLDER, 2L, RoleCode.ROLE_ADMIN, "admin");
-        final Long savedId = menuApplicationService.saveMenu(createMenu);
+        final Long savedId = menuManageService.createMenu(createMenu);
 
         mockMvc.perform(
                         delete(requestMapijng + "/" + savedId)
@@ -116,19 +120,19 @@ class MenuControllerTest {
                 ).andExpect(status().isOk())
                 .andDo(print());
 
-        assertThrows(MenuNotFoundException.class, () -> menuApplicationService.findById(savedId));
+        assertThrows(MenuNotFoundException.class, () -> menuQueryService.findById(savedId));
     }
 
     @Test
     void editMenu() throws Exception {
         final String token = testAuth.setUserAdminAndGetToken();
         final Long testMenuId = 2L;
-        final MenuDto testTargetMenu = menuApplicationService.findById(testMenuId);
-        final EditMenuRequest editMenu = new EditMenuRequest(testTargetMenu.getId(), testTargetMenu.getUpperMenuId(), "테스트", MenuType.FOLDER, 99L, null, RoleCode.ROLE_ADMIN);
+        final MenuDto testTargetMenu = menuQueryService.findById(testMenuId);
+        final EditMenuRequest editMenu = new EditMenuRequest(testTargetMenu.getId(), testTargetMenu.getUpperMenu().getId(), "테스트", MenuType.FOLDER, 99L, null, RoleCode.ROLE_ADMIN);
         final String editMenuString = objectMapper.writeValueAsString(editMenu);
 
         mockMvc.perform(
-                        patch(requestMapijng + "/")
+                        patch(requestMapijng + "")
                                 .contentType(APPLICATION_JSON)
                                 .cookie(new Cookie(JwtAuthenticationToken.TOKEN_NAME, token))
                                 .characterEncoding(StandardCharsets.UTF_8)
@@ -136,7 +140,7 @@ class MenuControllerTest {
                 ).andExpect(status().isOk())
                 .andDo(print());
 
-        final MenuDto editedMenu = menuApplicationService.findById(testMenuId);
+        final MenuDto editedMenu = menuQueryService.findById(testMenuId);
         assertEquals("테스트", editedMenu.getMenuName());
         assertEquals(MenuType.FOLDER, editedMenu.getMenuType());
         assertEquals(99L, editedMenu.getOrderNum());

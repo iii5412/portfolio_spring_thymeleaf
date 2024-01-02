@@ -1,5 +1,6 @@
 package com.portfolio.main.infrastructure.config.security.jwt.provider;
 
+import com.portfolio.main.application.login.dto.UserDto;
 import com.portfolio.main.domain.model.account.User;
 import com.portfolio.main.infrastructure.config.security.jwt.util.TokenUtil;
 import io.jsonwebtoken.*;
@@ -22,9 +23,9 @@ public class JwtProvider {
     private String secretKeyString;
     public final static long validityInMilliseconds = 3600000L; // 토큰 유효 시간 (1시간)
 
-    public String createToken(User user) {
-        final Claims claims = Jwts.claims().setSubject(user.getLoginId());
-        claims.put("roles", user.getRoleCodes());
+    public String createToken(UserDto userDto) {
+        final Claims claims = Jwts.claims().setSubject(userDto.getLoginId());
+        claims.put("roles", userDto.getRoleCodes());
 
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
         ZonedDateTime validity = now.plus(validityInMilliseconds, ChronoUnit.MILLIS);
@@ -41,7 +42,7 @@ public class JwtProvider {
 
     public boolean validateToken(String token) {
         final Jws<Claims> claimsJws = getClaimsJws(token);
-        final Claims claimsJwsBody = claimsJws.getBody();
+        claimsJws.getBody();
         return true;
     }
 

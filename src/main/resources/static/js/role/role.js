@@ -1,4 +1,4 @@
-class Role {
+export default class Role {
     childRoles = [];
 
     constructor({id, upperRoleId, roleCode, roleName, createdAt, updatedAt}) {
@@ -42,16 +42,3 @@ class Role {
     }
 }
 
-function roleMapping(data = []) {
-    const roles = [];
-    data.forEach(r => {
-        const role = new Role(r);
-        if(r.childRoles && r.childRoles.length > 0){
-            role.childRoles = roleMapping(r.childRoles);
-        }
-        roles.push(role);
-    })
-    return roles;
-}
-
-export {Role, roleMapping}

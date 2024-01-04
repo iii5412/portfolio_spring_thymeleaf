@@ -47,7 +47,7 @@ public class MenuDto {
     }
 
     public MenuDto (MenuDto menuDto) {
-        this.id = menuDto.id;
+        this.id = menuDto.getId();
         this.upperMenu = menuDto.getUpperMenu();
         this.menuType = menuDto.getMenuType();
         this.orderNum = menuDto.getOrderNum();
@@ -59,7 +59,7 @@ public class MenuDto {
     }
 
     public void setSubMenus(List<MenuDto> subMenus) {
-        this.subMenus = subMenus;
+        this.subMenus = new ArrayList<>(subMenus);
     }
 
     public boolean hasUpperMenu() {

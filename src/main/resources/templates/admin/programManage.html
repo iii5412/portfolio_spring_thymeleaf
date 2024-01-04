@@ -108,7 +108,7 @@
 </body>
 <script th:type="module">
     import {qs, qsAll, createEl, HTTP_STATUS} from "/js/common/util.js";
-    import {fetchDeleteProgram, fetchSaveProgram, fetchEditProgram} from "/js/apis/menu/program.js";
+    import {fetchDeleteProgram, fetchCreateProgram, fetchEditProgram} from "/js/apis/menu/program.js";
     import {errorAlert, infoAlert} from "/js/common/alert.js";
     import Program from "/js/program/Program.js";
     import {FetchError, FieldFetchError} from "/js/error/fetchError.js";
@@ -191,16 +191,19 @@
                 const url = qs(this.form, '#url').value;
 
                 try {
-                    await fetchSaveProgram({programName, url});
+                    await fetchCreateProgram({programName, url});
                     infoAlert("저장되었습니다.");
                     await this.grid.refreshGrid();
                     this.setNewMode();
                 } catch (e) {
                     if(e instanceof FetchError) {
+                        const fieldFetchError = new FieldFetchError(this.form, e);
                         if(e.status === HTTP_STATUS.CONFLICT) {
                             errorAlert('이미 등록된 URL입니다.');
-                            const fieldFetchError = new FieldFetchError(this.form, e);
                             fieldFetchError.clearMessage(...qsAll(this.form, '#url'));
+                            fieldFetchError.bindingMessage();
+                        } else {
+                            fieldFetchError.clearMessage(...qsAll(this.form, 'input[type="text"]'));
                             fieldFetchError.bindingMessage();
                         }
                     } else {

@@ -1,6 +1,9 @@
 package com.portfolio.main.application.menu.service;
 
 import com.portfolio.main.application.menu.dto.MenuDto;
+import com.portfolio.main.application.menu.dto.MenuManageDto;
+import com.portfolio.main.application.menu.dto.factory.MenuDtoFactory;
+import com.portfolio.main.application.program.exception.DuplicatedProgramUrlException;
 import com.portfolio.main.domain.model.account.type.RoleCode;
 import com.portfolio.main.domain.model.menu.Menu;
 import com.portfolio.main.domain.service.menu.menu.MenuService;
@@ -10,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -42,8 +46,8 @@ public class MenuQueryService {
         final List<Menu> allMenus = menuService.selectMenuByRoleCode(highestRoleCode);
 
         final List<MenuDto> allMenusDto = allMenus.stream().map(MenuDto::new).toList();
-
-        return rebuildHierarchyFromFlatMenuList(allMenusDto);
+        MenuDtoFactory<MenuDto> menuDtoFactory = MenuDto::new;
+        return rebuildHierarchyFromFlatMenuList(allMenusDto, menuDtoFactory);
     }
 
     public List<MenuDto> selectMenu() {
@@ -58,9 +62,9 @@ public class MenuQueryService {
      * @param targetMenus
      * @return
      */
-    public List<MenuDto> rebuildHierarchyFromFlatMenuList(List<MenuDto> targetMenus) {
-        List<MenuDto> topMenus = new ArrayList<>();
-        for (MenuDto menuDto : targetMenus) {
+    public <T extends MenuDto> List<T> rebuildHierarchyFromFlatMenuList(List<T> targetMenus, MenuDtoFactory<T> factory) {
+        List<T> topMenus = new ArrayList<>();
+        for (T menuDto : targetMenus) {
             menuDto.clearSubMenu();
             //상위메뉴를 갖고있지않고, topMenus에 없는 경우만 add
             if (!menuDto.hasUpperMenu()) {
@@ -75,7 +79,7 @@ public class MenuQueryService {
                 targetMenus.stream()
                         .filter(tm -> Objects.equals(tm.getId(), menuDto.getUpperMenu().getId()))
                         .forEach(topMenuDto -> {
-                            final Optional<MenuDto> optionalTopMenu = topMenus.stream()
+                            final Optional<T> optionalTopMenu = topMenus.stream()
                                     .filter(tm -> Objects.equals(tm.getId(), topMenuDto.getId()))
                                     .findAny();
 
@@ -83,7 +87,7 @@ public class MenuQueryService {
                                     tm -> tm.addSubMenu(menuDto),
                                     () ->
                                     {
-                                        MenuDto newTopMenuDto = new MenuDto(topMenuDto);
+                                        T newTopMenuDto = factory.create(topMenuDto); // 팩토리를 사용하여 객체 생성
                                         newTopMenuDto.addSubMenu(menuDto);
                                         topMenus.add(newTopMenuDto);
                                     }

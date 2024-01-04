@@ -20,7 +20,7 @@ public class RoleLevelDto {
         this.id = roleMapperDto.getId();
         this.upperId = roleMapperDto.getUpperId();
         this.roleCode = RoleCode.valueOf(roleMapperDto.getRoleCode());
-        this.roleName = roleCode.name();
+        this.roleName = roleMapperDto.getRoleName();
         this.createdAt = roleMapperDto.getCreatedAt();
         this.updatedAt = roleMapperDto.getUpdatedAt();
         this.level = roleMapperDto.getLevel();

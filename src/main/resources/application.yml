@@ -16,7 +16,7 @@ spring:
     #    url: jdbc:mysql://mysql:3306/tododb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
 #    url: jdbc:mysql://host.docker.internal:3306/portfolio_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
 #    url: jdbc:p6spy:mysql://host.docker.internal:3306/portfolio_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    url: jdbc:p6spy:mysql://13.209.64.105:3306/portfolio_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    url: jdbc:p6spy:mysql://43.200.180.72:3306/portfolio_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
 #    driver-class-name: com.mysql.cj.jdbc.Driver
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver
     username: appuser

@@ -1,9 +1,7 @@
 package com.portfolio.main.application.menu.service;
 
-import com.portfolio.main.application.menu.dto.CreateMenu;
-import com.portfolio.main.application.menu.dto.EditMenu;
-import com.portfolio.main.application.menu.dto.MenuDto;
-import com.portfolio.main.application.menu.dto.SearchMenu;
+import com.portfolio.main.application.menu.dto.*;
+import com.portfolio.main.application.menu.dto.factory.MenuDtoFactory;
 import com.portfolio.main.application.menu.exception.CannotDeleteMenuWithSubmenusException;
 import com.portfolio.main.application.menu.exception.UpperMenuNotFoundException;
 import com.portfolio.main.application.menurole.dto.MenuRoleDto;
@@ -42,10 +40,15 @@ public class MenuManageService {
         this.roleApplicationService = roleApplicationService;
     }
 
-    public List<MenuDto> selectMenu(SearchMenu searchMenu) {
+    public List<MenuManageDto> selectMenu(SearchMenu searchMenu) {
         final List<MenuDto> menus = menuQueryService.selectMenu();
         final List<MenuDto> filterMenus = filterBySearchMenu(menus, searchMenu);
-        return menuQueryService.rebuildHierarchyFromFlatMenuList(filterMenus);
+        final List<MenuRoleDto> topMenuRolesForMenus = menuRoleApplicationService.createTopMenuRolesForMenus(filterMenus.stream().map(MenuDto::getId).toList());
+        final List<MenuManageDto> menuManageDtoList = topMenuRolesForMenus.stream()
+                .map(mr -> new MenuManageDto(mr.getMenuDto(), mr.getRoleDto().getRoleCode()))
+                .toList();
+        MenuDtoFactory<MenuManageDto> menuDtoFactory = MenuManageDto::new;
+        return menuQueryService.rebuildHierarchyFromFlatMenuList(menuManageDtoList, menuDtoFactory);
     }
 
     public List<MenuDto> selectFolderMenus() {

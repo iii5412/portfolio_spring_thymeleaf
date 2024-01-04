@@ -1,5 +1,5 @@
 import {FETCH} from "/js/common/util.js";
-import {roleMapping} from "/js/role/role.js";
+import Role from "/js/role/role.js";
 
 const tag = "[api/role]";
 const requestMapping = '/role';
@@ -40,6 +40,18 @@ async function fetchRoleCodeName() {
     } catch (e) {
         throw e;
     }
+}
+
+function roleMapping(data = []) {
+    const roles = [];
+    data.forEach(r => {
+        const role = new Role(r);
+        if(r.childRoles && r.childRoles.length > 0){
+            role.childRoles = roleMapping(r.childRoles);
+        }
+        roles.push(role);
+    })
+    return roles;
 }
 
 export {getAllRoles, getAllRolesFlat, fetchRoleCodeName}

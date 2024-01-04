@@ -28,6 +28,10 @@ public class ProgramService {
         return programRepository.findById(id).orElseThrow(ProgramNotFoundException::new);
     }
 
+    public Program findByUrl(String url) throws ProgramNotFoundException {
+        return programRepository.findByUrl(url);
+    }
+
     public List<Program> findAll() {
         return programRepository.findAll();
     }

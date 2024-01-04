@@ -61,6 +61,23 @@ async function fetchMenuById(id) {
 }
 
 /**
+ *
+ * @param {number | null} upperId
+ * @param {string} menuName
+ * @param {MENU_TYPE} menuType
+ * @param {number} orderNum
+ * @param {ROLE_CODE} roleCode
+ * @return {Promise<*|undefined>}
+ */
+async function fetchCreateMenu({upperId, menuName, menuType, orderNum, roleCode}) {
+    try {
+        return await FETCH.post(`${requestMapping}`, {upperId, menuName, menuType, orderNum, roleCode});
+    } catch (e) {
+        throw e;
+    }
+}
+
+/**
  * 주어진 메뉴 데이터로부터 메뉴 객체의 배열을 생성합니다.
  *
  * @param {Object[]} menuData - 메뉴 객체를 생성하는 데 사용되는 메뉴 데이터입니다.
@@ -86,7 +103,7 @@ function createMenuFromMenuData(menuData = []) {
  * @return {MainMenu[] | MainMenu} - 데이터에서 매핑되는 메뉴 개체의 배열입니다.
  */
 function mainMenuMapping(data = []) {
-    if(data instanceof Array)
+    if (data instanceof Array)
         return data.map(d => new MainMenu(d));
     else
         return new MainMenu(data);
@@ -99,7 +116,7 @@ function mainMenuMapping(data = []) {
  * @return {ManageMenu[] | ManageMenu} - 데이터에서 매핑되는 메뉴 개체의 배열입니다.
  */
 function manageMenuMapping(data = []) {
-    if(data instanceof Array)
+    if (data instanceof Array)
         return data.map(d => new ManageMenu(d));
     else
         return new ManageMenu(data);
@@ -114,4 +131,4 @@ function folderMenuMapping(data = []) {
     return data.map(d => new FolderMenu(d));
 }
 
-export {fetchMenusByUserRole, fetchAllMenus, fetchMenuById, fetchFolderMenus};
+export {fetchMenusByUserRole, fetchAllMenus, fetchMenuById, fetchFolderMenus, fetchCreateMenu};

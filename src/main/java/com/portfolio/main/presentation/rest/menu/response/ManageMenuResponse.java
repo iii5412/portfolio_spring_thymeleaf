@@ -2,10 +2,12 @@ package com.portfolio.main.presentation.rest.menu.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.portfolio.main.application.menu.dto.MenuDto;
+import com.portfolio.main.application.menu.dto.MenuManageDto;
 import com.portfolio.main.application.program.dto.ProgramDto;
 import com.portfolio.main.domain.model.menu.Program;
 import com.portfolio.main.domain.model.menu.type.MenuType;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +21,8 @@ public class ManageMenuResponse {
     private String upperMenuName;
 
     private Long programId;
+
+    private String roleCode;
 
     private String programName;
 
@@ -38,29 +42,32 @@ public class ManageMenuResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "${locale.timezone}")
     private LocalDateTime updatedAt;
 
-    public ManageMenuResponse(MenuDto menuDto) {
+    public ManageMenuResponse(MenuManageDto menuManageDto) {
 
-        if (menuDto.hasUpperMenu()) {
-            this.upperMenuId = menuDto.getUpperMenu().getId();
-            this.upperMenuName = menuDto.getUpperMenu().getMenuName();
+        if (menuManageDto.hasUpperMenu()) {
+            this.upperMenuId = menuManageDto.getUpperMenu().getId();
+            this.upperMenuName = menuManageDto.getUpperMenu().getMenuName();
         }
 
-        this.id = menuDto.getId();
-        this.menuName = menuDto.getMenuName();
-        this.menuType = menuDto.getMenuType();
-        this.orderNum = menuDto.getOrderNum();
-        this.createdAt = menuDto.getCreatedAt();
-        this.updatedAt = menuDto.getUpdatedAt();
+        this.id = menuManageDto.getId();
+        this.menuName = menuManageDto.getMenuName();
+        this.menuType = menuManageDto.getMenuType();
+        this.roleCode = menuManageDto.getRoleCode().name();
+        this.orderNum = menuManageDto.getOrderNum();
+        this.createdAt = menuManageDto.getCreatedAt();
+        this.updatedAt = menuManageDto.getUpdatedAt();
 
-        if (menuDto.hasSubMenus())
-            this.subMenus = menuDto.getSubMenus().stream().map(ManageMenuResponse::new).toList();
+        if (menuManageDto.hasSubMenus())
+            this.subMenus = menuManageDto.getSubMenus().stream()
+                    .map(ManageMenuResponse::new).toList();
 
-        if (menuDto.hasProgram()) {
-            final ProgramDto program = menuDto.getProgram();
+        if (menuManageDto.hasProgram()) {
+            final ProgramDto program = menuManageDto.getProgram();
             this.programId = program.getId();
             this.programName = program.getProgramName();
         }
 
-        this.lastModifiedByLoginId = menuDto.getLastModifiedByUser().getLoginId();
+        this.lastModifiedByLoginId = menuManageDto.getLastModifiedByUser().getLoginId();
     }
+
 }

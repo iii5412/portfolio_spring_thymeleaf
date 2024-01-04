@@ -1,15 +1,13 @@
 package com.portfolio.main.presentation.rest.menu;
 
+import com.portfolio.main.application.menu.dto.*;
 import com.portfolio.main.application.menu.service.MenuManageService;
+import com.portfolio.main.application.menurole.service.MenuRoleApplicationService;
 import com.portfolio.main.presentation.rest.menu.request.EditMenuRequest;
 import com.portfolio.main.presentation.rest.menu.response.FolderMenusResponse;
 import com.portfolio.main.presentation.rest.menu.response.MainMenuResponse;
 import com.portfolio.main.presentation.rest.menu.response.ManageMenuResponse;
 import com.portfolio.main.presentation.rest.response.SuccResponse;
-import com.portfolio.main.application.menu.dto.CreateMenu;
-import com.portfolio.main.application.menu.dto.EditMenu;
-import com.portfolio.main.application.menu.dto.MenuDto;
-import com.portfolio.main.application.menu.dto.SearchMenu;
 import com.portfolio.main.application.menu.service.MenuQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +45,7 @@ public class MenuController {
 
     @GetMapping("/all")
     public ResponseEntity<List<ManageMenuResponse>> getAllMenuFlat(SearchMenu searchMenu) {
-        final List<MenuDto> menuDtos = menuManageService.selectMenu(searchMenu);
+        final List<MenuManageDto> menuDtos = menuManageService.selectMenu(searchMenu);
         final List<ManageMenuResponse> mainMenuResponseList = menuDtos.stream().map(ManageMenuResponse::new).toList();
         return ResponseEntity.ok(mainMenuResponseList);
     }
@@ -77,9 +75,10 @@ public class MenuController {
     }
 
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<Long> createMenu(@AuthenticationPrincipal UserDetails userDetails, @RequestBody CreateMenu createMenu) {
         createMenu.setCreateUserLoginId(userDetails.getUsername());
+        createMenu.validate();
         final Long savedMenuId = menuManageService.createMenu(createMenu);
         return ResponseEntity.ok(savedMenuId);
     }

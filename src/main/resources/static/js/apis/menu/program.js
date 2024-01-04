@@ -47,7 +47,7 @@ async function fetchManageProgram(searchParam = {}, page = 1, size = 10, sortFie
  * @return {Promise} POST 요청의 응답 데이터를 해결하는 Promise입니다.
  * 요청이 실패하면 Promise는 오류와 함께 거부됩니다.
  */
-function fetchSaveProgram({programName, url}) {
+function fetchCreateProgram({programName, url}) {
     return FETCH.post(`${requstMapping}`, {programName, url});
 }
 
@@ -80,4 +80,4 @@ function programMapping(data = []) {
     return data.map(d => new Program(d));
 }
 
-export {fetchAllProgram, fetchManageProgram, fetchSaveProgram, fetchEditProgram, fetchDeleteProgram, programMapping};
+export {fetchAllProgram, fetchManageProgram, fetchCreateProgram, fetchEditProgram, fetchDeleteProgram, programMapping};

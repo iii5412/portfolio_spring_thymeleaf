@@ -48,7 +48,7 @@
             </div>
         </div>
         <div class="right">
-            <div id="menuEditForm">
+            <form id="menuEditForm">
                 <input th:type="text" id="id" name="id">
                 <div class="grid-container">
                     <div class="grid-header">
@@ -64,7 +64,7 @@
                     <div class="grid-cell">
                         <input type="text" name="upperId" id="upperId" class="readonly" readonly>
                         <input type="text" name="upperMenuName" id="upperMenuName" class="readonly" readonly>
-                        <input th:type="button" id="findUpperMenuBtn" value="돋보기" />
+                        <input th:type="button" id="findUpperMenuBtn" value="돋보기"/>
                         <div class="field-error-message" data-target="upperId"></div>
                         <div class="field-error-message" data-target="upperMenuName"></div>
                     </div>
@@ -80,12 +80,21 @@
                         <div class="field-error-message" data-target="menuType"></div>
                     </div>
                     <div class="grid-header">
+                        <label for="roleCode">권한</label>
+                    </div>
+                    <div class="grid-cell">
+                        <select id="roleCode" name="roleCode">
+                            <option value="">선택하세요</option>
+                        </select>
+                        <div class="field-error-message" data-target="roleCode"></div>
+                    </div>
+                    <div class="grid-header">
                         <label for="programName">프로그램</label>
                     </div>
                     <div class="grid-cell">
                         <input type="text" name="programId" id="programId" class="readonly" readonly>
                         <input type="text" name="programName" id="programName" class="readonly" readonly>
-                        <input th:type="button" id="findProgramBtn" value="돋보기" />
+                        <input th:type="button" id="findProgramBtn" value="돋보기"/>
                         <div class="field-error-message" data-target="programId"></div>
                         <div class="field-error-message" data-target="programName"></div>
                     </div>
@@ -111,7 +120,8 @@
                         <label for="lastModifiedByLoginId">수정자</label>
                     </div>
                     <div class="grid-cell">
-                        <input th:type="text" id="lastModifiedByLoginId" name="lastModifiedByLoginId" class="readonly" readonly>
+                        <input th:type="text" id="lastModifiedByLoginId" name="lastModifiedByLoginId" class="readonly"
+                               readonly>
                     </div>
                     <div class="grid-header">
                         <label for="updatedAt">수정일</label>
@@ -122,18 +132,20 @@
                 </div>
                 <div class="rightBtnArea">
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
 </body>
 <script th:type="module">
-    import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/+esm';
-    import {fetchAllMenus, fetchMenuById, fetchFolderMenus} from "/js/apis/menu/menu.js";
-    import {qs, qsAll, lpad, createEl} from "/js/common/util.js";
-    import {createColumn, COLUMN_TYPE, createField} from "/js/realgrid/gridUtil.js";
-    import {infoAlert} from "/js/common/alert.js";
+    import {fetchAllMenus, fetchFolderMenus, fetchMenuById, fetchCreateMenu} from "/js/apis/menu/menu.js";
     import {fetchAllProgram} from "/js/apis/menu/program.js";
+    import {createEl, lpad, qs, qsAll} from "/js/common/util.js";
+    import {COLUMN_TYPE, createColumn, createField} from "/js/realgrid/gridUtil.js";
+    import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/+esm';
+    import {errorAlert, infoAlert} from "/js/common/alert.js";
+    import {FetchError, FieldFetchError} from "/js/error/fetchError.js";
+    import {fetchRoleCodeName} from "/js/apis/account/role.js";
 
     function setTreeId(data = []) {
 
@@ -141,7 +153,7 @@
             let result = [];
             data.forEach(d => {
                 result.push(d);
-                if(d.hasChildren()) {
+                if (d.hasChildren()) {
                     result = result.concat(getFlatData(d.getChildren()));
                 }
             })
@@ -171,7 +183,9 @@
         return flatData;
     }
 
-    function setTreeName(data = [], fetchTreeName = (d) => {return ''}) {
+    function setTreeName(data = [], fetchTreeName = (d) => {
+        return ''
+    }) {
         data.forEach(d => {
             d.treeName = fetchTreeName(d);
         })
@@ -181,6 +195,7 @@
     class EditForm {
         container;
         btnArea;
+
         /**
          *
          * @param {Element} container
@@ -225,6 +240,12 @@
             qsAll(this.container, 'select').forEach(select => select.value = "");
         }
 
+        #getFormData() {
+            const formData = new FormData(this.container);
+            const formDataArray = Array.from(formData.entries());
+            return Object.fromEntries(formDataArray);
+        }
+
         #clearBtn() {
             qsAll(this.btnArea, 'input[type="button"]').forEach(button => button.remove());
         }
@@ -232,8 +253,22 @@
         #createNewBtn() {
             const btn = createEl('input', {id: 'addBtn', type: 'button', value: '추가'});
             btn.addEventListener('click', async () => {
-
-            })
+                try {
+                    const formData = this.#getFormData();
+                    await fetchCreateMenu(formData);
+                    infoAlert('저장되었습니다.');
+                    this.setNewMode();
+                } catch (e) {
+                    if (e instanceof FetchError) {
+                        const fieldFetchError = new FieldFetchError(this.form, e);
+                        fieldFetchError.clearMessage(...qsAll(this.form, 'input[type="text"], select'));
+                        fieldFetchError.bindingMessage();
+                    } else {
+                        errorAlert("저장에 실패하였습니다. 잠시 후 다시 시도해주세요.");
+                        throw e;
+                    }
+                }
+            });
             this.btnArea.appendChild(btn);
         }
 
@@ -260,7 +295,6 @@
             })
             this.btnArea.appendChild(btn);
         }
-
 
 
     }
@@ -301,11 +335,12 @@
     document.addEventListener('DOMContentLoaded', async () => {
         const menus = await fetchAllMenus();
         const container = qs(document, '#content');
+        const editForm_form = qs(container, '#menuEditForm')
         const gridContainer = qs(container, '#grid');
         const treeProvider = new RealGrid.LocalTreeDataProvider();
         const treeView = new RealGrid.TreeView(gridContainer);
-        const editForm = new EditForm(qs(document, '#menuEditForm'));
-
+        const editForm = new EditForm(editForm_form);
+        const roleCodes = await fetchRoleCodeName();
         const showUpperMenuDialog = () => {
             const swal = Swal;
             swal.fire({
@@ -405,24 +440,28 @@
             })
         }
 
+        const roleCodeSelect = qs(container, '#roleCode');
+        for(const roleCode of roleCodes) {
+            roleCodeSelect.innerHTML += `<option value="${roleCode.getRoleCode()}">${roleCode.getRoleName()}</option>`
+        }
 
         drawGrid(menus, treeView, treeProvider);
         treeView.onCellClicked = (grid, clickData) => {
-            if(clickData.cellType === 'gridEmpty')
+            if (clickData.cellType === 'gridEmpty')
                 return false;
             const {id} = grid.getDataSource().getJsonRow(clickData.dataRow);
 
             editForm.setEditMode(id);
         };
 
+        editForm_form.addEventListener('submit', (e) => e.preventDefault());
+
         qs(container, '#findUpperMenuBtn').addEventListener('click', showUpperMenuDialog);
 
         qs(container, '#findProgramBtn').addEventListener('click', showProgramListDialog);
 
-
-
+        //TODO: 권한 select 생성 및 option 바인딩
     });
-
 
 
 </script>

@@ -43,6 +43,8 @@ public class RoleApplicationService {
         return new RoleLevelDto(byIdFlat);
     }
 
+
+
     public List<RoleDto> findAll() {
         return roleService.findAll().stream().map(RoleDto::new).toList();
     }
@@ -51,4 +53,6 @@ public class RoleApplicationService {
         final Role byId = roleService.findById(id);
         return new RoleDto(byId);
     }
+
+
 }

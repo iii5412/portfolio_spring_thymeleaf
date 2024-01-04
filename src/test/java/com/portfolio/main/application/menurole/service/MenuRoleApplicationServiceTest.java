@@ -48,19 +48,6 @@ class MenuRoleApplicationServiceTest {
     }
 
     @Test
-    void createTopMenuRolesForMenus() {
-        //given
-        final PageRequest pageable = PageRequest.of(0, 10);
-        final List<MenuDto> menus = menuQueryService.selectMenu();
-
-        //when
-        final List<MenuRoleDto> topMenuRolesForMenus = menuRoleApplicationService.createTopMenuRolesForMenus(menus.stream().map(MenuDto::getId).toList());
-
-        //then
-        topMenuRolesForMenus.forEach(MenuRoleDto -> assertEquals(RoleCode.ROLE_ADMIN, MenuRoleDto.getRoleDto().getRoleCode()));
-    }
-
-    @Test
     void changeRole() {
         final List<MenuDto> menuDtos = menuQueryService.selectMenu();
         final MenuDto menuDto = menuDtos.get(0);

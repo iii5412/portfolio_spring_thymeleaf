@@ -53,29 +53,6 @@ public class MenuRoleApplicationService {
         }
     }
 
-    /**
-     * 메뉴별 최상위 권한을 찾아 MenuRole을 생성 및 반환한다.
-     * @param menuIds
-     * @return List<MenuRole>
-     */
-    public List<MenuRoleDto> createTopMenuRolesForMenus(List<Long> menuIds) {
-        List<MenuRoleDto> topMenuRoles = new ArrayList<>();
-
-        for (Long menuId : menuIds) {
-            List<MenuRole> menuRoles = menuRoleService.findByMenuId(menuId);
-
-            menuRoles.stream()
-                    .map(menuRole -> new AbstractMap.SimpleEntry<>(menuRole, roleApplicationService.findByIdFlat(menuRole.getRole().getId())))
-                    .min(Comparator.comparing(entry -> entry.getValue().getLevel()))
-                    .ifPresent(entry -> {
-                        topMenuRoles.add(new MenuRoleDto(entry.getKey()));
-                    });
-        }
-
-        return topMenuRoles;
-    }
-
-
     public void changeRole(MenuDto menuDto, RoleCode roleCode) {
         final Long menuId = menuDto.getId();
         final Menu menu = menuService.findById(menuDto.getId());

@@ -1,14 +1,11 @@
 package com.portfolio.main.application.menu.service;
 
+import com.portfolio.main.application.menu.dto.*;
 import com.portfolio.main.application.program.service.ProgramManageService;
 import com.portfolio.main.application.program.service.ProgramQueryService;
 import com.portfolio.main.domain.model.account.type.RoleCode;
 import com.portfolio.main.presentation.rest.TestAuth;
 import com.portfolio.main.domain.model.menu.Menu;
-import com.portfolio.main.application.menu.dto.CreateMenu;
-import com.portfolio.main.application.menu.dto.EditMenu;
-import com.portfolio.main.application.menu.dto.MenuDto;
-import com.portfolio.main.application.menu.dto.SearchMenu;
 import com.portfolio.main.application.program.dto.CreateProgram;
 import com.portfolio.main.application.menu.exception.CannotDeleteMenuWithSubmenusException;
 import com.portfolio.main.domain.model.menu.exception.MenuNotFoundException;
@@ -52,7 +49,7 @@ class MenuManageServiceTest {
     @Test
     void selectMenu() {
         final SearchMenu searchMenu = SearchMenu.builder().build();
-        final List<MenuDto> menuDtos = menuManageService.selectMenu(searchMenu);
+        final List<MenuManageDto> menuDtos = menuManageService.selectMenu(searchMenu);
         assertEquals(1, menuDtos.size());
     }
 
@@ -77,7 +74,7 @@ class MenuManageServiceTest {
         String newChildMenuName = "테스트메뉴";
 
         //given
-        final List<MenuDto> menus = menuManageService.selectMenu(SearchMenu.builder().menuName(paretnMenuName).build());
+        final List<MenuManageDto> menus = menuManageService.selectMenu(SearchMenu.builder().menuName(paretnMenuName).build());
         final MenuDto parentMenu = menus.get(0);
         assertEquals(parentMenu.getId(), 1L);
         final CreateMenu createMenu = new CreateMenu(parentMenu.getId(), newChildMenuName, MenuType.PROGRAM,  3L, RoleCode.ROLE_ADMIN, testModifiedBy);
@@ -86,7 +83,7 @@ class MenuManageServiceTest {
         menuManageService.createMenu(createMenu);
 
         //then
-        final List<MenuDto> afterMenus = menuManageService.selectMenu(SearchMenu.builder().menuName(paretnMenuName).build());
+        final List<MenuManageDto> afterMenus = menuManageService.selectMenu(SearchMenu.builder().menuName(paretnMenuName).build());
         final MenuDto findParentMenu = afterMenus.get(0);
         final Optional<MenuDto> findSavedMenu = findParentMenu.getSubMenus().stream().filter(menu -> menu.getMenuName().equals(newChildMenuName)).findFirst();
 
@@ -96,7 +93,7 @@ class MenuManageServiceTest {
     @Test
     void whenDeleteMenuWithSubmenus_thenExceptionIsThrown() {
         String targetMenuName = "환경설정";
-        final List<MenuDto> menus = menuManageService.selectMenu(SearchMenu.builder().menuName(targetMenuName).build());
+        final List<MenuManageDto> menus = menuManageService.selectMenu(SearchMenu.builder().menuName(targetMenuName).build());
         final MenuDto targetMenu = menus.get(0);
         assertEquals(targetMenu.getId(), 1L);
 

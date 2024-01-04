@@ -1,7 +1,6 @@
 package com.portfolio.main.domain.model.menu;
 
 import com.portfolio.main.domain.model.account.User;
-import com.portfolio.main.application.menu.dto.EditMenu;
 import com.portfolio.main.domain.model.menu.type.MenuType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -42,6 +41,9 @@ public class Menu {
     @JoinColumn(name = "program_id")
     private Program program;
 
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MenuRole> menuRoles = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "last_modified_by", referencedColumnName = "id")
     private User lastModifiedByUser;
@@ -73,7 +75,7 @@ public class Menu {
         this.lastModifiedByUser = lastModifiedBy;
     }
 
-    public void addSubMenu(Menu subMenu){
+    public void addSubMenu(Menu subMenu) {
         this.subMenus.add(subMenu);
         this.subMenus.sort(Comparator.comparing(Menu::getOrderNum));
     }
@@ -96,13 +98,13 @@ public class Menu {
 
 
     public void setUpperMenu(Menu newUpperMenu) {
-        if(this.upperMenu != null && !this.upperMenu.equals(newUpperMenu)){
+        if (this.upperMenu != null && !this.upperMenu.equals(newUpperMenu)) {
             this.upperMenu.removeSubMenu(this);
         }
 
         this.upperMenu = newUpperMenu;
 
-        if(newUpperMenu != null) {
+        if (newUpperMenu != null) {
             newUpperMenu.addSubMenu(this);
         }
     }
@@ -118,7 +120,7 @@ public class Menu {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         final Menu menu = (Menu) o;
         return Objects.equals(id, menu.getId());
     }
@@ -136,4 +138,5 @@ public class Menu {
         this.program = program;
         setUpperMenu(upperMenu);
     }
+
 }

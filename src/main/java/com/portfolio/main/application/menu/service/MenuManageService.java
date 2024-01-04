@@ -7,6 +7,7 @@ import com.portfolio.main.application.menu.exception.UpperMenuNotFoundException;
 import com.portfolio.main.application.menurole.dto.MenuRoleDto;
 import com.portfolio.main.application.menurole.service.MenuRoleApplicationService;
 import com.portfolio.main.application.role.dto.RoleDto;
+import com.portfolio.main.application.role.dto.RoleLevelDto;
 import com.portfolio.main.application.role.service.RoleApplicationService;
 import com.portfolio.main.domain.model.account.exception.RoleNotFoundException;
 import com.portfolio.main.domain.model.account.type.RoleCode;
@@ -15,9 +16,7 @@ import com.portfolio.main.domain.service.menu.menu.MenuService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Service
@@ -43,10 +42,21 @@ public class MenuManageService {
     public List<MenuManageDto> selectMenu(SearchMenu searchMenu) {
         final List<MenuDto> menus = menuQueryService.selectMenu();
         final List<MenuDto> filterMenus = filterBySearchMenu(menus, searchMenu);
-        final List<MenuRoleDto> topMenuRolesForMenus = menuRoleApplicationService.createTopMenuRolesForMenus(filterMenus.stream().map(MenuDto::getId).toList());
-        final List<MenuManageDto> menuManageDtoList = topMenuRolesForMenus.stream()
-                .map(mr -> new MenuManageDto(mr.getMenuDto(), mr.getRoleDto().getRoleCode()))
-                .toList();
+
+        final List<MenuManageDto> menuManageDtoList = filterMenus.stream()
+                .map(fm -> fm.getRoles().stream()
+                        .map(roleDto -> roleApplicationService.findByIdFlat(roleDto.getId()))
+                        .min(Comparator.comparing(RoleLevelDto::getLevel))
+                        .map(roleLevelDto ->
+                                new MenuManageDto(fm, roleLevelDto.getRoleCode()))
+                        .orElseGet(() -> new MenuManageDto(fm, null))
+                ).toList();
+
+//
+//        final List<MenuRoleDto> topMenuRolesForMenus = menuRoleApplicationService.createTopMenuRolesForMenus(filterMenus.stream().map(MenuDto::getId).toList());
+//        final List<MenuManageDto> menuManageDtoList = topMenuRolesForMenus.stream()
+//                .map(mr -> new MenuManageDto(mr.getMenuDto(), mr.getRoleDto().getRoleCode()))
+//                .toList();
         MenuDtoFactory<MenuManageDto> menuDtoFactory = MenuManageDto::new;
         return menuQueryService.rebuildHierarchyFromFlatMenuList(menuManageDtoList, menuDtoFactory);
     }

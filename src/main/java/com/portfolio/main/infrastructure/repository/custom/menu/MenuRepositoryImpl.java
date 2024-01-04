@@ -84,10 +84,13 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
     private JPAQuery<Menu> menuJPAQuery() {
         QMenu qMenu = QMenu.menu;
         QProgram qProgram = QProgram.program;
+        final QMenuRole qMenuRole = QMenuRole.menuRole;
 
         return queryFactory
                 .selectFrom(qMenu)
-                .leftJoin(qMenu.program, qProgram).fetchJoin();
+                .leftJoin(qMenu.program, qProgram)
+                .leftJoin(qMenu.menuRoles, qMenuRole)
+                .fetchJoin();
     }
 
 }

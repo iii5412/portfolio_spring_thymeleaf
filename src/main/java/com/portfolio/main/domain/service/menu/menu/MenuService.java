@@ -7,18 +7,19 @@ import com.portfolio.main.application.menu.dto.MenuDto;
 import com.portfolio.main.application.menu.dto.SearchMenu;
 import com.portfolio.main.application.menu.exception.CannotDeleteMenuWithSubmenusException;
 import com.portfolio.main.application.menu.exception.UpperMenuNotFoundException;
-import com.portfolio.main.application.menurole.dto.SaveMenuRole;
 import com.portfolio.main.common.util.page.PageResult;
 import com.portfolio.main.domain.model.account.Role;
 import com.portfolio.main.domain.model.account.User;
 import com.portfolio.main.domain.model.account.exception.RoleNotFoundException;
 import com.portfolio.main.domain.model.account.type.RoleCode;
 import com.portfolio.main.domain.model.menu.Menu;
+import com.portfolio.main.domain.model.menu.MenuRole;
 import com.portfolio.main.domain.model.menu.Program;
 import com.portfolio.main.domain.model.menu.exception.MenuCannotBeOwnParentException;
 import com.portfolio.main.domain.model.menu.exception.MenuNotFoundException;
 import com.portfolio.main.domain.model.menu.exception.ProgramNotFoundException;
 import com.portfolio.main.domain.repository.menu.MenuRepository;
+import com.portfolio.main.domain.repository.menu.MenuRoleRepository;
 import com.portfolio.main.domain.service.account.UserService;
 import com.portfolio.main.domain.service.account.role.RoleService;
 import com.portfolio.main.domain.service.menu.menurole.MenuRoleService;
@@ -29,6 +30,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -63,7 +65,8 @@ public class MenuService {
     }
 
     public List<Menu> selectMenuByRoleCode(RoleCode roleCode) {
-        return menuRepository.selectMenuByRoleCode(roleCode);
+        final List<Menu> menus = menuRepository.selectMenuByRoleCode(roleCode);
+        return getTopMenus(menus);
     }
 
     public PageResult<Menu> selectMenuWithPageable(SearchMenu searchMenu, PageRequest pageRequest) {
@@ -71,7 +74,19 @@ public class MenuService {
     }
 
     public List<Menu> selectMenu() {
-        return menuRepository.selectMenu();
+        final List<Menu> menus = menuRepository.selectMenu();
+        return getTopMenus(menus);
+    }
+
+    public List<Menu> selectMenuFlat() {
+        final List<Menu> menus = selectMenu();
+
+        List<Menu> flattenedMenus = new ArrayList<>();
+        for (Menu menu : menus) {
+            addMenuAndDescendants(flattenedMenus, menu);
+        }
+
+        return flattenedMenus;
     }
 
     @Transactional
@@ -97,15 +112,15 @@ public class MenuService {
         final Role role = roleService.findByRoleCode(roleCode);
 
         menuRoleService.save(savedMenu, role);
-
         return savedMenu.getId();
     }
 
+    @Transactional
     public Long edit(EditMenu editMenu) throws MenuNotFoundException, ProgramNotFoundException, InvalidLoginId {
         final Long targetMenuId = editMenu.getId();
         final Menu targetMenu = menuRepository.findById(targetMenuId).orElseThrow(MenuNotFoundException::new);
 
-        if(Objects.equals(editMenu.getId(), editMenu.getUpperId())){
+        if (Objects.equals(editMenu.getId(), editMenu.getUpperId())) {
             throw new MenuCannotBeOwnParentException();
         }
 
@@ -139,34 +154,46 @@ public class MenuService {
         menuRepository.deleteById(id);
     }
 
-    private Menu convertToMenu(MenuDto menuDto) {
-        final Long userId = menuDto.getLastModifiedByUser().getId();
-        final User user = userService.findByUserId(userId);
-        Program program = null;
-
-        if (menuDto.hasProgram()) {
-            final Long programId = menuDto.getProgram().getId();
-            program = programService.findById(programId);
-        }
-
-        final Menu menu = new Menu(
-                menuDto.getId(),
-                menuDto.hasUpperMenu() ? convertToMenu(menuDto.getUpperMenu()) : null,
-                menuDto.getMenuName(),
-                menuDto.getMenuType(),
-                menuDto.getOrderNum(),
-                program,
-                user,
-                null
-        );
-
-        if (menuDto.hasSubMenus()) {
-            menuDto.getSubMenus().stream()
-                    .map(this::convertToMenu)
-                    .forEach(menu::addSubMenu);
-        }
-
-        return menu;
+    private List<Menu> getTopMenus(List<Menu> menus) {
+        return menus.stream().filter(menu -> !menu.hasUpperMenu()).toList();
     }
+
+    private void addMenuAndDescendants(List<Menu> flattenedMenus, Menu menu) {
+        flattenedMenus.add(menu);
+
+        for (Menu subMenu : menu.getSubMenus()) {
+            addMenuAndDescendants(flattenedMenus, subMenu);
+        }
+    }
+
+//    private Menu convertToMenu(MenuDto menuDto) {
+//        final Long userId = menuDto.getLastModifiedByUser().getId();
+//        final User user = userService.findByUserId(userId);
+//        Program program = null;
+//
+//        if (menuDto.hasProgram()) {
+//            final Long programId = menuDto.getProgram().getId();
+//            program = programService.findById(programId);
+//        }
+//
+//        final Menu menu = new Menu(
+//                menuDto.getId(),
+//                menuDto.hasUpperMenu() ? convertToMenu(menuDto.getUpperMenu()) : null,
+//                menuDto.getMenuName(),
+//                menuDto.getMenuType(),
+//                menuDto.getOrderNum(),
+//                program,
+//                user,
+//                null
+//        );
+//
+//        if (menuDto.hasSubMenus()) {
+//            menuDto.getSubMenus().stream()
+//                    .map(this::convertToMenu)
+//                    .forEach(menu::addSubMenu);
+//        }
+//
+//        return menu;
+//    }
 
 }

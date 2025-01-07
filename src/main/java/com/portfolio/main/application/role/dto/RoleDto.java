@@ -2,6 +2,7 @@ package com.portfolio.main.application.role.dto;
 
 import com.portfolio.main.domain.model.account.Role;
 import com.portfolio.main.domain.model.account.type.RoleCode;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ public class RoleDto {
     private Long upperId;
     private RoleCode roleCode;
     private String roleName;
+    private Integer level;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<RoleDto> childRoles = new ArrayList<>();
@@ -27,6 +29,7 @@ public class RoleDto {
 
         this.roleCode = role.getRoleCode();
         this.roleName = role.getRoleName();
+        this.level = role.getLevel();
         this.createdAt = role.getCreatedAt();
         this.updatedAt = role.getUpdatedAt();
 

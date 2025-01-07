@@ -20,31 +20,6 @@ public class RoleApplicationService {
         this.roleService = roleService;
     }
 
-    public List<RoleLevelDto> findAllFlat() {
-        return roleService.findAllFlat().stream().map(RoleLevelDto::new).toList();
-    }
-
-    public List<RoleLevelDto> findFlattenedAboveLevel(Integer level) {
-        return roleService.findFlattenedAboveLevel(level).stream().map(RoleLevelDto::new).toList();
-    }
-
-    public RoleDto findByRoleCode(RoleCode roleCode) {
-        final Role role = roleService.findByRoleCode(roleCode);
-        return new RoleDto(role);
-    }
-
-    public RoleLevelDto findByRoleCodeFlat(RoleCode roleCode) {
-        final RoleMapperDto roleMapperDto = roleService.findByRoleCodeFlat(roleCode);
-        return new RoleLevelDto(roleMapperDto);
-    }
-
-    public RoleLevelDto findByIdFlat(Long id) {
-        final RoleMapperDto byIdFlat = roleService.findByIdFlat(id);
-        return new RoleLevelDto(byIdFlat);
-    }
-
-
-
     public List<RoleDto> findAll() {
         return roleService.findAll().stream().map(RoleDto::new).toList();
     }
@@ -54,5 +29,16 @@ public class RoleApplicationService {
         return new RoleDto(byId);
     }
 
+    public List<RoleDto> findAllFlat() {
+        return roleService.findAllFlat().stream().map(RoleDto::new).toList();
+    }
 
+    public List<RoleDto> findFlattenedAboveLevel(Integer level) {
+        return roleService.findFlattenedAboveLevel(level).stream().map(RoleDto::new).toList();
+    }
+
+    public RoleDto findByRoleCode(RoleCode roleCode) {
+        final Role role = roleService.findByRoleCode(roleCode);
+        return new RoleDto(role);
+    }
 }

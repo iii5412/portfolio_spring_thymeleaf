@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-<!--     콘솔 애펜더 정의-->
+    <!-- 콘솔 애펜더 정의 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <!-- 로그 메시지의 포맷 설정 -->
         <encoder>
@@ -9,13 +9,30 @@
         </encoder>
     </appender>
 
+    <!-- P6Spy 로그 설정 -->
+    <logger name="com.p6spy" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
     <!-- MyBatis 로그 설정 -->
-    <logger name="p6spy" level="DEBUG"/>
+    <logger name="org.mybatis" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="org.apache.ibatis" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <!-- Hibernate 관련 로그 설정 -->
+    <logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="org.hibernate.type.descriptor.sql" level="TRACE" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
 
     <!-- 애플리케이션의 기본 로그 레벨 설정 -->
     <root level="DEBUG">
         <!-- 콘솔 애펜더 사용 -->
         <appender-ref ref="STDOUT"/>
     </root>
-
 </configuration>

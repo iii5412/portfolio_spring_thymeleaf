@@ -21,7 +21,7 @@ public class ProgramManageService {
 
     public Long create(CreateProgram createProgram) {
 
-        if(!isUrlPresent(createProgram.getUrl()))
+        if(isUrlPresent(createProgram.getUrl()))
             throw new DuplicatedProgramUrlException();
 
         return programService.createProgram(createProgram);

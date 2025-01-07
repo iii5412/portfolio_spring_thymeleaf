@@ -49,7 +49,7 @@ async function fetchFolderMenus() {
 /**
  *
  * @param id
- * @return {Promise<ManageMenu[]>}
+ * @return {Promise<ManageMenu>}
  */
 async function fetchMenuById(id) {
     try {

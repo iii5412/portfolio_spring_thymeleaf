@@ -32,8 +32,16 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
 
     @Override
     public List<Menu> selectMenu() {
-        final JPAQuery<Menu> menuJPAQuery = menuJPAQuery();
-        return menuJPAQuery.fetch();
+        QMenu qMenu = QMenu.menu;
+        QProgram qProgram = QProgram.program;
+        final QMenuRole qMenuRole = QMenuRole.menuRole;
+
+        return queryFactory
+                .selectFrom(qMenu)
+                .leftJoin(qMenu.program, qProgram)
+                .leftJoin(qMenu.menuRoles, qMenuRole)
+                .fetchJoin()
+                .fetch();
     }
 
     @Override
@@ -42,11 +50,10 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
         final QRole qRole = QRole.role;
         final QMenuRole qMenuRole = QMenuRole.menuRole;
 
-        final JPAQuery<Menu> menuJPAQuery = menuJPAQuery();
-
-        return menuJPAQuery
-                .join(qMenuRole).on(qMenuRole.menu.eq(qMenu))
-                .join(qMenuRole).on(qMenuRole.role.eq(qRole))
+        return queryFactory
+                .selectFrom(qMenu)
+                .join(qMenu.menuRoles, qMenuRole)
+                .join(qMenuRole.role, qRole)
                 .where(qRole.roleCode.eq(roleCode))
                 .fetch();
     }
@@ -79,18 +86,6 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
                 .totalCount(totalCount)
                 .build();
 
-    }
-
-    private JPAQuery<Menu> menuJPAQuery() {
-        QMenu qMenu = QMenu.menu;
-        QProgram qProgram = QProgram.program;
-        final QMenuRole qMenuRole = QMenuRole.menuRole;
-
-        return queryFactory
-                .selectFrom(qMenu)
-                .leftJoin(qMenu.program, qProgram)
-                .leftJoin(qMenu.menuRoles, qMenuRole)
-                .fetchJoin();
     }
 
 }

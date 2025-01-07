@@ -2,7 +2,15 @@ import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/+esm';
 import NotImplementedError from "/js/error/NotImplementedError.js";
 
 const tag = "[Alert]";
+
+/**
+ * @class Alert
+ */
 class Alert {
+    /**
+     *
+     * @param message
+     */
     constructor(message) {
         this.message = message;
         // this.showAlert();
@@ -13,51 +21,91 @@ class Alert {
     }
 }
 
+/**
+ * @class InfoAlert
+ */
 class InfoAlert extends Alert {
+    /**
+     *
+     * @param message
+     */
     constructor(message) {
         super(message);
     }
 
+    /**
+     *
+     * @return {Swal}
+     */
     showAlert() {
-        Swal.fire({
+        return Swal.fire({
             text: this.message,
             icon: 'info',
         });
     }
 }
 
+/**
+ * @class WarnAlert
+ */
 class WarnAlert extends Alert {
+    /**
+     *
+     * @param message
+     */
     constructor(message) {
         super(message);
     }
-
+    /**
+     *
+     * @return {Swal}
+     */
     showAlert() {
-        Swal.fire({
+        return Swal.fire({
             text: this.message,
             icon: 'warning',
         });
     }
 }
 
+/**
+ * @class ErrorAlert
+ */
 class ErrorAlert extends Alert {
+    /**
+     *
+     * @param message
+     */
     constructor(message) {
         super(message);
     }
-
+    /**
+     *
+     * @return {Swal}
+     */
     showAlert() {
-        Swal.fire({
+        return Swal.fire({
             text: this.message,
             icon: 'error',
         });
     }
 }
 
+/**
+ * @class SuccAlert
+ */
 class SuccAlert extends Alert {
-
+    /**
+     *
+     * @param message
+     */
     constructor(message) {
         super(message);
     }
-
+    /**
+     *
+     * @return {Swal}
+     */
     showAlert() {
         return Swal.fire({
             text: this.message,
@@ -66,13 +114,24 @@ class SuccAlert extends Alert {
     }
 }
 
+/**
+ * @class CustomAlert
+ */
 class CustomAlert extends Alert {
     options = {};
+
+    /**
+     *
+     * @param options
+     */
     constructor(options) {
         super('');
         this.options = options;
     }
-
+    /**
+     *
+     * @return {Swal}
+     */
     showAlert() {
         return Swal.fire(this.options);
     }
@@ -84,11 +143,14 @@ const infoAlert = message => {
 }
 
 const warnAlert = message => {
-    new WarnAlert(message);
+    const alert = new WarnAlert(message);
+    return alert.showAlert();
 }
 
 const errorAlert = message => {
-    new ErrorAlert(message);
+    const alert = new ErrorAlert(message);
+    return alert.showAlert();
+
 }
 
 const succAlert = message => {

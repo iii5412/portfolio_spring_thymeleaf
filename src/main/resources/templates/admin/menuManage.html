@@ -223,6 +223,7 @@
             qs(this.container, '#upperId').value = menu.getUpperId();
             qs(this.container, '#upperMenuName').value = menu.getUpperMenuName();
             qs(this.container, '#menuType').value = menu.getMenuType();
+            qs(this.container, '#roleCode').value = menu.getRoleCode();
             qs(this.container, '#programId').value = menu.getProgramId();
             qs(this.container, '#programName').value = menu.getProgramName();
             qs(this.container, '#orderNum').value = menu.getOrderNum();
@@ -459,8 +460,6 @@
         qs(container, '#findUpperMenuBtn').addEventListener('click', showUpperMenuDialog);
 
         qs(container, '#findProgramBtn').addEventListener('click', showProgramListDialog);
-
-        //TODO: 권한 select 생성 및 option 바인딩
     });
 
 

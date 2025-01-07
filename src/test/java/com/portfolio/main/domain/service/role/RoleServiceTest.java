@@ -1,5 +1,6 @@
 package com.portfolio.main.domain.service.role;
 
+import com.portfolio.main.application.menu.dto.MenuManageDto;
 import com.portfolio.main.domain.model.account.Role;
 import com.portfolio.main.infrastructure.repository.mapper.role.dto.RoleMapperDto;
 import com.portfolio.main.domain.service.account.role.RoleService;
@@ -22,7 +23,7 @@ class RoleServiceTest {
 
     @Test
     void findAllRolesFlat() {
-        final List<RoleMapperDto> all = roleService.findAllFlat();
+        final List<Role> all = roleService.findAllFlat();
         assertFalse(all.isEmpty());
     }
 

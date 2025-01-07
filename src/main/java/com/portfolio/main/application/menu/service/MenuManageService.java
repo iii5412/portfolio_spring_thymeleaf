@@ -1,13 +1,11 @@
 package com.portfolio.main.application.menu.service;
 
 import com.portfolio.main.application.menu.dto.*;
-import com.portfolio.main.application.menu.dto.factory.MenuDtoFactory;
 import com.portfolio.main.application.menu.exception.CannotDeleteMenuWithSubmenusException;
 import com.portfolio.main.application.menu.exception.UpperMenuNotFoundException;
 import com.portfolio.main.application.menurole.dto.MenuRoleDto;
 import com.portfolio.main.application.menurole.service.MenuRoleApplicationService;
 import com.portfolio.main.application.role.dto.RoleDto;
-import com.portfolio.main.application.role.dto.RoleLevelDto;
 import com.portfolio.main.application.role.service.RoleApplicationService;
 import com.portfolio.main.domain.model.account.exception.RoleNotFoundException;
 import com.portfolio.main.domain.model.account.type.RoleCode;
@@ -17,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -40,25 +39,19 @@ public class MenuManageService {
     }
 
     public List<MenuManageDto> selectMenu(SearchMenu searchMenu) {
-        final List<MenuDto> menus = menuQueryService.selectMenu();
-        final List<MenuDto> filterMenus = filterBySearchMenu(menus, searchMenu);
+        final List<MenuDto> flatMenus = menuQueryService.selectMenuFlat();
+        final List<MenuDto> filterMenus = filterBySearchMenu(flatMenus, searchMenu);
 
         final List<MenuManageDto> menuManageDtoList = filterMenus.stream()
-                .map(fm -> fm.getRoles().stream()
-                        .map(roleDto -> roleApplicationService.findByIdFlat(roleDto.getId()))
-                        .min(Comparator.comparing(RoleLevelDto::getLevel))
-                        .map(roleLevelDto ->
-                                new MenuManageDto(fm, roleLevelDto.getRoleCode()))
-                        .orElseGet(() -> new MenuManageDto(fm, null))
-                ).toList();
+                .map(this::menuDtoToMenuManageDto)
+                .toList();
 
-//
-//        final List<MenuRoleDto> topMenuRolesForMenus = menuRoleApplicationService.createTopMenuRolesForMenus(filterMenus.stream().map(MenuDto::getId).toList());
-//        final List<MenuManageDto> menuManageDtoList = topMenuRolesForMenus.stream()
-//                .map(mr -> new MenuManageDto(mr.getMenuDto(), mr.getRoleDto().getRoleCode()))
-//                .toList();
-        MenuDtoFactory<MenuManageDto> menuDtoFactory = MenuManageDto::new;
-        return menuQueryService.rebuildHierarchyFromFlatMenuList(menuManageDtoList, menuDtoFactory);
+        return rebuildHierarchyFromFlatMenuList(menuManageDtoList);
+    }
+
+    public MenuManageDto findById(Long id) {
+        final MenuDto byId = menuQueryService.findById(id);
+        return menuDtoToMenuManageDto(byId);
     }
 
     public List<MenuDto> selectFolderMenus() {
@@ -118,7 +111,7 @@ public class MenuManageService {
         for (MenuDto menuDto : filteredMenus) {
             filteredMenusChildren = menus.stream()
                     .filter(MenuDto::hasUpperMenu)
-                    .filter(menu -> Objects.equals(menu.getUpperMenu().getId(), menuDto.getId()))
+                    .filter(menu -> Objects.equals(menu.getUpperMenuId(), menuDto.getId()))
                     .toList();
 
         }
@@ -126,6 +119,41 @@ public class MenuManageService {
         return Stream
                 .concat(filteredMenus.stream(), filteredMenusChildren.stream())
                 .distinct().toList();
+    }
+
+    private MenuManageDto menuDtoToMenuManageDto(MenuDto menuDto) {
+        return menuDto.getRoles().stream()
+                .map(roleDto -> roleApplicationService.findById(roleDto.getId()))
+                .min(Comparator.comparing(RoleDto::getLevel))
+                .map(roleLevelDto ->
+                        new MenuManageDto(menuDto))
+                .orElseGet(() -> new MenuManageDto(menuDto));
+    }
+
+    /**
+     * 평탄화된 MenuManageDto 컬렉션을 계층 구조로 변경하여 반환한다.
+     *
+     * @param flattenedMenus
+     * @return
+     */
+    public List<MenuManageDto> rebuildHierarchyFromFlatMenuList(List<MenuManageDto> flattenedMenus) {
+        final Map<Long, MenuManageDto> menuMap = flattenedMenus.stream()
+                .collect(Collectors.toMap(MenuManageDto::getId, menu -> menu));
+
+        List<MenuManageDto> topMenus = new ArrayList<>();
+
+        for (MenuManageDto menuManageDto : flattenedMenus) {
+            if (!menuManageDto.hasUpperMenu()) {
+                topMenus.add(menuManageDto);
+            } else {
+                final MenuManageDto parent = menuMap.get(menuManageDto.getUpperMenuId());
+                if (parent != null) {
+                    parent.addSubMenu(menuManageDto);
+                }
+            }
+        }
+
+        return topMenus;
     }
 
 }

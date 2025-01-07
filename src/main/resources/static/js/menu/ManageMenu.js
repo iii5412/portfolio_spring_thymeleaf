@@ -6,7 +6,7 @@ const tag = `[ManageMenu]`;
 export default class ManageMenu extends AbstractTreeNode {
 
     constructor({
-                    id, menuName, menuType, orderNum, subMenus, upperMenuId, upperMenuName
+                    id, menuName, menuType, roleCode, orderNum, subMenus, upperMenuId, upperMenuName
                     , programId, programName
                     , lastModifiedByLoginId, createdAt, updatedAt
                 }) {
@@ -20,7 +20,7 @@ export default class ManageMenu extends AbstractTreeNode {
             subMenus = [];
 
         Object.assign(this, {
-            id, menuName, menuType, orderNum, subMenus, upperMenuId, upperMenuName
+            id, menuName, menuType, roleCode, orderNum, subMenus, upperMenuId, upperMenuName
             , programId, programName
             , lastModifiedByLoginId, createdAt, updatedAt
         })
@@ -56,6 +56,10 @@ export default class ManageMenu extends AbstractTreeNode {
 
     getMenuType() {
         return this.menuType;
+    }
+
+    getRoleCode() {
+        return this.roleCode;
     }
 
     getUpperName() {

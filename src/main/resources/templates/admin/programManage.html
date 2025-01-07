@@ -154,6 +154,12 @@
             this.status = this.FORM_STATE.CLEAR;
             qsAll(this.form, 'input[type="text"]').forEach(input => input.value = '');
             qsAll(this.form, 'input[type="button"]').forEach(button => button.remove());
+            this.errorClear();
+        }
+
+        errorClear() {
+            const fieldFetchError = new FieldFetchError(this.form);
+            fieldFetchError.clearMessage(...qsAll(this.form, 'input[type="text"]'));
         }
 
         setNewMode() {
@@ -189,7 +195,6 @@
             btn.addEventListener('click', async () => {
                 const programName = qs(this.form, '#programName').value;
                 const url = qs(this.form, '#url').value;
-
                 try {
                     await fetchCreateProgram({programName, url});
                     infoAlert("저장되었습니다.");

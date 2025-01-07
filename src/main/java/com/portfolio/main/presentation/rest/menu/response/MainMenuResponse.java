@@ -29,7 +29,7 @@ public class MainMenuResponse {
     public MainMenuResponse(MenuDto menuDto) {
 
         if (menuDto.hasUpperMenu()) {
-            this.upperMenuId = menuDto.getUpperMenu().getId();
+            this.upperMenuId = menuDto.getUpperMenuId();
         }
 
         this.id = menuDto.getId();

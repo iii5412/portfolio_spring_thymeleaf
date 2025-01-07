@@ -33,14 +33,14 @@ public class RoleController {
 
     @GetMapping("/flat")
     public ResponseEntity<List<RoleResponse>> getAllRolesFlat() {
-        final List<RoleLevelDto> allRolesFlat = roleApplicationService.findAllFlat();
+        final List<RoleDto> allRolesFlat = roleApplicationService.findAllFlat();
         final List<RoleResponse> responses = allRolesFlat.stream().map(RoleResponse::new).toList();
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/roleCodeNames")
     public ResponseEntity<List<RoleCodeNameResponse>> getAllRolesCodeNames() {
-        final List<RoleLevelDto> allRoles = roleApplicationService.findAllFlat();
+        final List<RoleDto> allRoles = roleApplicationService.findAllFlat();
         final List<RoleCodeNameResponse> responses = allRoles.stream().map(RoleCodeNameResponse::new).toList();
 
         return ResponseEntity.ok(responses);

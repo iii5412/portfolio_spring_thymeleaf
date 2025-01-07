@@ -44,10 +44,12 @@ class FieldFetchError {
      */
     constructor(target, fetchError) {
         this.target = target;
-        this.status = fetchError.status;
-        this.serverMessage = fetchError.serverMessage;
-        this.validation = fetchError.validation;
         this.fieldError = new FieldError(target);
+        if(fetchError) {
+            this.status = fetchError.status;
+            this.serverMessage = fetchError.serverMessage;
+            this.validation = fetchError.validation;
+        }
     }
 
     bindingMessage() {

@@ -19,7 +19,7 @@ public class FolderMenusResponse {
         this.menuName = menuDto.getMenuName();
 
         if(menuDto.hasUpperMenu()) {
-            this.upperId = menuDto.getUpperMenu().getId();
+            this.upperId = menuDto.getUpperMenuId();
         }
 
         if(menuDto.hasSubMenus()) {

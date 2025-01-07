@@ -39,6 +39,9 @@ public class Role {
     @OneToMany(mappedBy = "upperRole", cascade = CascadeType.ALL)
     private List<Role> childRoles = new ArrayList<>();
 
+    @Transient
+    private Integer level = 1;
+
     public boolean hasUpperRole() {
         return this.upperRole != null;
     }
@@ -47,4 +50,13 @@ public class Role {
         return !this.childRoles.isEmpty();
     }
 
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevels(int currentLevel) {
+        this.level = currentLevel;
+        for(Role childRole : this.childRoles)
+            childRole.setLevels(currentLevel + 1);
+    }
 }

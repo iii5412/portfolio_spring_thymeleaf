@@ -18,6 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * 사용자와 관련된 작업을 수행하는 서비스 클래스입니다.
+ * 이 클래스는 필요한 UserRepository, UserRoleService, RoleService 및 BCryptPasswordEncoder를 주입받아서 사용하며,
+ * 사용자를 찾는 검색, 사용자 등록, 로그인 정보의 검증 등 다양한 메서드를 제공합니다.
+ */
 @Service
 @Transactional
 public class UserService {

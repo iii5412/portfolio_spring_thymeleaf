@@ -8,6 +8,9 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
+/**
+ * 메뉴 검색
+ */
 @Getter
 @Setter
 public class SearchMenu extends PageDto {

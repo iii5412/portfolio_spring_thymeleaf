@@ -38,20 +38,37 @@ public class MenuManageService {
         this.roleApplicationService = roleApplicationService;
     }
 
+    /**
+     * 일련의 단계를 거쳐 SearchMenu params를 기반으로 계층적 MenuManageDto 객체 List를 반환한다.
+     * - 1단계: 전체 메뉴를 평탄화된 (모든 메뉴가 동일한 레벨에 있는) MenuDto List로 받아온다.
+     * - 2단계: SearchMenu params를 기반으로 해당 평탄화된 메뉴 List 내에서 필요한 항목들만 필터링한다.
+     * - 3단계: 필터된 각각의 MenuDto들을 MenuManageDto로 변환한다. 이 과정에서 각각 메뉴 진행상의 메뉴들은 같은 level에 위치한다(아직 계층적 구조화 X)
+     * - 4단계: Convert된 메뉴 객체들을 기존 계층적 구조대로 재배열하고 결과를 반환한다.
+     */
     public List<MenuManageDto> selectMenu(SearchMenu searchMenu) {
+        // Step 1
         final List<MenuDto> flatMenus = menuQueryService.selectMenuFlat();
-        final List<MenuDto> filterMenus = filterBySearchMenu(flatMenus, searchMenu);
-
-        final List<MenuManageDto> menuManageDtoList = filterMenus.stream()
+        // Step 2
+        final List<MenuDto> filteredMenus = filterBySearchMenu(flatMenus, searchMenu);
+        // Step 3
+        final List<MenuManageDto> flattenMenuManageDtos = filteredMenus.stream()
                 .map(this::menuDtoToMenuManageDto)
+                .filter(menuManageDto -> !menuManageDto.hasUpperMenu())
                 .toList();
+        // Step 4
+        final List<MenuManageDto> menuManageDtos = rebuildHierarchyFromFlatMenuList(flattenMenuManageDtos);
 
-        return rebuildHierarchyFromFlatMenuList(menuManageDtoList);
+        return menuManageDtos;
     }
-
+    /**
+     * 특정 ID를 가진 MenuManageDto 객체를 찾아 반환하는 메서드.
+     *
+     * @param id 찾고자 하는 메뉴의 Unique한 식별자인 ID.
+     * @return 찾은 MenuManageDto 객체. 만약 해당 ID 값을 가진 메뉴가 없을 경우 null 반환.
+     */
     public MenuManageDto findById(Long id) {
-        final MenuDto byId = menuQueryService.findById(id);
-        return menuDtoToMenuManageDto(byId);
+        final MenuDto findMenu = menuQueryService.findById(id);
+        return menuDtoToMenuManageDto(findMenu);
     }
 
     public List<MenuDto> selectFolderMenus() {
@@ -126,8 +143,7 @@ public class MenuManageService {
                 .map(roleDto -> roleApplicationService.findById(roleDto.getId()))
                 .min(Comparator.comparing(RoleDto::getLevel))
                 .map(roleLevelDto ->
-                        new MenuManageDto(menuDto))
-                .orElseGet(() -> new MenuManageDto(menuDto));
+                        new MenuManageDto(menuDto)).orElseGet(() -> new MenuManageDto(menuDto));
     }
 
     /**
@@ -136,7 +152,7 @@ public class MenuManageService {
      * @param flattenedMenus
      * @return
      */
-    public List<MenuManageDto> rebuildHierarchyFromFlatMenuList(List<MenuManageDto> flattenedMenus) {
+    private List<MenuManageDto> rebuildHierarchyFromFlatMenuList(List<MenuManageDto> flattenedMenus) {
         final Map<Long, MenuManageDto> menuMap = flattenedMenus.stream()
                 .collect(Collectors.toMap(MenuManageDto::getId, menu -> menu));
 
@@ -155,5 +171,6 @@ public class MenuManageService {
 
         return topMenus;
     }
+
 
 }

@@ -34,6 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * 메뉴 작업을 위한 서비스 클래스입니다.
+ */
 @Service
 public class MenuService {
     private final MenuRepository menuRepository;
@@ -64,6 +67,12 @@ public class MenuService {
         return menuRepository.findById(id).orElseThrow(MenuNotFoundException::new);
     }
 
+    /**
+     * 주어진 RoleCode에 따라 메뉴 목록을 검색합니다.
+     *
+     * @param roleCode 메뉴를 검색할 역할 코드
+     * @return 역할이 액세스할 수 있는 최상위 메뉴 목록
+     */
     public List<Menu> selectMenuByRoleCode(RoleCode roleCode) {
         final List<Menu> menus = menuRepository.selectMenuByRoleCode(roleCode);
         return getTopMenus(menus);
@@ -89,6 +98,15 @@ public class MenuService {
         return flattenedMenus;
     }
 
+    /**
+     * 제공된 정보를 기반으로 새 메뉴를 만듭니다.
+     *
+     * @param createMenu 생성할 메뉴의 세부정보가 포함된 객체입니다.
+     * 상위 메뉴ID, 메뉴명, 메뉴종류, 주문번호, 역할코드, 작성자 로그인ID가 포함되어야 합니다.
+     * @return 새로 생성된 메뉴의 ID입니다.
+     * @throws UpperMenuNotFoundException createMenu에 지정된 상위 메뉴를 찾을 수 없는 경우.
+     * @throws RoleNotFoundException createMenu에 지정된 역할을 찾을 수 없는 경우.
+     */
     @Transactional
     public Long createMenu(CreateMenu createMenu) throws UpperMenuNotFoundException, RoleNotFoundException {
         final String createUserLoginId = createMenu.getCreateUserLoginId();

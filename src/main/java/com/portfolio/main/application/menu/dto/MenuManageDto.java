@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -31,6 +32,13 @@ public class MenuManageDto {
 
     public MenuManageDto(MenuDto menuDto) {
         this.id = menuDto.getId();
+        this.menuType = menuDto.getMenuType();
+        this.orderNum = menuDto.getOrderNum();
+        this.program = menuDto.getProgram();
+        this.menuName = menuDto.getMenuName();
+        this.lastModifiedByUser = menuDto.getLastModifiedByUser();
+        this.createdAt = menuDto.getCreatedAt();
+        this.updatedAt = menuDto.getUpdatedAt();
 
         if (menuDto.hasUpperMenu()) {
 //            this.upperMenu = new MenuManageDto(menuDto.getUpperMenu());
@@ -38,7 +46,7 @@ public class MenuManageDto {
         }
 
         if (menuDto.hasSubMenus()) {
-            final List<MenuManageDto> subMenus = menuDto.getSubMenus().stream().map(MenuManageDto::new).toList();
+            final List<MenuManageDto> subMenus = menuDto.getSubMenus().stream().map(MenuManageDto::new).collect(Collectors.toList());
             this.setSubMenus(subMenus);
         }
 
@@ -54,7 +62,7 @@ public class MenuManageDto {
     }
 
     public boolean hasSubMenus() {
-        return this.subMenus.isEmpty();
+        return !this.subMenus.isEmpty();
     }
 
     public boolean hasProgram() {
@@ -65,8 +73,8 @@ public class MenuManageDto {
         return this.upperMenuId != null;
     }
 
-    public void addSubMenu(MenuManageDto suMenuManageDto) {
-        this.subMenus.add(suMenuManageDto);
+    public void addSubMenu(MenuManageDto subMenuManageDto) {
+        this.subMenus.add(subMenuManageDto);
         this.subMenus.sort(Comparator.comparing(MenuManageDto::getOrderNum));
     }
 }

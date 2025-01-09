@@ -128,7 +128,7 @@ class MenuControllerTest {
         final String token = testAuth.setUserAdminAndGetToken();
         final Long testMenuId = 2L;
         final MenuDto testTargetMenu = menuQueryService.findById(testMenuId);
-        final EditMenuRequest editMenu = new EditMenuRequest(testTargetMenu.getId(), testTargetMenu.getUpperMenu().getId(), "테스트", MenuType.FOLDER, 99L, null, RoleCode.ROLE_ADMIN);
+        final EditMenuRequest editMenu = new EditMenuRequest(testTargetMenu.getId(), testTargetMenu.getUpperMenuId(), "테스트", MenuType.FOLDER, 99L, null, RoleCode.ROLE_ADMIN);
         final String editMenuString = objectMapper.writeValueAsString(editMenu);
 
         mockMvc.perform(

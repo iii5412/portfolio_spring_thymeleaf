@@ -55,7 +55,7 @@ public class TestAuth {
         String token = "";
 
         if(type.equals(USER_ADMIN)) {
-            loginPw = "6212";
+            loginPw = "1234";
         } else if(type.equals(USER_USER)) {
             loginPw = "1234";
         }

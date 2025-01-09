@@ -44,7 +44,7 @@ public class MenuController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ManageMenuResponse>> getAllMenuFlat(SearchMenu searchMenu) {
+    public ResponseEntity<List<ManageMenuResponse>> getAllMenus(SearchMenu searchMenu) {
         final List<MenuManageDto> menuDtos = menuManageService.selectMenu(searchMenu);
         final List<ManageMenuResponse> mainMenuResponseList = menuDtos.stream().map(ManageMenuResponse::new).toList();
         return ResponseEntity.ok(mainMenuResponseList);

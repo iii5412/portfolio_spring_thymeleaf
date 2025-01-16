@@ -61,7 +61,6 @@ public class MenuController {
     @GetMapping("/{id}")
     public ResponseEntity<ManageMenuResponse> findMenu(@PathVariable Long id) {
         final MenuManageDto findMenu = menuManageService.findById(id);
-
         return ResponseEntity.ok(new ManageMenuResponse(findMenu));
     }
 

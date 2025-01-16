@@ -2,9 +2,14 @@ import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/+esm';
 import NotImplementedError from "/js/error/NotImplementedError.js";
 
 const tag = "[Alert]";
-
 /**
- * @class Alert
+ * `Alert` 클래스는 경고 메시지를 생성하고 표시하는 역할을 합니다.
+ *
+ * @example
+ * const alert = new Alert('This is an alert message');
+ * alert.showAlert();  // Displays alert message
+ *
+ * @class
  */
 class Alert {
     /**

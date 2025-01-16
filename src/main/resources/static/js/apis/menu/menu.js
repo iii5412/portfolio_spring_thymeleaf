@@ -77,11 +77,13 @@ async function fetchCreateMenu({upperId, menuName, menuType, orderNum, roleCode}
     }
 }
 
+
+
 /**
- * 주어진 메뉴 데이터로부터 메뉴 객체의 배열을 생성합니다.
+* 주어진 메뉴 데이터로부터 메뉴 구조를 생성합니다.
  *
- * @param {Object[]} menuData - 메뉴 객체를 생성하는 데 사용되는 메뉴 데이터입니다.
- * @return {MainMenu[]} - 메뉴 객체의 배열입니다.
+ * @param {Object[]} menuData - 메뉴를 생성할 메뉴 데이터입니다.
+ * @return {Object[]} - 생성된 메뉴 구조.
  */
 function createMenuFromMenuData(menuData = []) {
     const result = [];
@@ -97,10 +99,10 @@ function createMenuFromMenuData(menuData = []) {
 }
 
 /**
- * 데이터 개체 배열을 MainMenu 개체 배열로 매핑합니다.
+ * 주어진 데이터 객체를 MainMenu 객체로 매핑합니다.
  *
- * @param {Object[] | Object} data - 매핑할 데이터 개체의 배열입니다.
- * @return {MainMenu[] | MainMenu} - 데이터에서 매핑되는 메뉴 개체의 배열입니다.
+ * @param {Object[] | Object} data - 매핑할 데이터 객체 또는 데이터 객체의 배열입니다.
+ * @returns {MainMenu[] | MainMenu} - 주어진 데이터에서 매핑된 MainMenu 객체 또는 MainMenu 객체의 배열을 반환합니다.
  */
 function mainMenuMapping(data = []) {
     if (data instanceof Array)

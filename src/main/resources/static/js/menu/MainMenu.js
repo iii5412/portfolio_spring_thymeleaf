@@ -1,63 +1,20 @@
 import AbstractTreeNode from "/js/common/AbstractTreeNode.js";
+import Menu from "/js/menu/Menu.js";
 
 const tag = `[MainMenu]`;
-export default class MainMenu extends AbstractTreeNode {
-    constructor({
-            id, upperMenuId, menuName, programUrl, menuType, orderNum, subMenus
-                }) {
+export default class MainMenu extends Menu {
 
-        super();
-
-        if(!subMenus)
-            subMenus = [];
-
-        Object.assign(this, {id, upperMenuId, menuName, programUrl, menuType, orderNum, subMenus})
-    }
-
-    getId() {
-        return this.id;
-    }
-
-    hasUpper() {
-        return !!this.getUpperId();
-    }
-
-    hasChildren() {
-        return this.subMenus.length > 0
+    constructor({id, upperMenuId, menuName, programUrl, menuType, orderNum, subMenus = []}) {
+        super({id, upperMenuId, menuName, programUrl, menuType, orderNum, subMenus});
     }
 
     /**
-     * 하위 Menu data를 Menu객체로 변환 후 반환한다.
-     * @return {MainMenu[]}
+     * MainMenu 개체의 배열로 하위 메뉴를 반환합니다.
+     *
+     * @return {MainMenu[]} 하위 메뉴를 나타내는 MainMenu 개체의 배열.
      */
     getChildren() {
         return this.subMenus.map(sm => new MainMenu(sm));
     }
 
-    getUpperId() {
-        return this.upperMenuId;
-    }
-
-    setSubMenus(subMenus) {
-        this.subMenus = subMenus;
-    }
-
-    /**
-     * @return {boolean}
-     */
-    isProgramMenu() {
-        return this.menuType === MENU_TYPE.PROGRAM;
-    }
-
-    isFolderMenu() {
-        return this.menuType === MENU_TYPE.FOLDER;
-    }
-
-    getMenuName() {
-        return this.menuName;
-    }
-
-    getProgramUrl() {
-        return this.programUrl;
-    }
 }

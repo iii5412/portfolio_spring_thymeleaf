@@ -1,42 +1,20 @@
-import AbstractTreeNode from "/js/common/AbstractTreeNode.js";
+import Menu from "js/menu/Menu.js";
+import {MENU_TYPE} from "/js/menu/menuConstants.js"
 
-export default class FolderMenu extends AbstractTreeNode {
-
-    constructor({id, menuName, upperId, subMenus}) {
-        super();
-
+export default class FolderMenu extends Menu {
+    constructor({id, upperId, menuName, orderNum, subMenus = []}) {
         if(!subMenus)
             subMenus = [];
 
-        Object.assign(this, {id, menuName, upperId, subMenus});
-    }
-
-    /**
-     * @return {Number}
-     */
-    getId() {
-        return this.id;
-    }
-
-    /**
-     * @return {String}
-     */
-    getMenuName() {
-        return this.menuName;
-    }
-
-    /**
-     * @return {boolean}
-     */
-    hasUpper() {
-        return !!this.upperId;
-    }
-
-    /**
-     * @return {boolean}
-     */
-    hasChildren() {
-        return this.subMenus.length > 0
+        super({
+            id,
+            upperMenuId: upperId,
+            menuName,
+            programUrl: null,
+            menuType: MENU_TYPE.FOLDER,
+            orderNum,
+            subMenus
+        });
     }
 
     /**
@@ -44,13 +22,6 @@ export default class FolderMenu extends AbstractTreeNode {
      */
     getChildren() {
         return this.subMenus.map(sm => new FolderMenu(sm));
-    }
-
-    /**
-     * @return {Number}
-     */
-    getUpperId() {
-        return this.upperId;
     }
 
 }

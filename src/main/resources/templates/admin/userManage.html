@@ -3,12 +3,31 @@
 <link rel="stylesheet" th:href="@{/css/common.css}"/>
 
 <style>
+    .userManageContent {
+        display: flex;
+    }
 </style>
 
 <body>
 <div id="content" class="ifrm-content">
+    <div class="userManageContent">
+        <div>
+            <div id="searchForm">
+                <label for="searchKeyword">사용자 검색:</label>
+                <input type="text" name="searchKeyword" id="searchKeyword" placeholder="사용자 명 또는 아이디"/>
+            </div>
+        </div>
+        <div id="grid" style="height: 470px;"></div>
+    </div>
 </div>
 </body>
 <script th:type="module">
+    import {fetchAllUserInfo} from "/js/apis/user/user.js";
+
+    const tag = `[userManage]`;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchAllUserInfo();
+    })
 
 </script>

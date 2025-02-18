@@ -1,4 +1,5 @@
 import {createEl, qs, qsAll} from "/js/common/util.js";
+const fieldErrorMessageClass = "invalid-feedback";
 
 export default class FieldError {
     constructor(target) {
@@ -7,13 +8,13 @@ export default class FieldError {
 
     #createMessageArea(elId) {
         const div = createEl('div');
-        div.classList.add('field-error-message');
+        div.classList.add(`${fieldErrorMessageClass}`);
         div.dataset.target = elId;
         return div;
     }
 
     getMessageArea(elId) {
-        let findArea = qsAll(this.target, '.field-error-message').find(el => el.dataset.target === elId);
+        let findArea = qsAll(this.target, `.${fieldErrorMessageClass}`).find(el => el.dataset.target === elId);
         if(!findArea) {
             const el = qs(this.target, '#' + elId);
             findArea = this.#createMessageArea(elId);

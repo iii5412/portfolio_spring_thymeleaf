@@ -5,19 +5,26 @@ import {COLUMN_TYPE, createColumn, createField} from "/js/realgrid/gridUtil.js";
 const tag = '[ProgramGrid]';
 
 export default class ProgramGrid {
+    container;
+    gridId;
+    searchForm;
+    pagination;
+
     searchParam = {};
     size = 20;
     gridView;
     gridProvider;
 
     /**
-     * 클래스의 새 인스턴스를 초기화하기 위한 생성자.
      *
-     * @param {Element} searchForm - 검색 양식 요소입니다.
+     * @param {HTMLElement} container
+     * @param {string} gridId
+     * @param {HTMLElement} searchForm - 검색 양식 요소입니다.
      * @param {Pagination} pagination - Pagination 개체입니다.
      */
-    constructor(container, searchForm, pagination) {
+    constructor(container, gridId, searchForm, pagination) {
         this.container = container;
+        this.gridId = gridId;
         this.searchForm = searchForm;
         this.pagination = pagination;
     }
@@ -38,7 +45,7 @@ export default class ProgramGrid {
      * @return {Promise<void>}
      */
     #drawGrid(programList, programCount) {
-        const gridContainer = qs(this.container, '#grid');
+        const gridContainer = qs(this.container, `#${this.gridId}`);
         const gridProvider = new RealGrid.LocalDataProvider(false);
         const gridView = new RealGrid.GridView(gridContainer);
 

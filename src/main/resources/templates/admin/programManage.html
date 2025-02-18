@@ -115,12 +115,10 @@
     import Pagination from "/js/common/Pagination.js";
     import ProgramGrid from "/js/program/ProgramGrid.js";
 
+const tag = '[programManage]';
 
-    const tag = '[programManage]';
-
-
-    class EditForm {
-        FORM_STATE = {
+class EditForm {
+FORM_STATE = {
             'CLEAR': 'clear',
             'EDIT': 'edit',
         }
@@ -287,13 +285,14 @@
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
+        console.log(`Grid => ${Grid}`);
         const container = qs(document, '#content');
         const searchForm = qs(container, '#searchForm');
         const searchBtn = qs(searchForm, '#searchBtn');
         const searchInput = qs(searchForm, '#searchInput');
 
         const pagination = new Pagination(qs(container, '.pagination'));
-        const grid = new ProgramGrid(container, searchForm, pagination);
+        const grid = new ProgramGrid(container, 'grid', searchForm, pagination);
         await grid.init();
 
         new EditForm(container, grid);

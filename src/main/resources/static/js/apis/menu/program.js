@@ -4,7 +4,7 @@ import RequiredValueError from "/js/error/RequiredValueError.js";
 import Program from "/js/program/Program.js";
 
 const tag = "[api/program]";
-const requstMapping = "/program";
+const requestMapping = "/program";
 
 /**
  * 모든 프로그램을 가져옵니다.
@@ -12,7 +12,7 @@ const requstMapping = "/program";
  */
 async function fetchAllProgram() {
     try {
-        const response = await FETCH.get(`${requstMapping}`);
+        const response = await FETCH.get(`${requestMapping}`);
         return programMapping(response);
     } catch (e) {
         throw e;
@@ -31,7 +31,7 @@ async function fetchAllProgram() {
  */
 async function fetchManageProgram(searchParam = {}, page = 1, size = 10, sortFields = [], sorts = []) {
     try {
-        const responseJson = await FETCH.get(`${requstMapping}/manage?${toQueryString(searchParam)}&page=${page}&size=${size}&sortFields=${sortFields.join(',')}&sorts=${sorts.join(',')}`);
+        const responseJson = await FETCH.get(`${requestMapping}/manage?${toQueryString(searchParam)}&page=${page}&size=${size}&sortFields=${sortFields.join(',')}&sorts=${sorts.join(',')}`);
         return new PageResult(responseJson);
     } catch (e) {
         throw e;
@@ -48,7 +48,7 @@ async function fetchManageProgram(searchParam = {}, page = 1, size = 10, sortFie
  * 요청이 실패하면 Promise는 오류와 함께 거부됩니다.
  */
 function fetchCreateProgram({programName, url}) {
-    return FETCH.post(`${requstMapping}`, {programName, url});
+    return FETCH.post(`${requestMapping}`, {programName, url});
 }
 
 /**
@@ -63,13 +63,13 @@ function fetchCreateProgram({programName, url}) {
 function fetchEditProgram({id, programName, url}) {
     if(!id)
         throw RequiredValueError('id');
-    return FETCH.patch(`${requstMapping}`, {id, programName, url})
+    return FETCH.patch(`${requestMapping}`, {id, programName, url})
 }
 
 function fetchDeleteProgram(id) {
     if(!id)
         throw RequiredValueError('id');
-    return FETCH.delete(`${requstMapping}`, {id});
+    return FETCH.delete(`${requestMapping}`, {id});
 }
 
 /**

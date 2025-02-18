@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>메인페이지</title>
-    <script th:type="module" th:src="@{/js/common/util.js}"></script>
-    <link rel="stylesheet" th:href="@{/css/common.css}"/>
-    <link rel="stylesheet" th:href="@{/css/layout.css}"/>
-    <link rel="stylesheet" th:href="@{/css/menu/menu.css}"/>
+<!--    <script th:type="module" th:src="@{/js/common/util.js}"></script>-->
+<!--    <link rel="stylesheet" th:href="@{/css/common.css}"/>-->
+<!--    <link rel="stylesheet" th:href="@{/css/layout.css}"/>-->
+<!--    <link rel="stylesheet" th:href="@{/css/menu/menu.css}"/>-->
+
 </head>
 <body>
 <div class="layout">
-    <div id="header" th:replace="fragments/header :: header"></div>
-    <div id="menu" th:replace="fragments/menu :: menu"></div>
-    <div class="row">
-        <section id="ifr_content" class="content"></section>
+    <div id="header" class="header" th:replace="fragments/header :: header"></div>
+    <div id="menu" class="menu" th:replace="fragments/menu :: menu"></div>
+    <div class="content">
+        <div id="ifr_content" class="card p-3">
     </div>
 </div>
 </body>
@@ -24,7 +25,7 @@
     import {loadContent} from "/js/common/common.js";
 
     async function getMenus() {
-        const nav = qs(document, '.menu-nav');
+        const nav = qs(document, '.nav');
         const leftMenuArea = qs(document, '.leftMenuArea');
         const menus = new Menus(nav, leftMenuArea);
         await menus.init();

@@ -60,6 +60,7 @@ public class SecurityConfig {
                 )
 //                .addFilterAfter(new AuthorizationFilter(customAuthorizationManager()), JwtAuthorizationFilter.class)
                 .exceptionHandling()
+                .accessDeniedPage("/404")
                 .authenticationEntryPoint((request, response, authException) -> {
                     final ErrorResponse errorResponse = ErrorResponse.builder()
                             .code(String.valueOf(HttpServletResponse.SC_UNAUTHORIZED))

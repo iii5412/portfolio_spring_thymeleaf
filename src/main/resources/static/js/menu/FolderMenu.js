@@ -1,4 +1,4 @@
-import Menu from "js/menu/Menu.js";
+import Menu from "/js/menu/Menu.js";
 import {MENU_TYPE} from "/js/menu/menuConstants.js"
 
 export default class FolderMenu extends Menu {

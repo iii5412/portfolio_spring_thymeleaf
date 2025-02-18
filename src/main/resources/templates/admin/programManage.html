@@ -7,7 +7,7 @@
 <script src="/js/realgrid/realgrid.2.7.2/realgrid-lic.js"></script>
 <script src="/js/realgrid/realgrid.2.7.2/realgrid.2.7.2.min.js"></script>
 <script src="/js/realgrid/realgrid.2.7.2/libs/jszip.min.js"></script>
-
+<script src="/js/tuigrid/tui-grid.min.js"></script>
 
 <style>
     .programContent {
@@ -59,7 +59,7 @@
                             <option value="url">URL</option>
                         </select>
                         <input type="text" id="searchInput" name="searchInput" value=""/>
-                        <input type="button" id="searchBtn" value="검색" />
+                        <input type="button" id="searchBtn" value="검색"/>
                     </div>
                 </div>
             </div>
@@ -106,6 +106,10 @@
     </div>
 </div>
 </body>
+<script>
+    const Grid = tui.Grid;
+    console.log(`Grid => ${Grid}`);
+</script>
 <script th:type="module">
     import {qs, qsAll, createEl, HTTP_STATUS} from "/js/common/util.js";
     import {fetchDeleteProgram, fetchCreateProgram, fetchEditProgram} from "/js/apis/menu/program.js";
@@ -114,11 +118,10 @@
     import {FetchError, FieldFetchError} from "/js/error/fetchError.js";
     import Pagination from "/js/common/Pagination.js";
     import ProgramGrid from "/js/program/ProgramGrid.js";
+    const tag = '[programManage]';
 
-const tag = '[programManage]';
-
-class EditForm {
-FORM_STATE = {
+    class EditForm {
+        FORM_STATE = {
             'CLEAR': 'clear',
             'EDIT': 'edit',
         }
@@ -199,9 +202,9 @@ FORM_STATE = {
                     await this.grid.refreshGrid();
                     this.setNewMode();
                 } catch (e) {
-                    if(e instanceof FetchError) {
+                    if (e instanceof FetchError) {
                         const fieldFetchError = new FieldFetchError(this.form, e);
-                        if(e.status === HTTP_STATUS.CONFLICT) {
+                        if (e.status === HTTP_STATUS.CONFLICT) {
                             errorAlert('이미 등록된 URL입니다.');
                             fieldFetchError.clearMessage(...qsAll(this.form, '#url'));
                             fieldFetchError.bindingMessage();
@@ -230,9 +233,9 @@ FORM_STATE = {
                     infoAlert("수정되었습니다.");
                     await this.grid.refreshGrid();
                     this.setNewMode();
-                } catch(e) {
-                    if(e instanceof FetchError) {
-                        if(e.status === HTTP_STATUS.CONFLICT) {
+                } catch (e) {
+                    if (e instanceof FetchError) {
+                        if (e.status === HTTP_STATUS.CONFLICT) {
                             errorAlert('이미 등록된 URL입니다.');
                             const fieldFetchError = new FieldFetchError(this.form, e);
                             fieldFetchError.clearMessage(...qsAll(this.form, '#url'));
@@ -246,6 +249,7 @@ FORM_STATE = {
             });
             return btn;
         }
+
         #createDelBtn() {
             const btn = createEl('input', {id: 'editBtn', type: 'button', value: '삭제'});
             btn.addEventListener('click', async () => {
@@ -285,7 +289,8 @@ FORM_STATE = {
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
-        console.log(`Grid => ${Grid}`);
+
+
         const container = qs(document, '#content');
         const searchForm = qs(container, '#searchForm');
         const searchBtn = qs(searchForm, '#searchBtn');
@@ -303,7 +308,7 @@ FORM_STATE = {
 
         searchBtn.addEventListener('click', search);
         searchInput.addEventListener('keyup', (event) => {
-            if(event.key === 'Enter')
+            if (event.key === 'Enter')
                 search();
         })
     });

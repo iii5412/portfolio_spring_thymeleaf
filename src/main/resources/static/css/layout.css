@@ -10,13 +10,13 @@
 /* 헤더 영역 */
 .header {
     height: 60px;
-    background-color: #212529;
-    color: #fff;
+    background-color: #f8f9fa;
+    color: #000;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .header .loginDiv {
@@ -26,7 +26,7 @@
 }
 
 .header .loginDiv a {
-    color: #fff;
+    color: #000;
     text-decoration: none;
     padding: 5px 10px;
     border-radius: 5px;
@@ -34,42 +34,31 @@
 }
 
 .header .loginDiv a:hover {
-    background-color: #343a40;
+    background-color: #e9ecef;
 }
+
 
 /* 콘텐츠 영역 */
 .content {
     flex: 1;
     overflow-y: auto;
     padding: 20px;
-    background-color: #e9ecef;
+    background-color: #f8f9fa;
     box-sizing: border-box;
     border-radius: 10px;
     margin: 15px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-    position: relative; /* ✅ 상대적 위치 설정 */
-    z-index: 1; /* ✅ 메뉴보다 낮은 z-index로 지정 */
-}
-
-#ifr_content.card {
-    height: 100%; /* ✅ 콘텐츠 영역 높이 전체 사용 */
-    width: 100%; /* ✅ 콘텐츠 영역 너비 전체 사용 */
-    box-sizing: border-box;
-}
-
-iframe {
-    width: 100%;  /* ✅ 너비 100% */
-    height: 100%; /* ✅ 높이 100% */
-    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 1;
 }
 
 /* 푸터 영역 */
 .footer {
     height: 50px;
-    background-color: #212529;
-    color: #fff;
+    background-color: #f8f9fa;
+    color: #000;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
 }

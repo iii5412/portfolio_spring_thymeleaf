@@ -1,14 +1,14 @@
 /* 전체 레이아웃 */
 .layout {
+    min-height: 85vh;
     display: flex;
     flex-direction: column;
-    height: 100vh;
     margin: 0;
     overflow: hidden;
 }
 
 /* 헤더 영역 */
-.header {
+.loginHeader {
     height: 60px;
     background-color: #f8f9fa;
     color: #000;
@@ -19,13 +19,13 @@
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-.header .loginDiv {
+.loginHeader .loginDiv {
     margin-left: auto;
     display: flex;
     gap: 15px;
 }
 
-.header .loginDiv a {
+.loginHeader .loginDiv a {
     color: #000;
     text-decoration: none;
     padding: 5px 10px;
@@ -33,7 +33,7 @@
     transition: background-color 0.3s;
 }
 
-.header .loginDiv a:hover {
+.loginHeader .loginDiv a:hover {
     background-color: #e9ecef;
 }
 

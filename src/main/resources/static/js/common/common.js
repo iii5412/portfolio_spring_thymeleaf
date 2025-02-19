@@ -52,22 +52,24 @@ const loadContent = async menu => {
 
     if(!await checkContentUrlStatus(menu.getProgramUrl()))
         return;
+    location.href = menu.getProgramUrl();
 
-    const iframe = createEl('iframe');
-    iframe.border = 'none';
-    iframe.src = menu.getProgramUrl();
-
-    const headerDiv = createContentHeader(menu);
-
-    const contentArea = qs(document, '#ifr_content');
-    contentArea.innerHTML = '';
-    contentArea.appendChild(headerDiv);
-    contentArea.appendChild(iframe);
-
-    iframe.onerror = (e) => {
-        errorAlert('프로그램 로드에 실패하였습니다.');
-        throw new Error(e.message);
-    }
+    //
+    // const iframe = createEl('iframe');
+    // iframe.border = 'none';
+    // iframe.src = menu.getProgramUrl();
+    //
+    // const headerDiv = createContentHeader(menu);
+    //
+    // const contentArea = qs(document, '#ifr_content');
+    // contentArea.innerHTML = '';
+    // contentArea.appendChild(headerDiv);
+    // contentArea.appendChild(iframe);
+    //
+    // iframe.onerror = (e) => {
+    //     errorAlert('프로그램 로드에 실패하였습니다.');
+    //     throw new Error(e.message);
+    // }
 }
 
 export {loadContent};

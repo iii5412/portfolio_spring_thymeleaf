@@ -26,9 +26,9 @@
         </main>
     </div>
 
-    <footer th:replace="fragments/footer :: footer"></footer>
+    <footer layout:replace="fragments/footer :: footer"></footer>
 
-    <th:block th:fragment="pageScripts"></th:block>
+    <th:block layout:fragment="pageScripts"></th:block>
 
     <script th:type="module">
         import {qs} from '/js/common/util.js';

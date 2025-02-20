@@ -62,14 +62,16 @@ public class SecurityConfig {
                 .exceptionHandling()
                 .accessDeniedPage("/404")
                 .authenticationEntryPoint((request, response, authException) -> {
-                    final ErrorResponse errorResponse = ErrorResponse.builder()
-                            .code(String.valueOf(HttpServletResponse.SC_UNAUTHORIZED))
-                            .message("인증 실패 : " + authException.getMessage())
-                            .build();
-
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                    new ObjectMapper().writeValue(response.getOutputStream(), errorResponse);
+                    response.sendRedirect("/");
+//                    final ErrorResponse errorResponse = ErrorResponse.builder()
+//                            .code(String.valueOf(HttpServletResponse.SC_UNAUTHORIZED))
+//                            .message("인증 실패 : " + authException.getMessage())
+//                            .build();
+//
+//                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//                    new ObjectMapper().writeValue(response.getOutputStream(), errorResponse);
                 })
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
                     final ErrorResponse errorResponse = ErrorResponse.builder()

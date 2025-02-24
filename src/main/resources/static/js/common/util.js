@@ -17,7 +17,6 @@ const HTTP_STATUS = {
     NOT_FOUND: 404,
     CONFLICT: 409,
 }
-
 /**
  * Fetch API를 사용하여 HTTP 요청을 만들기 위한 Fetch 유틸리티 클래스를 나타냅니다.
  */
@@ -189,13 +188,12 @@ class Fetch {
             });
     }
 }
-
 /**
  * 제공된 대상 요소 내에서 지정된 선택자와 일치하는 첫 번째 요소를 찾아 반환합니다.
  *
  * @param {Document | Element} target - 일치하는 요소를 검색할 요소입니다.
  * @param {string} selector - 일치하는 요소를 찾는 데 사용되는 CSS 선택기입니다.
- * @returns {Element} - 제공된 대상 요소 내에서 지정된 선택기와 일치하는 첫 번째 요소이거나, 일치하는 항목이 없으면 null입니다.
+ * @return {HTMLElement} - 제공된 대상 요소 내에서 지정된 선택기와 일치하는 첫 번째 요소이거나, 일치하는 항목이 없으면 null입니다.
  */
 const qs = (target, selector) => target.querySelector(selector);
 /**
@@ -227,12 +225,13 @@ const toQueryString = (obj) => {
  */
 const createEl = (tag, options = {}) => Object.assign(document.createElement(tag), options);
 const FETCH = new Fetch();
-
 const lpad = (str, len, char) => {
     str = String(str); // ensures that str is a string
     return str.length >= len ? str : char.repeat(len - str.length) + str;
 };
-
+const isEmptyObject = (object) => {
+    return Object.keys(object).length === 0;
+}
 export {
     qs,
     qsAll,
@@ -241,4 +240,5 @@ export {
     FETCH,
     HTTP_STATUS,
     lpad,
+    isEmptyObject,
 };

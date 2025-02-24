@@ -7,6 +7,11 @@ export default class PageResult {
     result = [];
     totalCount = 0;
 
+    constructor({result, totalCount}) {
+        this.result = result;
+        this.totalCount = totalCount;
+    }
+
     /**
      * 메소드 실행 결과를 검색합니다.
      *
@@ -24,8 +29,5 @@ export default class PageResult {
     getTotalCount() {
         return this.totalCount;
     }
-    constructor({result, totalCount}) {
-        this.result = result;
-        this.totalCount = totalCount;
-    }
+
 }

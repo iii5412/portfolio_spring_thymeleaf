@@ -40,7 +40,7 @@ class FieldFetchError {
 
     /**
      * @param {Element} target
-     * @param {FetchError} fetchError
+     * @param {FetchError} [fetchError]
      */
     constructor(target, fetchError) {
         this.target = target;

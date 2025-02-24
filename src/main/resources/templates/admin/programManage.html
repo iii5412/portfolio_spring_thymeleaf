@@ -4,16 +4,8 @@
       layout:decorate="~{common/template}"
 >
 <body>
-<div layout:fragment="pageJs">
-    <link rel="stylesheet" href="@{/js/realgrid/realgrid.2.7.2/realgrid-style.css}"
-          th:href="@{/js/realgrid/realgrid.2.7.2/realgrid-sky-blue.css}"/>
-    <link rel="stylesheet" th:href="@{/css/realgrid/custom.css}"/>
-    <script src="/js/realgrid/realgrid.2.7.2/realgrid-lic.js"></script>
-    <script src="/js/realgrid/realgrid.2.7.2/realgrid.2.7.2.min.js"></script>
-    <script src="/js/realgrid/realgrid.2.7.2/libs/jszip.min.js"></script>
-    <script src="/js/tuigrid/tui-grid.min.js"></script>
-</div>
 <div layout:fragment="pageStyles">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
     <style>
         .programContent {
             display: flex;
@@ -51,6 +43,16 @@
         }
     </style>
 </div>
+<div layout:fragment="pageJs">
+    <!--    <link rel="stylesheet" href="@{/js/realgrid/realgrid.2.7.2/realgrid-style.css}"-->
+    <!--          th:href="@{/js/realgrid/realgrid.2.7.2/realgrid-sky-blue.css}"/>-->
+    <!--    <link rel="stylesheet" th:href="@{/css/realgrid/custom.css}"/>-->
+    <!--    <script src="/js/realgrid/realgrid.2.7.2/realgrid-lic.js"></script>-->
+    <!--    <script src="/js/realgrid/realgrid.2.7.2/realgrid.2.7.2.min.js"></script>-->
+    <!--    <script src="/js/realgrid/realgrid.2.7.2/libs/jszip.min.js"></script>-->
+    <script src="/js/grid/tuigrid/tui-grid.min.js"></script>
+</div>
+
 <div layout:fragment="content">
     <div class="programContent">
         <div class="left">
@@ -68,8 +70,7 @@
                     </div>
                 </div>
             </div>
-            <div id="grid" style="height: 470px;">
-            </div>
+            <div id="grid"></div>
             <div class="pagination">
             </div>
         </div>
@@ -113,105 +114,97 @@
 <div layout:fragment="pageScripts">
     <script th:type="module">
         import {qs, qsAll, createEl, HTTP_STATUS} from "/js/common/util.js";
-        import {fetchDeleteProgram, fetchCreateProgram, fetchEditProgram} from "/js/apis/menu/program.js";
-        import {errorAlert, infoAlert} from "/js/common/alert.js";
-        import Program from "/js/program/Program.js";
-        import {FetchError, FieldFetchError} from "/js/error/fetchError.js";
         import Pagination from "/js/common/Pagination.js";
-        import ProgramGrid from "/js/program/ProgramGrid.js";
+        import ProgramGrid from "/js/program/admin/manage/ProgramGrid.js";
+        import TGrid from "/js/grid/TGrid.js";
+        import TGridColumn from "/js/grid/TGridColumn.js";
+        import EditForm from "/js/program/admin/manage/EditForm.js";
+        import {fetchCreateProgram, fetchDeleteProgram, fetchEditProgram} from "/js/apis/program/program.js";
+        import {errorAlert, infoAlert} from "/js/common/alert.js";
+        import {FetchError, FieldFetchError} from "/js/error/fetchError.js";
 
         const tag = '[programManage]';
 
-        class EditForm {
-            FORM_STATE = {
-                'CLEAR': 'clear',
-                'EDIT': 'edit',
+        class ProgramManageMediator {
+            /**
+             * @type {ProgramGrid}
+             */
+            programGrid;
+            /**
+             * @type {EditForm}
+             */
+            editForm;
+
+            constructor(programGrid) {
+                this.programGrid = programGrid;
+                this.editForm = new EditForm({
+                    form: qs(document, '#programEditForm'),
+                    addBtnCallback: this.#addBtnCallback(),
+                    editBtnCallback: this.#editBtnCallback(),
+                    delBtnCallback: this.#delBtnCallback(),
+                    newBtnCallback: this.#newBtnCallback(),
+                });
+                this.#init();
             }
-            form;
-            grid;
-            status;
+            async search() {
+                await this.programGrid.search();
+            }
+            /**
+             * @description 프로그램 수정 모드
+             * @param {Program} program
+             */
+            editMode(program) {
+                this.editForm.setEditMode(program);
+            }
+
+            newMode() {
+                this.editForm.setNewMode();
+            }
+
+            #init() {
+                this.programGrid.setClickEvent(async ({rowNum, columnName}) => {
+                    const program = this.programGrid.getProgram(rowNum);
+
+                    if(!program)
+                        return;
+
+                    this.editMode(program);
+                });
+            }
 
             /**
-             * 클래스의 생성자.
-             *
-             * @param {Element} target - 양식을 추가할 대상 요소입니다.
-             * @param {ProgramGrid} grid - 사용할 그리드 객체입니다.
+             * @description 신규 등록 버튼 콜백 생성
+             * @return {(function(): void)|*}
              */
-            constructor(target, grid) {
-                this.form = qs(target, '#programEditForm');
-                this.grid = grid;
-                this.init();
-                this.clear();
-                this.setNewMode();
+            #newBtnCallback() {
+                return () => {
+                    this.newMode();
+                };
             }
 
-            init() {
-                this.grid.gridView.onCellClicked = (grid, clickData) => {
-                    const rowData = grid.getDataSource().getJsonRow(clickData.dataRow);
-                    const program = new Program(rowData);
-                    this.setEditMode(program);
-                }
-            }
-
-            clear() {
-                this.status = this.FORM_STATE.CLEAR;
-                qsAll(this.form, 'input[type="text"]').forEach(input => input.value = '');
-                qsAll(this.form, 'input[type="button"]').forEach(button => button.remove());
-                this.errorClear();
-            }
-
-            errorClear() {
-                const fieldFetchError = new FieldFetchError(this.form);
-                fieldFetchError.clearMessage(...qsAll(this.form, 'input[type="text"]'));
-            }
-
-            setNewMode() {
-                const btnArea = qs(this.form, '.rightBtnArea');
-                const addBtn = this.#createAddBtn();
-
-                this.clear();
-                btnArea.appendChild(addBtn);
-            }
-
-            setEditMode(program) {
-                const btnArea = qs(this.form, '.rightBtnArea');
-                const editBtn = this.#createEditBtn();
-                const delBtn = this.#createDelBtn();
-                const newModeBtn = this.#createNewModeBtn();
-
-                this.status = this.FORM_STATE.EDIT;
-                this.clear();
-                this.#setProramValue(program);
-                btnArea.appendChild(editBtn);
-                btnArea.appendChild(delBtn);
-                btnArea.appendChild(newModeBtn);
-            }
-
-            #createNewModeBtn() {
-                const btn = createEl('input', {id: 'newBtn', type: 'button', value: '신규등록'});
-                btn.addEventListener('click', () => this.setNewMode());
-                return btn;
-            }
-
-            #createAddBtn() {
-                const btn = createEl('input', {id: 'addBtn', type: 'button', value: '추가'});
-                btn.addEventListener('click', async () => {
-                    const programName = qs(this.form, '#programName').value;
-                    const url = qs(this.form, '#url').value;
+            /**
+             * @description 추가 버튼 콜백 생성
+             * @return {(function(): Promise<void>)|*}
+             */
+            #addBtnCallback() {
+                return async () => {
+                    const programName = this.editForm.getProgramName();
+                    const url = this.editForm.getUrl();
+                    const form = this.editForm.getForm();
                     try {
                         await fetchCreateProgram({programName, url});
                         infoAlert("저장되었습니다.");
-                        await this.grid.refreshGrid();
-                        this.setNewMode();
+                        await this.programGrid.search();
+                        this.newMode();
                     } catch (e) {
                         if (e instanceof FetchError) {
-                            const fieldFetchError = new FieldFetchError(this.form, e);
+                            const fieldFetchError = new FieldFetchError(form, e);
                             if (e.status === HTTP_STATUS.CONFLICT) {
                                 errorAlert('이미 등록된 URL입니다.');
-                                fieldFetchError.clearMessage(...qsAll(this.form, '#url'));
+                                fieldFetchError.clearMessage(...qsAll(form, '#url'));
                                 fieldFetchError.bindingMessage();
                             } else {
-                                fieldFetchError.clearMessage(...qsAll(this.form, 'input[type="text"]'));
+                                fieldFetchError.clearMessage(...qsAll(form, 'input[type="text"]'));
                                 fieldFetchError.bindingMessage();
                             }
                         } else {
@@ -219,28 +212,31 @@
                             throw e;
                         }
                     }
-                });
-                return btn;
+                }
             }
 
-            #createEditBtn() {
-                const btn = createEl('input', {id: 'editBtn', type: 'button', value: '저장'});
-                btn.addEventListener('click', async () => {
-                    const id = qs(this.form, '#id').value;
-                    const programName = qs(this.form, '#programName').value;
-                    const url = qs(this.form, '#url').value;
+            /**
+             * @description 수정 버튼 콜백 생성
+             * @return {(function(): Promise<void>)|*}
+             */
+            #editBtnCallback() {
+                return async () => {
+                    const form = this.editForm.getForm();
+                    const id = this.editForm.getId();
+                    const programName = this.editForm.getProgramName();
+                    const url = this.editForm.getUrl();
 
                     try {
                         await fetchEditProgram({id, programName, url})
                         infoAlert("수정되었습니다.");
-                        await this.grid.refreshGrid();
-                        this.setNewMode();
+                        await this.programGrid.search();
+                        this.newMode();
                     } catch (e) {
                         if (e instanceof FetchError) {
                             if (e.status === HTTP_STATUS.CONFLICT) {
                                 errorAlert('이미 등록된 URL입니다.');
-                                const fieldFetchError = new FieldFetchError(this.form, e);
-                                fieldFetchError.clearMessage(...qsAll(this.form, '#url'));
+                                const fieldFetchError = new FieldFetchError(form, e);
+                                fieldFetchError.clearMessage(...qsAll(form, '#url'));
                                 fieldFetchError.bindingMessage();
                             }
                         } else {
@@ -248,68 +244,70 @@
                             throw e;
                         }
                     }
-                });
-                return btn;
+                };
             }
 
-            #createDelBtn() {
-                const btn = createEl('input', {id: 'editBtn', type: 'button', value: '삭제'});
-                btn.addEventListener('click', async () => {
+            /**
+             * @description 삭제 버튼 콜백 생성
+             * @return {(function(): Promise<void>)|*}
+             */
+            #delBtnCallback() {
+                return async () => {
                     try {
-                        const id = qs(this.form, '#id').value;
+                        const id = this.editForm.getId();
                         await fetchDeleteProgram(id);
                         infoAlert("삭제되었습니다.");
-                        await this.grid.refreshGrid();
-                        this.setNewMode();
+                        await this.programGrid.search();
+                        this.newMode();
                     } catch (e) {
                         errorAlert("삭제에 실패하였습니다. 잠시 후 다시 시도해주세요.");
                         throw e;
                     }
-                });
-                return btn;
+                }
             }
 
-            /**
-             * @param {Program} program
-             */
-            #setProramValue(program) {
-                const form = this.form;
-                const id = qs(form, '#id');
-                const programName = qs(form, '#programName');
-                const url = qs(form, '#url');
-                const createdAt = qs(form, '#createdAt');
-                const updatedAt = qs(form, '#updatedAt');
-                const lastUpdatedByUserLoginId = qs(form, '#lastUpdatedByUserLoginId');
-
-                id.value = program.getId();
-                programName.value = program.getProgramName();
-                url.value = program.getUrl();
-                createdAt.value = program.getCreatedAt();
-                updatedAt.value = program.getUpdatedAt();
-                lastUpdatedByUserLoginId.value = program.getLastUpdatedByUserLoginId();
-            }
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            const container = qs(document, '#content');
+            const TUI_GRID = tui.Grid;
+            const container = qs(document, '.programContent');
+            const gridWrapper = qs(container, '#grid');
             const searchForm = qs(container, '#searchForm');
             const searchBtn = qs(searchForm, '#searchBtn');
             const searchInput = qs(searchForm, '#searchInput');
-
             const pagination = new Pagination(qs(container, '.pagination'));
-            const grid = new ProgramGrid(container, 'grid', searchForm, pagination);
-            await grid.init();
+            const tGrid = TGrid.create({
+                tuiGrid: TUI_GRID,
+                wrapperElement: gridWrapper,
+                columns: [
+                    TGridColumn.create({name: 'id', header: 'id'}).width(50).end()
+                    , TGridColumn.create({name: 'programName', header: '프로그램명'})
+                            .alignLeft()
+                            .end()
+                    , TGridColumn.create({name: 'url', header: 'URL'}).end()
+                    , TGridColumn.create({name: 'createdAt', header: '생성일'}).end()
+                    , TGridColumn.create({name: 'updatedAt', header: '수정일'}).end()
+                    , TGridColumn.create({name: 'lastUpdatedByUserLoginId', header: '수정자'}).end()
+                ]
+            })
+                    .end();
+            const programGrid = new ProgramGrid({
+                tGrid,
+                container,
+                searchForm,
+                pagination,
+            });
 
-            new EditForm(container, grid);
+            const programManageMediator = new ProgramManageMediator(programGrid);
 
-            const search = () => {
-                grid.search();
-            }
+            await programManageMediator.search();
 
-            searchBtn.addEventListener('click', search);
-            searchInput.addEventListener('keyup', (event) => {
+            searchBtn.addEventListener('click', async () => {
+                await programManageMediator.search()
+            });
+            searchInput.addEventListener('keyup', async (event) => {
                 if (event.key === 'Enter')
-                    search();
+                    await programManageMediator.search()
             })
         });
     </script>

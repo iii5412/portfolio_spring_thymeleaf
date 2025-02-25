@@ -52,6 +52,9 @@ class FieldFetchError {
         }
     }
 
+    /**
+     * @description 필드에 에러메세지를 바인딩합니다.
+     */
     bindingMessage() {
         Object.keys(this.validation).forEach(key => {
             this.#showMessage(key, this.validation[key]);
@@ -62,6 +65,10 @@ class FieldFetchError {
         this.fieldError.showMessage(elId, message);
     }
 
+    /**
+     * @description 해당 필드에 에러메세지를 지웁니다.
+     * @param {HTMLElement[]} elements
+     */
     clearMessage(...elements) {
         this.fieldError.clearMessage(...elements);
     }

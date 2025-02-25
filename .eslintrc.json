@@ -1,0 +1,44 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:jsdoc/recommended"
+  ],
+  "plugins": [
+    "jsdoc"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2021,
+    "sourceType": "module"
+  },
+  "rules": {
+    "quotes": ["error", "single", { "avoidEscape": true }],
+    "semi": ["error", "always"],
+    "indent": ["error", 4],
+    "comma-dangle": ["error", "always-multiline"],
+    "no-console": "warn",
+    "no-unused-vars": ["warn", { "args": "none", "ignoreRestSiblings": true }],
+    "jsdoc/check-alignment": "error",
+    "jsdoc/newline-after-description": "error",
+    "jsdoc/require-param": "error",
+    "jsdoc/require-returns": "error",
+    "object-curly-spacing": ["error", "always"],
+    "array-bracket-spacing": ["error", "never"],
+    "space-in-parens": ["error", "never"],
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
+    "keyword-spacing": ["error", { "before": true, "after": true }],
+    "comma-spacing": ["error", { "before": false, "after": true }],
+    "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 1 }]
+  }
+}

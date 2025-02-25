@@ -61,3 +61,10 @@ body {
     cursor: not-allowed; /* 커서를 '금지' 모양으로 변경 */
 }
 
+/*
+    input field errorMeesage
+ */
+.invalid-feedback {
+    display: block;
+    font-size: 0.875rem;
+}

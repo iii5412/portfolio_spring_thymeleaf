@@ -6,50 +6,12 @@
 <body>
 <div layout:fragment="pageStyles">
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-    <style>
-        .programContent {
-            display: flex;
-        }
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui.pagination/v3.4.0/tui-pagination.css">
+    <link rel="stylesheet" href="/css/program/admin/programManage.css"/>
 
-        .left {
-            flex: 2;
-        }
-
-        .right {
-            flex: 1;
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr 3fr;
-            grid-gap: 10px; /* 셀 사이의 간격 */
-            padding: 10px;
-        }
-
-        .grid-header {
-            background-color: #f2f2f2;
-            padding: 10px;
-            text-align: left;
-        }
-
-        .grid-cell {
-            grid-column: span 1; /* 기본적으로 한 열 차지 */
-            padding: 10px;
-        }
-
-        .searchForm {
-            text-align: right;
-            padding: 10px;
-        }
-    </style>
 </div>
 <div layout:fragment="pageJs">
-    <!--    <link rel="stylesheet" href="@{/js/realgrid/realgrid.2.7.2/realgrid-style.css}"-->
-    <!--          th:href="@{/js/realgrid/realgrid.2.7.2/realgrid-sky-blue.css}"/>-->
-    <!--    <link rel="stylesheet" th:href="@{/css/realgrid/custom.css}"/>-->
-    <!--    <script src="/js/realgrid/realgrid.2.7.2/realgrid-lic.js"></script>-->
-    <!--    <script src="/js/realgrid/realgrid.2.7.2/realgrid.2.7.2.min.js"></script>-->
-    <!--    <script src="/js/realgrid/realgrid.2.7.2/libs/jszip.min.js"></script>-->
+    <script type="text/javascript" src="https://uicdn.toast.com/tui.pagination/v3.4.0/tui-pagination.js"></script>
     <script src="/js/grid/tuigrid/tui-grid.min.js"></script>
 </div>
 
@@ -57,64 +19,72 @@
     <div class="programContent">
         <div class="left">
             <div>
-                <div id="searchForm" class="searchForm">
-                    <div>
-                        <select id="searchType" name="searchType">
-                            <option value="">전체</option>
-                            <option value="id">ID</option>
+                <div id="searchForm" class="d-flex justify-content-end align-items-center p-3 bg-white border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                        <select id="searchType" name="searchType" class="form-select form-select-sm"
+                                style="width: auto;">
                             <option value="programName">프로그램명</option>
+                            <option value="id">ID</option>
                             <option value="url">URL</option>
                         </select>
-                        <input type="text" id="searchInput" name="searchInput" value=""/>
-                        <input type="button" id="searchBtn" value="검색"/>
+                        <input type="text" id="searchInput" name="searchInput" value=""
+                               class="form-control form-control-sm" placeholder="검색어 입력" style="width: 200px;">
+                        <div class="invalid-feedback" data-target="searchInput"></div>
+                        <input type="button" id="searchBtn" value="검색" class="btn btn-sm btn-primary">
                     </div>
                 </div>
             </div>
             <div id="grid"></div>
-            <div class="pagination">
-            </div>
+            <div id="pagination" class="tui-pagination"></div>
         </div>
         <div class="right">
-            <div id="programEditForm" name="programEditForm">
-                <input type="text" class="hidden" name="id" id="id"/>
-                <div class="grid-container">
-                    <div class="grid-header">프로그램명</div>
-                    <div class="grid-cell">
-                        <input type="text" style="width: 100%;" name="programName" id="programName"/>
-                        <div class="field-error-message" data-target="programName"></div>
+            <div id="programEditForm" name="programEditForm" class="card shadow-sm">
+                <div class="card-header bg-white text-dark border-bottom">
+                    <h5 class="mb-0">프로그램</h5>
+                </div>
+                <div class="card-body">
+                    <!-- hidden input -->
+                    <input type="hidden" name="id" id="id"/>
+
+                    <div class="mb-3">
+                        <label for="programName" class="form-label">프로그램명</label>
+                        <input type="text" class="form-control" name="programName" id="programName"/>
+                        <div class="invalid-feedback" data-target="programName"></div>
                     </div>
 
-                    <div class="grid-header">URL</div>
-                    <div class="grid-cell">
-                        <input type="text" style="width: 100%;" name="url" id="url"/>
+                    <div class="mb-3">
+                        <label for="url" class="form-label">URL</label>
+                        <input type="text" class="form-control" name="url" id="url"/>
                     </div>
 
-                    <div class="grid-header">생성일</div>
-                    <div class="grid-cell">
-                        <input type="text" style="width: 100%;" name="createdAt" id="createdAt" disabled/>
+                    <div class="mb-3">
+                        <label for="createdAt" class="form-label">생성일</label>
+                        <input type="text" class="form-control" name="createdAt" id="createdAt" disabled/>
                     </div>
 
-                    <div class="grid-header">수정일</div>
-                    <div class="grid-cell">
-                        <input type="text" style="width: 100%;" name="updatedAt" id="updatedAt" disabled/>
+                    <div class="mb-3">
+                        <label for="updatedAt" class="form-label">수정일</label>
+                        <input type="text" class="form-control" name="updatedAt" id="updatedAt" disabled/>
                     </div>
 
-                    <div class="grid-header">수정자</div>
-                    <div class="grid-cell">
-                        <input type="text" style="width: 100%;" name="lastUpdatedByUserLoginId"
+                    <div class="mb-3">
+                        <label for="lastUpdatedByUserLoginId" class="form-label">수정자</label>
+                        <input type="text" class="form-control" name="lastUpdatedByUserLoginId"
                                id="lastUpdatedByUserLoginId" disabled/>
                     </div>
                 </div>
-                <div class="rightBtnArea">
+                <div class="card-footer text-end">
+                    <div class="rightBtnArea">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+</div>
 <div layout:fragment="pageScripts">
     <script th:type="module">
-        import {qs, qsAll, createEl, HTTP_STATUS} from "/js/common/util.js";
-        import Pagination from "/js/common/Pagination.js";
+        import {qs, qsAll, HTTP_STATUS} from "/js/common/util.js";
         import ProgramGrid from "/js/program/admin/manage/ProgramGrid.js";
         import TGrid from "/js/grid/TGrid.js";
         import TGridColumn from "/js/grid/TGridColumn.js";
@@ -122,6 +92,7 @@
         import {fetchCreateProgram, fetchDeleteProgram, fetchEditProgram} from "/js/apis/program/program.js";
         import {errorAlert, infoAlert} from "/js/common/alert.js";
         import {FetchError, FieldFetchError} from "/js/error/fetchError.js";
+        import TPagination from "/js/common/TPagination.js";
 
         const tag = '[programManage]';
 
@@ -146,9 +117,11 @@
                 });
                 this.#init();
             }
+
             async search() {
                 await this.programGrid.search();
             }
+
             /**
              * @description 프로그램 수정 모드
              * @param {Program} program
@@ -165,7 +138,7 @@
                 this.programGrid.setClickEvent(async ({rowNum, columnName}) => {
                     const program = this.programGrid.getProgram(rowNum);
 
-                    if(!program)
+                    if (!program)
                         return;
 
                     this.editMode(program);
@@ -270,12 +243,18 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             const TUI_GRID = tui.Grid;
+            const TUI_PAGINATION = tui.Pagination;
             const container = qs(document, '.programContent');
             const gridWrapper = qs(container, '#grid');
             const searchForm = qs(container, '#searchForm');
             const searchBtn = qs(searchForm, '#searchBtn');
             const searchInput = qs(searchForm, '#searchInput');
-            const pagination = new Pagination(qs(container, '.pagination'));
+            const searchType = qs(searchForm, '#searchType');
+            const pagination = TPagination.create({
+                tuiPageNation: TUI_PAGINATION
+                , paginationContainer: qs(container, '#pagination')
+            })
+                    .end();
             const tGrid = TGrid.create({
                 tuiGrid: TUI_GRID,
                 wrapperElement: gridWrapper,
@@ -288,8 +267,10 @@
                     , TGridColumn.create({name: 'createdAt', header: '생성일'}).end()
                     , TGridColumn.create({name: 'updatedAt', header: '수정일'}).end()
                     , TGridColumn.create({name: 'lastUpdatedByUserLoginId', header: '수정자'}).end()
-                ]
+                ],
+                pagination,
             })
+                    .setBodyHeight(800)
                     .end();
             const programGrid = new ProgramGrid({
                 tGrid,
@@ -299,17 +280,41 @@
             });
 
             const programManageMediator = new ProgramManageMediator(programGrid);
+            const search = async () => {
+                const form = qs(container, '#searchForm');
+                try {
+                    await programManageMediator.search();
+                } catch (e) {
+                    if (e instanceof FetchError) {
+                        const fieldFetchError = new FieldFetchError(form, e);
+                        fieldFetchError.clearMessage(...qsAll(form, 'input[type="text"]'));
+                        fieldFetchError.bindingMessage();
+                    } else {
+                        errorAlert("검색에 실패하였습니다. 잠시 후 다시 시도해주세요.");
+                        throw e;
+                    }
+                }
+            }
 
-            await programManageMediator.search();
+            await search();
 
             searchBtn.addEventListener('click', async () => {
-                await programManageMediator.search()
+                await search();
             });
-            searchInput.addEventListener('keyup', async (event) => {
+            searchInput.addEventListener('keydown', async (event) => {
+                const searchKeyword = event.target.value;
+                if (searchType.value === 'id') {
+                    if (!/^[0-9]*$/.test(searchKeyword)) {
+                        event.target.value = searchKeyword.substring(0, searchKeyword.length - 1);
+                    }
+                }
+
                 if (event.key === 'Enter')
-                    await programManageMediator.search()
-            })
+                    await search();
+            });
+
         });
+
     </script>
 </div>
 </body>

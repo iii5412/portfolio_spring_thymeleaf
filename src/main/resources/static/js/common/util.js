@@ -224,6 +224,16 @@ const toQueryString = (obj) => {
  * @returns {HTMLElement} - 새로 생성된 HTML 요소입니다.
  */
 const createEl = (tag, options = {}) => Object.assign(document.createElement(tag), options);
+/**
+ * @description 문자열을 HTML 요소로 변환합니다.
+ * @param {string} string
+ * @return {HTMLElement|null}
+ */
+const stringToHTMLElement = (string) => {
+    const template = document.createElement('template');
+    template.innerHTML = string.trim();
+    return template.content.firstChild instanceof HTMLElement ? template.content.firstChild : null;
+}
 const FETCH = new Fetch();
 const lpad = (str, len, char) => {
     str = String(str); // ensures that str is a string
@@ -241,4 +251,5 @@ export {
     HTTP_STATUS,
     lpad,
     isEmptyObject,
+    stringToHTMLElement,
 };

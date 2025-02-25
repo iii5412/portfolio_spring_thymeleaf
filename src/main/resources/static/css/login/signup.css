@@ -17,11 +17,6 @@
     transform: scale(1.05);
 }
 
-.invalid-feedback {
-    display: block;
-    font-size: 0.875rem;
-}
-
 .close-btn {
     position: absolute;
     top: 20px;

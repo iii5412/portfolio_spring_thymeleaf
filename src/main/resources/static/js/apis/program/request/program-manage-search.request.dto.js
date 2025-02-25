@@ -42,6 +42,7 @@ export default class ProgramSearchRequestDto extends Dto {
      */
     constructor({page = 1, size = 10, sortFields = [], sorts = [], id, programName, url}) {
         super();
+        Object.assign(this, {page, size, sortFields, sorts, id, programName, url});
     }
 
     /**

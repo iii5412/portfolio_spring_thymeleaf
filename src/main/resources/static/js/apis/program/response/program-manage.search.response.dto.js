@@ -1,7 +1,13 @@
-import PageResultDto from "/js/apis/program/PageResultDto.js";
+import PageResultResponseDto from "/js/apis/response/PageResultResponseDto.js";
 import ProgramResponseDto from "/js/apis/program/response/program.response.dto.js";
 
-export default class ProgramSearchResponseDto extends PageResultDto {
+export default class ProgramSearchResponseDto extends PageResultResponseDto {
+    /**
+     *
+     * @type {ProgramResponseDto[]}
+     */
+    result;
+
     /**
      * @param paramObj
      * @param {object[]} paramObj.result
@@ -27,15 +33,11 @@ export default class ProgramSearchResponseDto extends PageResultDto {
 
     /**
      *
-     * @override
-     * @return {{result: {createdAt: string, programName: string, lastUpdatedByUserLoginId: string, id: number, url: string, updatedAt: string}[], size: number, page: number, totalCount: number}}
+     * @return {{size: number, page: number, totalCount: number, result: {createdAt: string, programName: string, lastUpdatedByUserLoginId: string, id: number, url: string, updatedAt: string}[]}}
      */
     toObject() {
-        return {
-            result: this.result.map(programDto => programDto.toObject()),
-            totalCount: this.totalCount,
-            page: this.page,
-            size: this.size,
-        }
+        return Object.assign(super.toObject(), {
+            result: this.result.map(programDto => programDto.toObject())
+        });
     }
 }

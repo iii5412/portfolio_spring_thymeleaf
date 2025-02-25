@@ -145,7 +145,7 @@ export default class EditForm {
      */
     #createEditBtn() {
         const btn = createEl('input', {id: 'editBtn', type: 'button', value: '저장'});
-
+        btn.classList.add("btn","btn-primary", "me-2");
         btn.addEventListener('click', this.#editBtnCallback);
 
         return btn;
@@ -157,6 +157,7 @@ export default class EditForm {
      */
     #createDelBtn() {
         const btn = createEl('input', {id: 'editBtn', type: 'button', value: '삭제'});
+        btn.classList.add("btn","btn-danger", "me-2");
         btn.addEventListener('click', this.#delBtnCallback);
         return btn;
     }
@@ -167,6 +168,7 @@ export default class EditForm {
      */
     #createNewModeBtn() {
         const btn = createEl('input', {id: 'newBtn', type: 'button', value: '신규등록'});
+        btn.classList.add("btn","btn-secondary", "me-2");
         btn.addEventListener('click', this.#newBtnCallback);
         return btn;
     }
@@ -177,6 +179,7 @@ export default class EditForm {
      */
     #createAddBtn() {
         const btn = createEl('input', {id: 'addBtn', type: 'button', value: '추가'});
+        btn.classList.add("btn","btn-success", "me-2");
         btn.addEventListener('click', this.#addBtnCallback);
         return btn;
     }

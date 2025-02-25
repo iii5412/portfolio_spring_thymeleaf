@@ -48,6 +48,7 @@ async function fetchManageProgram(searchParam = {}, page = 1, size = 10, sortFie
  * 요청이 실패하면 Promise는 오류와 함께 거부됩니다.
  */
 function fetchCreateProgram({programName, url}) {
+
     return FETCH.post(`${requestMapping}`, {programName, url});
 }
 
@@ -61,13 +62,13 @@ function fetchCreateProgram({programName, url}) {
  * @throws {RequiredValueError} - 'id' 매개변수가 누락인 경우.
  */
 function fetchEditProgram({id, programName, url}) {
-    if(!id)
+    if (!id)
         throw RequiredValueError('id');
     return FETCH.patch(`${requestMapping}`, {id, programName, url})
 }
 
 function fetchDeleteProgram(id) {
-    if(!id)
+    if (!id)
         throw RequiredValueError('id');
     return FETCH.delete(`${requestMapping}`, {id});
 }

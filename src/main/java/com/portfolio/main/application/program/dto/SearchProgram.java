@@ -33,4 +33,5 @@ public class SearchProgram extends PageDto {
         else
             this.setSorts(List.of(Sort.Direction.ASC));
     }
+
 }

@@ -11,6 +11,7 @@ import com.portfolio.main.application.program.service.ProgramQueryService;
 import com.portfolio.main.common.util.page.PageResult;
 import com.portfolio.main.infrastructure.config.security.MyUserDetails;
 import com.portfolio.main.infrastructure.config.security.service.MyUserDetailsService;
+import com.portfolio.main.presentation.rest.program.request.SearchProgramRequest;
 import com.portfolio.main.presentation.rest.program.response.ProgramResponse;
 import com.portfolio.main.presentation.rest.request.IdRequest;
 import com.portfolio.main.presentation.rest.response.SuccResponse;
@@ -54,7 +55,10 @@ public class ProgramController {
     }
 
     @GetMapping("/manage")
-    public ResponseEntity<PageResult<ProgramResponse>> getAllManageProgram(SearchProgram searchProgram) {
+    public ResponseEntity<PageResult<ProgramResponse>> getAllManageProgram(SearchProgramRequest searchProgramRequest) {
+        searchProgramRequest.validate();
+
+        final SearchProgram searchProgram = searchProgramRequest.toSearchProgram();
         final PageResult<ProgramDto> programPageResult = programQueryService.selectManageProgram(searchProgram);
         final List<ProgramResponse> programResponses = programPageResult.getResult().stream().map(ProgramResponse::new).toList();
         final PageResult<ProgramResponse> programResponsePageResult = PageResult.<ProgramResponse>builder()

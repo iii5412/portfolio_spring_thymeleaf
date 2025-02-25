@@ -1,0 +1,16 @@
+.programContent {
+    display: flex;
+    justify-content: space-between;
+}
+
+.programContent .left {
+    flex: 2;
+    margin-right: 20px;
+}
+
+.programContent .right {
+    flex: 1;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-left: 1px solid #dee2e6;
+}

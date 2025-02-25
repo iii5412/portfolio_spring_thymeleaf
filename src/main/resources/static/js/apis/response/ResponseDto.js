@@ -1,3 +1,5 @@
-export default class ResponseDto {
+import Dto from "/js/apis/Dto.js";
+
+export default class ResponseDto extends Dto{
 
 }

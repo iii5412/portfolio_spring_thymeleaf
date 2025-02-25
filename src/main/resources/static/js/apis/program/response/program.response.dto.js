@@ -1,6 +1,6 @@
-import Dto from "/js/apis/Dto.js";
+import ResponseDto from "/js/apis/response/ResponseDto.js";
 
-export default class ProgramResponseDto extends Dto {
+export default class ProgramResponseDto extends ResponseDto {
     /**
      * @type {number}
      */

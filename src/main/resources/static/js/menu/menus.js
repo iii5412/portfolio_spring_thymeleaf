@@ -1,8 +1,8 @@
-import {createEl} from "/js/common/util.js";
-import {loadContent} from "/js/common/common.js";
-import {fetchMenusByUserRole} from "/js/apis/menu/menu.js";
-import {FetchError} from "/js/error/fetchError.js";
-import {errorAlert} from "/js/common/alert.js";
+import { createEl } from '/js/common/util.js';
+import { loadContent } from '/js/common/common.js';
+import { fetchMenusByUserRole } from '/js/apis/menu/menu.js';
+import { FetchError } from '/js/error/fetchError.js';
+import { errorAlert } from '/js/common/alert.js';
 export default class Menus {
     /**
      * @type {MainMenu[]}
@@ -26,10 +26,10 @@ export default class Menus {
             this.menus = await fetchMenusByUserRole();
             this.#createTopMenu();
         } catch (e) {
-            if(e instanceof FetchError) {
-               errorAlert(e.serverMessage);
+            if (e instanceof FetchError) {
+                errorAlert(e.serverMessage);
             } else {
-                alert("메뉴를 가져오는데 실패했습니다.");
+                alert('메뉴를 가져오는데 실패했습니다.');
                 throw e;
             }
         }
@@ -54,7 +54,7 @@ export default class Menus {
      */
     addTopLi(parent, mainMenu) {
         let menuName = mainMenu.getMenuName();
-        return this.addLi(parent, {href: '#', innerText: menuName});
+        return this.addLi(parent, { href: '#', innerText: menuName });
     }
 
     /**
@@ -66,7 +66,7 @@ export default class Menus {
         subMenuDiv.classList.add('subMenu');
 
         subMenus.forEach(subMenu => {
-            const a = createEl('a', {innerText: subMenu.getMenuName()});
+            const a = createEl('a', { innerText: subMenu.getMenuName() });
             a.addEventListener('click', () => {
                 loadContent(subMenu);
             });
@@ -81,20 +81,20 @@ export default class Menus {
      * @return {MainMenu|null}
      */
     #findFirstProgramSubMenu(menu) {
-        if(!menu.hasChildren())
+        if (!menu.hasChildren())
             return null;
 
         let firstProgramMenu;
 
         let programMenu = menu.getChildren().find(subMenu => subMenu.isProgramMenu());
 
-        if(programMenu)
+        if (programMenu)
             return programMenu;
 
         menu.getChildren().forEach(subMenu => {
-            if(!programMenu)
+            if (!programMenu)
                 programMenu = this.#findFirstProgramSubMenu(subMenu);
-        })
+        });
 
         return programMenu;
     }
@@ -103,7 +103,7 @@ export default class Menus {
         const ul = this.addUl(this.topMenuArea);
         this.menus.forEach(menu => {
             const li = this.addTopLi(ul, menu);
-            if(menu.hasChildren()) {
+            if (menu.hasChildren()) {
                 this.#createSubMenu(li, menu.getChildren());
             }
         });

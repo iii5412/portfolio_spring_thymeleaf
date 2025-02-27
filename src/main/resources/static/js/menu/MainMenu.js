@@ -1,11 +1,19 @@
-import AbstractTreeNode from "/js/common/AbstractTreeNode.js";
-import Menu from "/js/menu/Menu.js";
+import Menu from '/js/menu/Menu.js';
 
-const tag = `[MainMenu]`;
+const tag = '[MainMenu]';
 export default class MainMenu extends Menu {
-
-    constructor({id, upperMenuId, menuName, programUrl, menuType, orderNum, subMenus = []}) {
-        super({id, upperMenuId, menuName, programUrl, menuType, orderNum, subMenus});
+    /**
+     *
+     * @param {number} id
+     * @param {number} [upperMenuId]
+     * @param {string} menuName
+     * @param {string} programUrl
+     * @param {MENU_TYPE} menuType
+     * @param {number} orderNum
+     * @param {Menu[]} [subMenus]
+     */
+    constructor({ id, upperMenuId, menuName, programUrl, menuType, orderNum, subMenus = [] }) {
+        super({ id, upperMenuId, menuName, programUrl, menuType, orderNum, subMenus });
     }
 
     /**

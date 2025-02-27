@@ -1,4 +1,4 @@
-import ResponseDto from "/js/apis/response/ResponseDto.js";
+import ResponseDto from '/js/apis/response/ResponseDto.js';
 
 export default class ProgramResponseDto extends ResponseDto {
     /**
@@ -35,9 +35,9 @@ export default class ProgramResponseDto extends ResponseDto {
      * @param {string} updatedAt
      * @param {string} lastUpdatedByUserLoginId
      */
-    constructor({id, programName, url, createdAt, updatedAt, lastUpdatedByUserLoginId}) {
+    constructor({ id, programName, url, createdAt, updatedAt, lastUpdatedByUserLoginId }) {
         super();
-        Object.assign(this, {id, programName, url, createdAt, updatedAt, lastUpdatedByUserLoginId});
+        Object.assign(this, { id, programName, url, createdAt, updatedAt, lastUpdatedByUserLoginId });
     }
 
     /**
@@ -52,6 +52,6 @@ export default class ProgramResponseDto extends ResponseDto {
             createdAt: this.createdAt,
             updatedAt: this.updatedAt,
             lastUpdatedByUserLoginId: this.lastUpdatedByUserLoginId,
-        }
+        };
     }
 }

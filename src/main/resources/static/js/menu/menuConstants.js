@@ -4,7 +4,7 @@
  */
 const MENU_TYPE = {
     FOLDER: 'FOLDER',
-    PROGRAM: 'PROGRAM'
-}
+    PROGRAM: 'PROGRAM',
+};
 
-export {MENU_TYPE};
+export { MENU_TYPE };

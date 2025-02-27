@@ -1,136 +1,136 @@
-import {FETCH} from "/js/common/util.js";
-import MainMenu from "/js/menu/MainMenu.js";
-import ManageMenu from "/js/menu/ManageMenu.js";
-import FolderMenu from "/js/menu/FolderMenu.js";
+import FolderMenuResponseDto from '/js/apis/menu/response/folder-menu.response.dto.js';
+import MainMenuResponseDto from '/js/apis/menu/response/main-menu.response.dto.js';
+import MenuManageSearchResponseDto from '/js/apis/menu/response/menu-manage-search.response.dto.js';
+import { FETCH, toQueryString } from '/js/common/util.js';
+import FolderMenu from '/js/menu/FolderMenu.js';
+import MainMenu from '/js/menu/MainMenu.js';
+import ManageMenu from '/js/menu/ManageMenu.js';
 
-const tag = "[api/menu]";
-const requestMapping = "/menu";
+const tag = '[api/menu]';
+const requestMapping = '/menu';
 
 /**
- * 서버에서 사용자 권한에 맞는 모든 메뉴 데이터를 가져오고 Menu 객체의 배열로 해결되는 약속을 반환합니다.
- * @return {Promise<MainMenu[]>} Menu 객체의 배열로 해결되는 Promise입니다.
- * @throws {Error} 메뉴 데이터를 가져오는 중 오류가 발생한 경우.
+ * 현재 사용자의 역할에 따라 메뉴를 가져옵니다.
+ * @returns {Promise<MainMenu[]>}
  */
 async function fetchMenusByUserRole() {
-    try {
-        const response = await FETCH.get(`${requestMapping}`);
-        return createMenuFromMenuData(response)
-    } catch (e) {
-        throw e;
-    }
+    const response = await FETCH.get(`${requestMapping}`);
+    const mainMenuResponseDtos = response.map(r => {
+        return new MainMenuResponseDto(r);
+    });
+    return createMenuFromMenuData(mainMenuResponseDtos);
 }
 
 /**
- * 모든 메뉴를 가져옵니다.
- * @returns {Promise<ManageMenu[]>} 메뉴 항목 배열로 해결되는 Promise입니다.
+ * @param {MenuManageSearchRequestDto} menuManageSearchRequestDto
+ * @returns {Promise<ManageMenu[]|ManageMenu>}
  */
-async function fetchAllMenus() {
-    try {
-        const response = await FETCH.get(`${requestMapping}/all`);
-        return manageMenuMapping(response);
-    } catch (e) {
-        throw e;
-    }
+async function fetchAllMenus(menuManageSearchRequestDto) {
+    const param = menuManageSearchRequestDto.toObject();
+    const response = await FETCH.get(`${requestMapping}/all?${toQueryString(param)}`);
+    const menuManageSearchResponseDtos = response.map(r => new MenuManageSearchResponseDto(r));
+    return manageMenuMapping(menuManageSearchResponseDtos);
 }
 
 /**
- * 폴더 타입의 메뉴를 가져옵니다.
- * @return {Promise<FolderMenu[]>}
+ * 폴더 메뉴를 가져옵니다.
+ * @returns {Promise<FolderMenu[]>}
  */
 async function fetchFolderMenus() {
-    try {
-        const response = await FETCH.get(`${requestMapping}/forderMenus`);
-        return folderMenuMapping(response);
-    } catch (e) {
-        throw e;
-    }
+    const response = await FETCH.get(`${requestMapping}/forderMenus`);
+    const folderMenuResponseDtos = response.map(r => new FolderMenuResponseDto(r));
+    return folderMenuMapping(folderMenuResponseDtos);
 }
 
 /**
- *
- * @param id
+ * 메뉴 ID에 해당하는 메뉴를 가져옵니다.
+ * @param {FetchMenuByIdRequestDto} fetchMenuByIdRequestDto
  * @return {Promise<ManageMenu>}
  */
-async function fetchMenuById(id) {
-    try {
-        const response = await FETCH.get(`${requestMapping}/${id}`);
-        return manageMenuMapping(response);
-    } catch (e) {
-        throw e;
-    }
+async function fetchMenuById(fetchMenuByIdRequestDto) {
+    const { id } = fetchMenuByIdRequestDto.toObject();
+    const response = await FETCH.get(`${requestMapping}/${id}`);
+    return manageMenuMapping(response);
 }
 
 /**
- *
- * @param {number | null} upperId
- * @param {string} menuName
- * @param {MENU_TYPE} menuType
- * @param {number} orderNum
- * @param {ROLE_CODE} roleCode
- * @return {Promise<*|undefined>}
+ * @description 메뉴를 생성합니다.
+ * @param {MenuManageCreateRequestDto} menuManageCreateRequestDto
+ * @returns {Promise<*|undefined>}
  */
-async function fetchCreateMenu({upperId, menuName, menuType, orderNum, roleCode}) {
-    try {
-        return await FETCH.post(`${requestMapping}`, {upperId, menuName, menuType, orderNum, roleCode});
-    } catch (e) {
-        throw e;
-    }
+async function fetchCreateMenu(menuManageCreateRequestDto) {
+    const { upperId, menuName, menuType, orderNum, roleCode } = menuManageCreateRequestDto.toObject();
+    return await FETCH.post(`${requestMapping}`, { upperId, menuName, menuType, orderNum, roleCode });
 }
 
-
-
 /**
-* 주어진 메뉴 데이터로부터 메뉴 구조를 생성합니다.
- *
- * @param {Object[]} menuData - 메뉴를 생성할 메뉴 데이터입니다.
- * @return {Object[]} - 생성된 메뉴 구조.
+ * 메뉴 데이터를 사용하여 메뉴 개체를 생성합니다.
+ * @param {MainMenuResponseDto[]} mainMenuResponseDtos
+ * @returns {MainMenu[]}
  */
-function createMenuFromMenuData(menuData = []) {
-    const result = [];
-    menuData.forEach(data => {
-        const menu = new MainMenu(data);
-        result.push(menu);
-        if (data.subMenus) {
-            const subMenus = createMenuFromMenuData(data.subMenus);
-            menu.setSubMenus(subMenus);
+function createMenuFromMenuData(mainMenuResponseDtos = []) {
+    const topMenus = [];
+    mainMenuResponseDtos.forEach(mainMenuResponseDto => {
+        const mainMenuObject = mainMenuResponseDto.toObject();
+        const { id, upperMenuId, menuName, menuType, programUrl, orderNum } = mainMenuObject;
+        const menu = new MainMenu({ id, upperMenuId, menuName, menuType, programUrl, orderNum });
+        if (mainMenuObject.subMenus) {
+            menu.setSubMenus(createMenuFromMenuData(mainMenuObject.subMenus));
         }
-    })
-    return result;
-}
-
-/**
- * 주어진 데이터 객체를 MainMenu 객체로 매핑합니다.
- *
- * @param {Object[] | Object} data - 매핑할 데이터 객체 또는 데이터 객체의 배열입니다.
- * @returns {MainMenu[] | MainMenu} - 주어진 데이터에서 매핑된 MainMenu 객체 또는 MainMenu 객체의 배열을 반환합니다.
- */
-function mainMenuMapping(data = []) {
-    if (data instanceof Array)
-        return data.map(d => new MainMenu(d));
-    else
-        return new MainMenu(data);
+        topMenus.push(menu);
+    });
+    return topMenus;
 }
 
 /**
  * 데이터 개체 배열을 ManageMenu 개체 배열로 매핑합니다.
  *
- * @param {Object[] | Object} data - 매핑할 데이터 개체의 배열입니다.
- * @return {ManageMenu[] | ManageMenu} - 데이터에서 매핑되는 메뉴 개체의 배열입니다.
+ * @param {MenuManageSearchResponseDto[] | MenuManageSearchResponseDto} menuManageSearchResponseDtos - 매핑할 데이터 개체의 배열입니다.
+ * @return {ManageMenu[] | ManageMenu}
  */
-function manageMenuMapping(data = []) {
-    if (data instanceof Array)
-        return data.map(d => new ManageMenu(d));
-    else
-        return new ManageMenu(data);
+function manageMenuMapping(menuManageSearchResponseDtos = []) {
+    if (Array.isArray(menuManageSearchResponseDtos)) {
+        return menuManageSearchResponseDtos.map(menuManageSearchResponseDto => {
+            const responseDtoObject = menuManageSearchResponseDto.toObject();
+            const { subMenus, ...rest } = responseDtoObject;
+            const manageMenu = new ManageMenu({ ...rest });
+            if (subMenus && subMenus.length > 0) {
+                manageMenu.setSubMenus(manageMenuMapping(subMenus));
+            }
+            return manageMenu;
+        });
+    } else {
+        const responseDtoObject = menuManageSearchResponseDtos.toObject();
+        const { subMenus, ...rest } = responseDtoObject;
+        return new ManageMenu({ ...rest });
+    }
 }
 
 /**
  * 데이터 개체 배열을 FolderMenu 개체 배열로 매핑합니다.
- * @param data
- * @return {FolderMenu[]}
+ * @param {FolderMenuResponseDto[] | FolderMenuResponseDto} folderMenuResponseDtos
+ * @return {FolderMenu[] | FolderMenu}
  */
-function folderMenuMapping(data = []) {
-    return data.map(d => new FolderMenu(d));
+function folderMenuMapping(folderMenuResponseDtos = []) {
+    if (Array.isArray(folderMenuResponseDtos)) {
+        return folderMenuResponseDtos.map(folderMenuResponseDto => {
+            const responseDtoObject = folderMenuResponseDto.toObject();
+            const { subMenus, ...rest } = responseDtoObject;
+            const folderMenu = new FolderMenu({ ...rest });
+            if (subMenus && subMenus.length > 0) {
+                folderMenu.setSubMenus(folderMenuMapping(subMenus));
+            }
+            return folderMenu;
+        });
+    } else {
+        const responseDtoObject = folderMenuResponseDtos.toObject();
+        const { subMenus, ...rest } = responseDtoObject;
+        const folderMenu = new FolderMenu({ ...rest });
+        if (subMenus && subMenus.length > 0) {
+            folderMenu.setSubMenus(folderMenuMapping(subMenus));
+        }
+        return folderMenu;
+    }
 }
 
-export {fetchMenusByUserRole, fetchAllMenus, fetchMenuById, fetchFolderMenus, fetchCreateMenu};
+export { fetchMenusByUserRole, fetchAllMenus, fetchMenuById, fetchFolderMenus, fetchCreateMenu };

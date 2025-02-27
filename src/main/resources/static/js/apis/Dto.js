@@ -4,9 +4,9 @@ export default class Dto {
     }
 
     /**
-     * @return {}
+     * @return {object}
      */
     toObject() {
-        console.warn(`toObject가 구현되지 않았습니다.`);
+        return {};
     }
 }

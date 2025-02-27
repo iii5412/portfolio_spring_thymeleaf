@@ -39,3 +39,5 @@ out/
 ### QueryDsl ###
 /src/main/generated/
 
+### node_modules ###
+node_modules/

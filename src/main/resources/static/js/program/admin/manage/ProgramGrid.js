@@ -1,7 +1,7 @@
-import {isEmptyObject, qs} from "/js/common/util.js";
-import {fetchManageProgram} from '/js/apis/program/index.js';
-import ProgramSearchRequestDto from "/js/apis/program/request/program-manage-search.request.dto.js";
-import Program from "/js/program/Program.js";
+import { isEmptyObject, qs } from '/js/common/util.js';
+import ProgramSearchRequestDto from '/js/apis/program/request/program-manage-search.request.dto.js';
+import Program from '/js/program/Program.js';
+import { fetchManageProgram } from '/js/apis/program/program';
 
 const tag = '[ProgramGrid]';
 /**
@@ -17,7 +17,7 @@ export default class ProgramGrid {
     /**
      * @type {HTMLElement}
      */
-    container
+    container;
     /**
      * @type {HTMLElement}
      */
@@ -44,11 +44,11 @@ export default class ProgramGrid {
      * @param {TPagination} paramObj.pagination - 페이지네이션 요소입니다.
      */
     constructor({
-                    tGrid,
-                    container,
-                    searchForm,
-                    pagination
-                }) {
+        tGrid,
+        container,
+        searchForm,
+        pagination,
+    }) {
         this.grid = tGrid;
         this.container = container;
         this.searchForm = searchForm;
@@ -62,9 +62,9 @@ export default class ProgramGrid {
 
     #bindPaginationEvent() {
         const handleBeforeMove = async (eventData) => {
-            const {page} = eventData;
-            if(page !== this.pagination.getCurrentPage())
-                await this.search({page});
+            const { page } = eventData;
+            if (page !== this.pagination.getCurrentPage())
+                await this.search({ page });
         };
 
         this.pagination.onBeforeMove(handleBeforeMove);
@@ -88,10 +88,10 @@ export default class ProgramGrid {
     getProgram(rowNum) {
         const rowData = this.grid.getRowData(rowNum);
 
-        if(isEmptyObject(rowData))
+        if (isEmptyObject(rowData))
             return null;
 
-        return new Program(rowData)
+        return new Program(rowData);
     }
 
     /**
@@ -99,7 +99,7 @@ export default class ProgramGrid {
      * @description 그리드를 조회한다.
      * @return {Promise<void>}
      */
-    async search({page = 1} = {}) {
+    async search({ page = 1 } = {}) {
         {
             const searchType = qs(this.searchForm, '#searchType').value;
             const searchInput = qs(this.searchForm, '#searchInput').value;
@@ -107,7 +107,7 @@ export default class ProgramGrid {
                 [searchType]: searchInput,
                 page,
                 size: 10,
-            }
+            };
 
             const programSearchResponseDto = await this.#fetchProgram(searchParam);
             const programResponseDtos = programSearchResponseDto.getResult();
@@ -132,15 +132,15 @@ export default class ProgramGrid {
      * @param {string} [paramObj.url]
      * @return {Promise<ProgramSearchResponseDto>}
      */
-    async #fetchProgram({id, programName, url, size, page}) {
+    async #fetchProgram({ id, programName, url, size, page }) {
         const programSearchRequestDto = new ProgramSearchRequestDto(
-                {
-                    id,
-                    programName,
-                    url,
-                    page: page ? page : 1,
-                    size: size ? size : 10,
-                });
+            {
+                id,
+                programName,
+                url,
+                page: page ? page : 1,
+                size: size ? size : 10,
+            });
         return await fetchManageProgram(programSearchRequestDto);
     }
 }

@@ -1,5 +1,5 @@
-import PageResultResponseDto from "/js/apis/response/PageResultResponseDto.js";
-import ProgramResponseDto from "/js/apis/program/response/program.response.dto.js";
+import PageResultResponseDto from '/js/apis/response/PageResultResponseDto.js';
+import ProgramResponseDto from '/js/apis/program/response/program.response.dto.js';
 
 export default class ProgramSearchResponseDto extends PageResultResponseDto {
     /**
@@ -15,8 +15,8 @@ export default class ProgramSearchResponseDto extends PageResultResponseDto {
      * @param {number} paramObj.page
      * @param {number} paramObj.size
      */
-    constructor({result, totalCount, page, size}) {
-        super({result, totalCount, page, size});
+    constructor({ result, totalCount, page, size }) {
+        super({ result, totalCount, page, size });
         this.result = result.map(program => new ProgramResponseDto(program));
         this.totalCount = totalCount;
         this.page = page;
@@ -37,7 +37,7 @@ export default class ProgramSearchResponseDto extends PageResultResponseDto {
      */
     toObject() {
         return Object.assign(super.toObject(), {
-            result: this.result.map(programDto => programDto.toObject())
+            result: this.result.map(programDto => programDto.toObject()),
         });
     }
 }

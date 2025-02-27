@@ -1,4 +1,4 @@
-import {FetchError} from "/js/error/fetchError.js";
+import { FetchError } from '/js/error/fetchError.js';
 
 /**
  * 일반적인 HTTP 상태 코드를 나타내는 개체입니다.
@@ -16,7 +16,7 @@ const HTTP_STATUS = {
     FORBIDDEN: 403,
     NOT_FOUND: 404,
     CONFLICT: 409,
-}
+};
 /**
  * Fetch API를 사용하여 HTTP 요청을 만들기 위한 Fetch 유틸리티 클래스를 나타냅니다.
  */
@@ -33,9 +33,9 @@ class Fetch {
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
         }).then(async response => {
-            if(response.ok)
+            if (response.ok)
                 return true;
             else {
                 const responseJson = await response.json();
@@ -60,8 +60,8 @@ class Fetch {
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
-                ...headers
-            }
+                ...headers,
+            },
         })
             .then(async response => {
                 const responseJson = await response.json();
@@ -91,11 +91,11 @@ class Fetch {
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
-                ...headers
+                ...headers,
             },
         };
 
-        if (init.headers["Content-Type"] === 'application/json')
+        if (init.headers['Content-Type'] === 'application/json')
             init.body = JSON.stringify(data);
         else
             init.body = data;
@@ -106,7 +106,7 @@ class Fetch {
                 if (response.ok) {
                     return responseJson;
                 } else {
-                    throw new FetchError(responseJson)
+                    throw new FetchError(responseJson);
                 }
             })
             .catch(error => {
@@ -128,11 +128,11 @@ class Fetch {
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
-                ...headers
+                ...headers,
             },
         };
 
-        if (init.headers["Content-Type"] === 'application/json')
+        if (init.headers['Content-Type'] === 'application/json')
             init.body = JSON.stringify(data);
         else
             init.body = data;
@@ -143,7 +143,7 @@ class Fetch {
                 if (response.ok) {
                     return responseJson;
                 } else {
-                    throw new FetchError(responseJson)
+                    throw new FetchError(responseJson);
                 }
             })
             .catch(error => {
@@ -165,11 +165,11 @@ class Fetch {
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
-                ...headers
+                ...headers,
             },
         };
 
-        if (init.headers["Content-Type"] === 'application/json')
+        if (init.headers['Content-Type'] === 'application/json')
             init.body = JSON.stringify(data);
         else
             init.body = data;
@@ -180,7 +180,7 @@ class Fetch {
                 if (response.ok) {
                     return responseJson;
                 } else {
-                    throw new FetchError(responseJson)
+                    throw new FetchError(responseJson);
                 }
             })
             .catch(error => {
@@ -215,7 +215,7 @@ const toQueryString = (obj) => {
         // return `${encodeURIComponent(key)}=${encodeURIComponent(value === undefined ? '' : value)}`;
         return `${key}=${value === undefined ? '' : value}`;
     }).join('&');
-}
+};
 /**
  * 지정된 태그와 옵션을 사용하여 새 HTML 요소를 만듭니다.
  *
@@ -233,7 +233,7 @@ const stringToHTMLElement = (string) => {
     const template = document.createElement('template');
     template.innerHTML = string.trim();
     return template.content.firstChild instanceof HTMLElement ? template.content.firstChild : null;
-}
+};
 const FETCH = new Fetch();
 const lpad = (str, len, char) => {
     str = String(str); // ensures that str is a string
@@ -241,7 +241,7 @@ const lpad = (str, len, char) => {
 };
 const isEmptyObject = (object) => {
     return Object.keys(object).length === 0;
-}
+};
 export {
     qs,
     qsAll,

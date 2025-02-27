@@ -1,4 +1,4 @@
-import Dto from "/js/apis/Dto.js";
+import Dto from '/js/apis/Dto.js';
 
 export default class ProgramSearchRequestDto extends Dto {
     /**
@@ -40,9 +40,9 @@ export default class ProgramSearchRequestDto extends Dto {
      * @param {string} paramObj.programName
      * @param {string} paramObj.url
      */
-    constructor({page = 1, size = 10, sortFields = [], sorts = [], id, programName, url}) {
+    constructor({ page = 1, size = 10, sortFields = [], sorts = [], id, programName, url }) {
         super();
-        Object.assign(this, {page, size, sortFields, sorts, id, programName, url});
+        Object.assign(this, { page, size, sortFields, sorts, id, programName, url });
     }
 
     /**
@@ -58,6 +58,6 @@ export default class ProgramSearchRequestDto extends Dto {
             id: this.id,
             programName: this.programName,
             url: this.url,
-        }
+        };
     }
 }

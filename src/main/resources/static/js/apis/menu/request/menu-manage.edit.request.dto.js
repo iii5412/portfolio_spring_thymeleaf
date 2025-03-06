@@ -1,8 +1,12 @@
 import Dto from '/js/apis/Dto.js';
 
-export default class MenuManageCreateRequestDto extends Dto {
+export default class MenuManageEditRequestDto extends Dto {
     /**
      * @type {number}
+     */
+    id;
+    /**
+     * @type {number|null}
      */
     upperId;
     /**
@@ -18,39 +22,44 @@ export default class MenuManageCreateRequestDto extends Dto {
      */
     orderNum;
     /**
+     * @type {number}
+     */
+    programId;
+    /**
      * @type {ROLE_CODE}
      */
     roleCode;
 
     /**
-     *
-     * @param {Object} param
+     * @param {object} param
+     * @param {number} param.id
      * @param {number|null} [param.upperId]
      * @param {string} param.menuName
      * @param {MENU_TYPE} param.menuType
      * @param {number} param.orderNum
+     * @param {number} param.programId
      * @param {ROLE_CODE} param.roleCode
      */
-    constructor({ upperId, menuName, menuType, orderNum, roleCode }) {
+    constructor({ id, upperId, menuName, menuType, orderNum, programId, roleCode }) {
         super();
+        this.id = id;
         this.upperId = upperId;
         this.menuName = menuName;
         this.menuType = menuType;
         this.orderNum = orderNum;
+        this.programId = programId;
         this.roleCode = roleCode;
     }
 
-    /**
-     * DTO를 오브젝트로 변환합니다.
-     * @returns {{upperId, menuName, menuType, orderNum, roleCode}}
-     */
     toObject() {
         return {
             ...super.toObject(),
+            id: this.id,
             upperId: this.upperId,
             menuName: this.menuName,
             menuType: this.menuType,
             orderNum: this.orderNum,
+            programId: this.programId,
             roleCode: this.roleCode,
         };
     }

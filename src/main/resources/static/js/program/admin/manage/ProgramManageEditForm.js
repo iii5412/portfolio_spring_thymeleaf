@@ -1,11 +1,11 @@
-import {createEl, qs, qsAll} from "/js/common/util.js";
-import { FieldFetchError} from "/js/error/fetchError.js";
+import { createEl, qs, qsAll } from '/js/common/util.js';
+import { FieldFetchError } from '/js/error/fetchError.js';
 
-export default class EditForm {
+export default class ProgramManageEditForm {
     static FORM_STATE = {
         'CLEAR': 'clear',
         'EDIT': 'edit',
-    }
+    };
     /**
      * @type {HTMLElement}
      */
@@ -15,21 +15,21 @@ export default class EditForm {
      */
     btnArea;
     /**
-     * @type {EditForm.FORM_STATE}
+     * @type {ProgramManageEditForm.FORM_STATE}
      */
     status;
     #addBtnCallback = () => {
         console.error('addBtnCallback is not defined');
-    }
+    };
     #editBtnCallback = () => {
         console.error('editBtnCallback is not defined');
-    }
+    };
     #delBtnCallback = () => {
         console.error('delBtnCallback is not defined');
-    }
+    };
     #newBtnCallback = () => {
         console.error('newBtnCallback is not defined');
-    }
+    };
     /**
      * @description EditForm 생성자
      * @param {Object} param
@@ -40,12 +40,12 @@ export default class EditForm {
      * @param {function} param.newBtnCallback
      */
     constructor({
-                    form
-                    , addBtnCallback
-                    , editBtnCallback
-                    , delBtnCallback
-                    , newBtnCallback
-                }) {
+        form
+        , addBtnCallback
+        , editBtnCallback
+        , delBtnCallback
+        , newBtnCallback,
+    }) {
         this.form = form;
         this.btnArea = qs(form, '.rightBtnArea');
         this.#addBtnCallback = addBtnCallback;
@@ -74,7 +74,7 @@ export default class EditForm {
     }
 
     clearFormData() {
-        this.status = EditForm.FORM_STATE.CLEAR;
+        this.status = ProgramManageEditForm.FORM_STATE.CLEAR;
         qsAll(this.form, 'input[type="text"]').forEach(input => input.value = '');
     }
 
@@ -83,7 +83,7 @@ export default class EditForm {
     }
 
     clear() {
-        this.status = EditForm.FORM_STATE.CLEAR;
+        this.status = ProgramManageEditForm.FORM_STATE.CLEAR;
         this.clearFormData();
         this.clearBtnArea();
         this.errorClear();
@@ -103,7 +103,7 @@ export default class EditForm {
     setEditMode(program) {
         const btnArea = this.btnArea;
 
-        this.status = EditForm.FORM_STATE.EDIT;
+        this.status = ProgramManageEditForm.FORM_STATE.EDIT;
         this.clear();
         const editBtn = this.#createEditBtn();
         const delBtn = this.#createDelBtn();
@@ -120,6 +120,7 @@ export default class EditForm {
      * @return {string}
      */
     getProgramName() {
+        /** @type {HTMLInputElement} */
         return qs(this.form, '#programName').value;
     }
 
@@ -128,6 +129,7 @@ export default class EditForm {
      * @return {string}
      */
     getUrl() {
+        /** @type {HTMLInputElement} */
         return qs(this.form, '#url').value;
     }
 
@@ -136,6 +138,7 @@ export default class EditForm {
      * @return {string}
      */
     getId() {
+        /** @type {HTMLInputElement} */
         return qs(this.form, '#id').value;
     }
 
@@ -144,8 +147,8 @@ export default class EditForm {
      * @return {HTMLElement}
      */
     #createEditBtn() {
-        const btn = createEl('input', {id: 'editBtn', type: 'button', value: '저장'});
-        btn.classList.add("btn","btn-primary", "me-2");
+        const btn = createEl('input', { id: 'editBtn', type: 'button', value: '저장' });
+        btn.classList.add('btn', 'btn-primary', 'me-2');
         btn.addEventListener('click', this.#editBtnCallback);
 
         return btn;
@@ -156,8 +159,8 @@ export default class EditForm {
      * @return {HTMLElement}
      */
     #createDelBtn() {
-        const btn = createEl('input', {id: 'editBtn', type: 'button', value: '삭제'});
-        btn.classList.add("btn","btn-danger", "me-2");
+        const btn = createEl('input', { id: 'editBtn', type: 'button', value: '삭제' });
+        btn.classList.add('btn', 'btn-danger', 'me-2');
         btn.addEventListener('click', this.#delBtnCallback);
         return btn;
     }
@@ -167,8 +170,8 @@ export default class EditForm {
      * @return {HTMLElement}
      */
     #createNewModeBtn() {
-        const btn = createEl('input', {id: 'newBtn', type: 'button', value: '신규등록'});
-        btn.classList.add("btn","btn-secondary", "me-2");
+        const btn = createEl('input', { id: 'newBtn', type: 'button', value: '신규등록' });
+        btn.classList.add('btn', 'btn-secondary', 'me-2');
         btn.addEventListener('click', this.#newBtnCallback);
         return btn;
     }
@@ -178,8 +181,8 @@ export default class EditForm {
      * @return {HTMLElement}
      */
     #createAddBtn() {
-        const btn = createEl('input', {id: 'addBtn', type: 'button', value: '추가'});
-        btn.classList.add("btn","btn-success", "me-2");
+        const btn = createEl('input', { id: 'addBtn', type: 'button', value: '추가' });
+        btn.classList.add('btn', 'btn-success', 'me-2');
         btn.addEventListener('click', this.#addBtnCallback);
         return btn;
     }

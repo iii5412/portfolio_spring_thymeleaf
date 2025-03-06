@@ -10,6 +10,7 @@ import com.portfolio.main.domain.model.menu.exception.MenuNotFoundException;
 import com.portfolio.main.domain.model.menu.type.MenuType;
 import com.portfolio.main.infrastructure.config.security.jwt.JwtAuthenticationToken;
 import com.portfolio.main.presentation.rest.TestAuth;
+import com.portfolio.main.presentation.rest.menu.request.CreateMenuRequest;
 import com.portfolio.main.presentation.rest.menu.request.EditMenuRequest;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
@@ -93,8 +94,8 @@ class MenuControllerTest {
     @Test
     void save() throws Exception {
         final String token = testAuth.setUserAdminAndGetToken();
-        final CreateMenu createMenu = new CreateMenu("테스트 부모", MenuType.FOLDER, 2L, RoleCode.ROLE_ADMIN, "admin");
-        final String createMenuJson = objectMapper.writeValueAsString(createMenu);
+        final CreateMenuRequest createMenuRequest = new CreateMenuRequest("테스트 부모", MenuType.FOLDER.toString(), 2L, RoleCode.ROLE_ADMIN, "admin");
+        final String createMenuJson = objectMapper.writeValueAsString(createMenuRequest);
 
         mockMvc.perform(
                         post(requestMapijng + "/")
@@ -109,7 +110,9 @@ class MenuControllerTest {
     @Test
     void deleteMenu() throws Exception {
         final String token = testAuth.setUserAdminAndGetToken();
-        final CreateMenu createMenu = new CreateMenu("테스트 부모", MenuType.FOLDER, 2L, RoleCode.ROLE_ADMIN, "admin");
+        final CreateMenuRequest createMenuRequest = new CreateMenuRequest("테스트 부모", MenuType.FOLDER.toString(), 2L, RoleCode.ROLE_ADMIN, "admin");
+        createMenuRequest.toCreateMenu();
+        final CreateMenu createMenu = createMenuRequest.toCreateMenu();
         final Long savedId = menuManageService.createMenu(createMenu);
 
         mockMvc.perform(

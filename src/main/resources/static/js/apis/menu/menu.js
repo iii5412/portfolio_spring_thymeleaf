@@ -2,9 +2,9 @@ import FolderMenuResponseDto from '/js/apis/menu/response/folder-menu.response.d
 import MainMenuResponseDto from '/js/apis/menu/response/main-menu.response.dto.js';
 import MenuManageSearchResponseDto from '/js/apis/menu/response/menu-manage-search.response.dto.js';
 import { FETCH, toQueryString } from '/js/common/util.js';
+import ManageMenu from '/js/menu/admin/manage/ManageMenu.js';
 import FolderMenu from '/js/menu/FolderMenu.js';
 import MainMenu from '/js/menu/MainMenu.js';
-import ManageMenu from '/js/menu/ManageMenu.js';
 
 const tag = '[api/menu]';
 const requestMapping = '/menu';
@@ -23,7 +23,7 @@ async function fetchMenusByUserRole() {
 
 /**
  * @param {MenuManageSearchRequestDto} menuManageSearchRequestDto
- * @returns {Promise<ManageMenu[]|ManageMenu>}
+ * @returns {Promise<ManageMenu[]>}
  */
 async function fetchAllMenus(menuManageSearchRequestDto) {
     const param = menuManageSearchRequestDto.toObject();
@@ -50,17 +50,35 @@ async function fetchFolderMenus() {
 async function fetchMenuById(fetchMenuByIdRequestDto) {
     const { id } = fetchMenuByIdRequestDto.toObject();
     const response = await FETCH.get(`${requestMapping}/${id}`);
-    return manageMenuMapping(response);
+    return manageMenuMapping(new MenuManageSearchResponseDto(response));
 }
 
 /**
  * @description 메뉴를 생성합니다.
  * @param {MenuManageCreateRequestDto} menuManageCreateRequestDto
- * @returns {Promise<*|undefined>}
+ * @returns {Promise<Object>}
  */
-async function fetchCreateMenu(menuManageCreateRequestDto) {
+async function createMenu(menuManageCreateRequestDto) {
     const { upperId, menuName, menuType, orderNum, roleCode } = menuManageCreateRequestDto.toObject();
     return await FETCH.post(`${requestMapping}`, { upperId, menuName, menuType, orderNum, roleCode });
+}
+
+/**
+ * 메뉴를 저장합니다.
+ * @param {MenuManageEditRequestDto} menuManageEditRequestDto
+ * @returns {Promise<Object>}
+ */
+async function editMenu(menuManageEditRequestDto) {
+    return await FETCH.patch(`${requestMapping}`, menuManageEditRequestDto.toObject());
+}
+
+/**
+ *
+ * @param {MenuManageDeleteRequestDto} menuManageDeleteRequestDto
+ * @returns {Promise<Object>}
+ */
+async function deleteMenu(menuManageDeleteRequestDto) {
+    return await FETCH.delete(`${requestMapping}`, menuManageDeleteRequestDto.toObject());
 }
 
 /**
@@ -95,14 +113,20 @@ function manageMenuMapping(menuManageSearchResponseDtos = []) {
             const { subMenus, ...rest } = responseDtoObject;
             const manageMenu = new ManageMenu({ ...rest });
             if (subMenus && subMenus.length > 0) {
-                manageMenu.setSubMenus(manageMenuMapping(subMenus));
+                const subMenuDtos = subMenus.map(sm => new MenuManageSearchResponseDto(sm));
+                manageMenu.setSubMenus(manageMenuMapping(subMenuDtos));
             }
             return manageMenu;
         });
     } else {
         const responseDtoObject = menuManageSearchResponseDtos.toObject();
         const { subMenus, ...rest } = responseDtoObject;
-        return new ManageMenu({ ...rest });
+        const manageMenu = new ManageMenu({ ...rest });
+        if (subMenus && subMenus.length > 0) {
+            const subMenuDtos = subMenus.map(sm => new MenuManageSearchResponseDto(sm));
+            manageMenu.setSubMenus(manageMenuMapping(subMenuDtos));
+        }
+        return manageMenu;
     }
 }
 
@@ -118,7 +142,8 @@ function folderMenuMapping(folderMenuResponseDtos = []) {
             const { subMenus, ...rest } = responseDtoObject;
             const folderMenu = new FolderMenu({ ...rest });
             if (subMenus && subMenus.length > 0) {
-                folderMenu.setSubMenus(folderMenuMapping(subMenus));
+                const subMenuDtos = subMenus.map(sm => new FolderMenuResponseDto(sm));
+                folderMenu.setSubMenus(folderMenuMapping(subMenuDtos));
             }
             return folderMenu;
         });
@@ -127,10 +152,19 @@ function folderMenuMapping(folderMenuResponseDtos = []) {
         const { subMenus, ...rest } = responseDtoObject;
         const folderMenu = new FolderMenu({ ...rest });
         if (subMenus && subMenus.length > 0) {
-            folderMenu.setSubMenus(folderMenuMapping(subMenus));
+            const subMenuDtos = subMenus.map(sm => new FolderMenuResponseDto(sm));
+            folderMenu.setSubMenus(folderMenuMapping(subMenuDtos));
         }
         return folderMenu;
     }
 }
 
-export { fetchMenusByUserRole, fetchAllMenus, fetchMenuById, fetchFolderMenus, fetchCreateMenu };
+export {
+    fetchMenusByUserRole,
+    fetchAllMenus,
+    fetchMenuById,
+    fetchFolderMenus,
+    createMenu,
+    editMenu,
+    deleteMenu,
+};

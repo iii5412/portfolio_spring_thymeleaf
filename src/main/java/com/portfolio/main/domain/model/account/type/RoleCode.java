@@ -23,6 +23,8 @@ public enum RoleCode {
     public static RoleCode getHighestAuthority(Collection<? extends GrantedAuthority> authorities) {
         return authorities.stream()
                 .map(GrantedAuthority::getAuthority)
+                // ROLE_ANONYMOUS를 ROLE_GUEST로 매핑
+                .map(role -> role.equals("ROLE_ANONYMOUS") ? "ROLE_GUEST" : role)
                 .min(Comparator.comparingInt(roleCode -> RoleCode.valueOf(roleCode).getLevel()))
                 .map(RoleCode::valueOf)
                 .orElse(null);

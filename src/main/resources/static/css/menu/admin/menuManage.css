@@ -1,0 +1,33 @@
+.menuContent {
+    display: flex;
+    justify-content: space-between;
+}
+
+.menuContent .left {
+    flex: 2;
+}
+
+.menuContent .right {
+    flex: 1;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-left: 1px solid #dee2e6;
+}
+
+.menuContent .grid-container {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    grid-gap: 10px; /* 셀 사이의 간격 */
+    padding: 10px;
+}
+
+.menuContent .grid-header {
+    background-color: #f2f2f2;
+    padding: 10px;
+    text-align: left;
+}
+
+.menuContent .grid-cell {
+    grid-column: span 1; /* 기본적으로 한 열 차지 */
+    padding: 10px;
+}

@@ -16,17 +16,12 @@ import java.util.List;
 @Transactional
 @AllArgsConstructor
 public class MenuRoleService {
-//    private final MenuService menuService;
-//    private final RoleService roleService;
     private final MenuRoleRepository menuRoleRepository;
 
     public List<MenuRole> findByMenuId(Long menuId) {
         return menuRoleRepository.findByMenuId(menuId);
     }
 
-//    public MenuRole save(Long menuId, Long roleId) {
-//        final Menu menu = menuService.findById(menuId);
-//        final Role role = roleService.findById(roleId);
     public MenuRole save (Menu menu, Role role) {
         final MenuRole menuRole = new MenuRole(new MenuRole.MenuRoleId(menu.getId(), role.getId()), menu, role);
         return menuRoleRepository.save(menuRole);

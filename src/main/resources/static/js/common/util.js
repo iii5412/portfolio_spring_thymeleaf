@@ -25,7 +25,7 @@ class Fetch {
      * GET 메소드로 URL을 미리 호출하여 인증 상태 및 권한이 충분한지 확인합니다.
      *
      * @param {string} url - GET 메소드를 사용하여 호출할 URL입니다.
-     * @return {Promise<boolean | undefined>} - 인증 상태 및 권한이 충분하면 true로, 그렇지 않으면 정의되지 않은 것으로 확인되는 Promise입니다.
+     * @return {Promise<boolean>} - 인증 상태 및 권한이 충분하면 true로, 그렇지 않으면 정의되지 않은 것으로 확인되는 Promise입니다.
      */
     getCheck(url) {
         return fetch(url, {
@@ -52,7 +52,8 @@ class Fetch {
      *
      * @param {string} url - GET 요청을 보낼 URL입니다.
      * @param {Object} [headers={}] - 요청에 포함할 선택적 헤더입니다.
-     * @returns {Promise<any|undefined>} - 요청이 성공하면 JSON 응답으로 확인되고, 요청이 실패하면 오류와 함께 거부하는 Promise입니다.
+     * @return {Promise<Object>}
+     * @throws {FetchError}
      */
     get(url, headers = {}) {
         return fetch(url, {
@@ -80,10 +81,10 @@ class Fetch {
      * 제공된 데이터 및 헤더와 함께 지정된 URL에 POST 요청을 보냅니다.
      *
      * @param {string} url - POST 요청이 전송될 URL입니다.
-     * @param {any} data - 요청 본문에 전송될 데이터입니다.
-     * @param {Object} headers - 요청에 포함될 추가 헤더입니다. 기본값은 빈 개체입니다.
-     * @return {Promise<any | undefined>} - 요청이 성공하면 구문 분석된 JSON 응답을 확인하는 Promise,
-     * or throws a FetchError with the parsed error response if the request fails.
+     * @param {any} [data] - 요청 본문에 전송될 데이터입니다.
+     * @param {Object} [headers] - 요청에 포함될 추가 헤더입니다. 기본값은 빈 개체입니다.
+     * @return {Promise<Object>}
+     * @throws {FetchError}
      */
     post(url, data, headers = {}) {
         const init = {
@@ -120,7 +121,8 @@ class Fetch {
      * @param {string} url - 요청을 보낼 URL입니다.
      * @param {Object} data - 요청 본문에 전송될 데이터입니다.
      * @param {Object} headers - 요청에 포함될 선택적 헤더입니다.
-     * @return {Promise<any | undefined>} - 요청이 성공하면 JSON 응답으로 확인되고, 요청이 실패하면 오류와 함께 거부되는 Promise입니다.
+     * @return {Promise<Object>}
+     * @throws {FetchError}
      */
     patch(url, data, headers = {}) {
         const init = {
@@ -157,7 +159,8 @@ class Fetch {
      * @param {string} url - HTTP DELETE 요청을 보낼 URL입니다.
      * @param {any} data - 요청 본문과 함께 보낼 데이터입니다. Content-Type 헤더에 따라 모든 유형이 될 수 있습니다.
      * @param {Object} headers - 요청에 포함할 선택적 HTTP 헤더입니다.
-     * @returns {Promise<any>} - 요청이 성공하면 응답 데이터를 확인하고, 요청이 실패하면 FetchError로 거부하는 Promise입니다.
+     * @return {Promise<Object>}
+     * @throws {FetchError}
      */
     delete(url, data, headers = {}) {
         const init = {
@@ -191,9 +194,10 @@ class Fetch {
 /**
  * 제공된 대상 요소 내에서 지정된 선택자와 일치하는 첫 번째 요소를 찾아 반환합니다.
  *
+ * @template T extends HTMLElement
  * @param {Document | Element} target - 일치하는 요소를 검색할 요소입니다.
  * @param {string} selector - 일치하는 요소를 찾는 데 사용되는 CSS 선택기입니다.
- * @return {HTMLElement} - 제공된 대상 요소 내에서 지정된 선택기와 일치하는 첫 번째 요소이거나, 일치하는 항목이 없으면 null입니다.
+ * @return {T | null} - 제공된 대상 요소 내에서 지정된 선택기와 일치하는 첫 번째 요소이거나, 일치하는 항목이 없으면 null입니다.
  */
 const qs = (target, selector) => target.querySelector(selector);
 /**

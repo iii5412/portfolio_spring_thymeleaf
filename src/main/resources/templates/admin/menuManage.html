@@ -1,460 +1,309 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<link rel="stylesheet" th:href="@{/css/common.css}"/>
-
-<style>
-    .menuContent {
-        display: flex;
-    }
-
-    .menuContent .left {
-        flex: 1;
-    }
-
-    .menuContent .right {
-        flex: 1;
-    }
-
-    .menuContent .grid-container {
-        display: grid;
-        grid-template-columns: 1fr 3fr;
-        grid-gap: 10px; /* 셀 사이의 간격 */
-        padding: 10px;
-    }
-
-    .menuContent .grid-header {
-        background-color: #f2f2f2;
-        padding: 10px;
-        text-align: left;
-    }
-
-    .menuContent .grid-cell {
-        grid-column: span 1; /* 기본적으로 한 열 차지 */
-        padding: 10px;
-    }
-</style>
-
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{template/template}"
+>
 <body>
-<div id="content" class="ifrm-content">
+
+<div layout:fragment="pageStyles">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/css/menu/admin/menuManage.css"/>
+    <link rel="stylesheet" href="/css/menu/admin/menuManageEditForm.css"/>
+</div>
+
+<div layout:fragment="pageJs">
+    <script src="/js/external-libraries/tuigrid/tui-grid.min.js"></script>
+</div>
+
+
+<div layout:fragment="content">
+    <!-- 전체 화면 높이(min-vh-100)와 gutter 제거(g-0) -->
     <div class="menuContent">
+        <!--        <div class="row min-vh-100 g-0 menuContent">-->
+        <!-- 왼쪽 영역: 그리드 영역 -->
+        <!--            <div class="col-lg-6 h-100 border-end">-->
         <div class="left">
-            <div id="grid" style="height: 470px;">
+            <!--                <div class="left d-flex flex-column h-100">-->
+            <div>
+                <div id="grid" class="flex-grow-1"></div>
             </div>
         </div>
+        <!-- 오른쪽 영역: 메뉴 편집 폼 카드 -->
+        <!--            <div class="col-lg-6 h-100">-->
         <div class="right">
-            <form id="menuEditForm">
-                <input th:type="text" id="id" name="id">
-                <div class="grid-container">
-                    <div class="grid-header">
-                        <label for="menuName">메뉴명</label>
-                    </div>
-                    <div class="grid-cell">
-                        <input type="text" name="menuName" id="menuName">
-                        <div class="field-error-message" data-target="menuName"></div>
-                    </div>
-                    <div class="grid-header">
-                        <label for="upperMenuName">상위메뉴</label>
-                    </div>
-                    <div class="grid-cell">
-                        <input type="text" name="upperId" id="upperId" class="readonly" readonly>
-                        <input type="text" name="upperMenuName" id="upperMenuName" class="readonly" readonly>
-                        <input th:type="button" id="findUpperMenuBtn" value="돋보기"/>
-                        <div class="field-error-message" data-target="upperId"></div>
-                        <div class="field-error-message" data-target="upperMenuName"></div>
-                    </div>
-                    <div class="grid-header">
-                        <label for="menuType">메뉴타입</label>
-                    </div>
-                    <div class="grid-cell">
-                        <select id="menuType" name="menuType">
-                            <option value="">선택하세요</option>
-                            <option value="FOLDER">폴더</option>
-                            <option value="PROGRAM">프로그램</option>
-                        </select>
-                        <div class="field-error-message" data-target="menuType"></div>
-                    </div>
-                    <div class="grid-header">
-                        <label for="roleCode">권한</label>
-                    </div>
-                    <div class="grid-cell">
-                        <select id="roleCode" name="roleCode">
-                            <option value="">선택하세요</option>
-                        </select>
-                        <div class="field-error-message" data-target="roleCode"></div>
-                    </div>
-                    <div class="grid-header">
-                        <label for="programName">프로그램</label>
-                    </div>
-                    <div class="grid-cell">
-                        <input type="text" name="programId" id="programId" class="readonly" readonly>
-                        <input type="text" name="programName" id="programName" class="readonly" readonly>
-                        <input th:type="button" id="findProgramBtn" value="돋보기"/>
-                        <div class="field-error-message" data-target="programId"></div>
-                        <div class="field-error-message" data-target="programName"></div>
-                    </div>
-                    <div class="grid-header">
-                        <label for="orderNum">순서</label>
-                    </div>
-                    <div class="grid-cell">
-                        <select id="orderNum" name="orderNum">
-                            <option value="">선택하세요</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                        </select>
-                        <div class="field-error-message" data-target="orderNum"></div>
-                    </div>
-                    <div class="grid-header">
-                        <label for="lastModifiedByLoginId">수정자</label>
-                    </div>
-                    <div class="grid-cell">
-                        <input th:type="text" id="lastModifiedByLoginId" name="lastModifiedByLoginId" class="readonly"
-                               readonly>
-                    </div>
-                    <div class="grid-header">
-                        <label for="updatedAt">수정일</label>
-                    </div>
-                    <div class="grid-cell">
-                        <input th:type="text" id="updatedAt" name="updatedAt" class="readonly" readonly>
+            <div id="editContainer" class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">메뉴 수정</h5>
+                </div>
+                <div class="card-body">
+                    <form id="menuForm">
+                        <!-- 숨김 필드: ID -->
+                        <input type="hidden" id="id" name="id">
+                        <!-- 메뉴명 -->
+                        <div class="mb-3">
+                            <label for="menuName" class="form-label">메뉴명</label>
+                            <input type="text" class="form-control" id="menuName" name="menuName"
+                                   placeholder="메뉴명을 입력하세요">
+                            <div class="invalid-feedback" data-target="menuName"></div>
+                        </div>
+                        <!-- 상위 메뉴 -->
+                        <div class="mb-3">
+                            <label for="upperMenuName" class="form-label">상위 메뉴</label>
+                            <div class="d-flex align-items-center gap-2">
+                                <input type="text" class="form-control readonly" id="upperId" name="upperId"
+                                       readonly>
+                                <input type="text" class="form-control readonly" id="upperMenuName"
+                                       name="upperMenuName" readonly>
+                                <button type="button" class="btn btn-outline-secondary" id="findUpperMenuBtn">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback" data-target="upperId"></div>
+                            <div class="invalid-feedback" data-target="upperMenuName"></div>
+                        </div>
+                        <!-- 메뉴 타입 -->
+                        <div class="mb-3">
+                            <label for="menuType" class="form-label">메뉴 타입</label>
+                            <select id="menuType" name="menuType" class="form-select">
+                                <option value="">선택하세요</option>
+                            </select>
+                            <div class="invalid-feedback d-block" data-target="menuType"></div>
+                        </div>
+                        <!-- 권한 -->
+                        <div class="mb-3">
+                            <label for="roleCode" class="form-label">권한</label>
+                            <select id="roleCode" name="roleCode" class="form-select">
+                                <option value="">선택하세요</option>
+                                <!-- 옵션은 동적으로 추가 -->
+                            </select>
+                            <div class="invalid-feedback" data-target="roleCode"></div>
+                        </div>
+                        <!-- 프로그램 -->
+                        <div id="programRow" class="mb-3">
+                            <label for="programGroup" class="form-label">프로그램</label>
+                            <div id="programGroup" class="d-flex align-items-center gap-2">
+                                <input type="text" class="form-control readonly" id="programId" name="programId"
+                                       readonly>
+                                <input type="text" class="form-control readonly" id="programName" name="programName"
+                                       readonly>
+                                <button type="button" class="btn btn-outline-secondary" id="findProgramBtn">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback" data-target="programId"></div>
+                            <div class="invalid-feedback" data-target="programName"></div>
+                        </div>
+                        <!-- 순서 -->
+                        <div class="mb-3">
+                            <label for="orderNum" class="form-label">순서</label>
+                            <select id="orderNum" name="orderNum" class="form-select">
+                                <option value="">선택하세요</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                            </select>
+                            <div class="invalid-feedback" data-target="orderNum"></div>
+                        </div>
+                        <!-- 수정자 -->
+                        <div class="mb-3">
+                            <label for="lastModifiedByLoginId" class="form-label">수정자</label>
+                            <input type="text" class="form-control readonly" id="lastModifiedByLoginId"
+                                   name="lastModifiedByLoginId" readonly>
+                        </div>
+                        <!-- 수정일 -->
+                        <div class="mb-3">
+                            <label for="updatedAt" class="form-label">수정일</label>
+                            <input type="text" class="form-control readonly" id="updatedAt" name="updatedAt"
+                                   readonly>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-end">
+                    <div class="rightBtnArea">
+
                     </div>
                 </div>
-                <div class="rightBtnArea">
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
+    </div><!-- row -->
 </div>
-</body>
-<script th:type="module">
-    import {fetchAllMenus, fetchFolderMenus, fetchMenuById, fetchCreateMenu} from "/js/apis/menu/menu.js";
-    import {fetchAllProgram} from "/js/apis/menu/program.js";
-    import {createEl, lpad, qs, qsAll} from "/js/common/util.js";
-    import {COLUMN_TYPE, createColumn, createField} from "/js/realgrid/gridUtil.js";
-    import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/+esm';
-    import {errorAlert, infoAlert} from "/js/common/alert.js";
-    import {FetchError, FieldFetchError} from "/js/error/fetchError.js";
-    import {fetchRoleCodeName} from "/js/apis/account/role.js";
-
-    function setTreeId(data = []) {
-
-        const getFlatData = (data = []) => {
-            let result = [];
-            data.forEach(d => {
-                result.push(d);
-                if (d.hasChildren()) {
-                    result = result.concat(getFlatData(d.getChildren()));
-                }
-            })
-            return result;
-        }
-
-        const getTreeId = (_data, allData) => {
-            let treeId = [];
-            if (_data.hasUpper()) {
-                const upper = allData.find(data => data.id === _data.getUpperId());
-                if (upper) {
-                    const upperTreeId = upper.hasOwnProperty('treeId') ? upper.treeId : getTreeId(upper);
-                    const upperTreeIdArr = upperTreeId.split(".");
-                    treeId = treeId.concat(upperTreeIdArr);
-                }
-            }
-            treeId.push(_data.getId());
-            return treeId.map(tid => lpad(tid, 3, '0')).join(".");
-        }
-
-
-        const flatData = getFlatData(data);
-        flatData.forEach(d => {
-            d.treeId = getTreeId(d, flatData);
-        })
-
-        return flatData;
-    }
-
-    function setTreeName(data = [], fetchTreeName = (d) => {
-        return ''
-    }) {
-        data.forEach(d => {
-            d.treeName = fetchTreeName(d);
-        })
-        return data;
-    }
-
-    class EditForm {
-        container;
-        btnArea;
+<div layout:fragment="pageScripts">
+    <script th:type="module">
+        import { fetchAllMenus, createMenu, fetchFolderMenus, fetchMenuById } from '/js/apis/menu/menu.js';
+        import { qs } from '/js/common/util.js';
+        import MenuManageSearchRequestDto from '/js/apis/menu/request/menu-manage-search.request.dto.js';
+        import { getAllRolesFlat } from '/js/apis/account/role.js';
+        import TGridColumn from '/js/grid/TGridColumn.js';
+        import TGrid from '/js/grid/TGrid.js';
+        import MenuManageEditForm from '/js/menu/admin/manage/MenuManageEditForm.js';
+        import MenuManageGrid from '/js/menu/admin/manage/MenuManageGrid.js';
+        import { getMenuTypeName, MENU_TYPE } from '/js/menu/menuConstants.js';
 
         /**
-         *
-         * @param {Element} container
+         * @typedef {Object} TGridTreeData
+         * @property {number} id - 메뉴의 ID
+         * @property {number|null} upperMenuId - 상위 메뉴의 ID
+         * @property {string} menuName - 메뉴 이름
+         * @property {number} programId - 프로그램의 ID
+         * @property {string} programName - 프로그램 이름
+         * @property {MENU_TYPE} menuType - 메뉴 타입 (예: "FOLDER", "PROGRAM")
+         * @property {number} orderNum - 정렬 순서
+         * @property {TGridTreeData[]} [_children] - 하위 메뉴 배열 (옵션)
          */
-        constructor(container) {
-            this.container = container;
-            this.btnArea = qs(container, '.rightBtnArea');
-            this.#setNewMode();
-        }
 
-        #setNewMode() {
-            this.clear();
-            this.#createNewBtn();
-        }
+        /**
+         * @typedef {Object} TGridMenuRowData
+         * @property {number} id - 메뉴의 ID
+         * @property {number|null} upperMenuId - 상위 메뉴의 ID
+         * @property {string} menuName - 메뉴 이름
+         * @property {number} programId - 프로그램의 ID
+         * @property {string} programName - 프로그램 이름
+         * @property {MENU_TYPE} menuType - 메뉴 타입 (예: "FOLDER", "PROGRAM")
+         * @property {number} orderNum - 정렬 순서
+         */
 
-        async setEditMode(id) {
-            this.clear();
-            this.#createEditBtn();
-            this.#createDelBtn();
-            this.#createNewModeBtn();
+        class MenuManageMediator {
+            /**
+             * @type {MenuManageGrid}
+             */
+            menuManageGrid;
+            /**
+             * @type {MenuManageEditForm}
+             */
+            menuManageEditForm;
 
-            const menu = await fetchMenuById(id);
-            qs(this.container, '#id').value = menu.getId();
-            qs(this.container, '#menuName').value = menu.getMenuName();
-            qs(this.container, '#upperId').value = menu.getUpperId();
-            qs(this.container, '#upperMenuName').value = menu.getUpperMenuName();
-            qs(this.container, '#menuType').value = menu.getMenuType();
-            qs(this.container, '#roleCode').value = menu.getRoleCode();
-            qs(this.container, '#programId').value = menu.getProgramId();
-            qs(this.container, '#programName').value = menu.getProgramName();
-            qs(this.container, '#orderNum').value = menu.getOrderNum();
-            qs(this.container, '#lastModifiedByLoginId').value = menu.getLastModifiedByLoginId();
-            qs(this.container, '#updatedAt').value = menu.getUpdatedAt();
-        }
+            /**
+             *
+             * @param menuManageGrid
+             * @param menuManageEditForm
+             */
+            constructor({
+                menuManageGrid,
+                menuManageEditForm,
+            }) {
+                this.menuManageGrid = menuManageGrid;
+                this.menuManageEditForm = menuManageEditForm;
+                this.#init();
+            }
 
-        clear() {
-            this.#clearForm();
-            this.#clearBtn();
-        }
+            #init() {
+                this.#setGridClickEvent();
+                this.menuManageEditForm.setNewBtnClickCallback(async () => {
+                    await this.menuManageEditForm.create();
+                    await this.#gridRefresh();
+                });
+                this.menuManageEditForm.setEditBtnClickCallback(async () => {
+                    await this.menuManageEditForm.edit();
+                    await this.#gridRefresh();
+                });
+                this.menuManageEditForm.setDelBtnClickCallback(async () => {
+                    await this.menuManageEditForm.delete();
+                    await this.#gridRefresh();
+                });
+            }
 
-        #clearForm() {
-            qsAll(this.container, 'input[type="text"]').forEach(input => input.value = "");
-            qsAll(this.container, 'select').forEach(select => select.value = "");
-        }
-
-        #getFormData() {
-            const formData = new FormData(this.container);
-            const formDataArray = Array.from(formData.entries());
-            return Object.fromEntries(formDataArray);
-        }
-
-        #clearBtn() {
-            qsAll(this.btnArea, 'input[type="button"]').forEach(button => button.remove());
-        }
-
-        #createNewBtn() {
-            const btn = createEl('input', {id: 'addBtn', type: 'button', value: '추가'});
-            btn.addEventListener('click', async () => {
-                try {
-                    const formData = this.#getFormData();
-                    await fetchCreateMenu(formData);
-                    infoAlert('저장되었습니다.');
-                    this.setNewMode();
-                } catch (e) {
-                    if (e instanceof FetchError) {
-                        const fieldFetchError = new FieldFetchError(this.form, e);
-                        fieldFetchError.clearMessage(...qsAll(this.form, 'input[type="text"], select'));
-                        fieldFetchError.bindingMessage();
-                    } else {
-                        errorAlert("저장에 실패하였습니다. 잠시 후 다시 시도해주세요.");
-                        throw e;
-                    }
-                }
-            });
-            this.btnArea.appendChild(btn);
-        }
-
-        #createNewModeBtn() {
-            const btn = createEl('input', {id: 'newBtn', type: 'button', value: '신규'});
-            btn.addEventListener('click', () => {
-                this.#setNewMode();
-            });
-            this.btnArea.appendChild(btn);
-        }
-
-        #createEditBtn() {
-            const btn = createEl('input', {id: 'editBtn', type: 'button', value: '저장'});
-            btn.addEventListener('click', async () => {
-
-            })
-            this.btnArea.appendChild(btn);
-        }
-
-        #createDelBtn() {
-            const btn = createEl('input', {id: 'delBtn', type: 'button', value: '삭제'});
-            btn.addEventListener('click', async () => {
-
-            })
-            this.btnArea.appendChild(btn);
-        }
-
-
-    }
-
-    /**
-     *
-     * @param {ManageMenu[]} menus
-     * @param treeView
-     * @param treeProvider
-     */
-    function drawGrid(menus = [], treeView, treeProvider) {
-        treeProvider.setFields([
-            createField('treeId').text().end(),
-            createField('treeName').text().end(),
-            createField('id').number().end(),
-            createField('menuName').text().end()
-        ]);
-
-        treeView.setColumns([
-            createColumn('treeId', COLUMN_TYPE.DATA, 100).editable(false).visible(false).header('treeId').end(),
-            createColumn('treeName', COLUMN_TYPE.DATA, 250).editable(false).visible(true).header('메뉴명').end(),
-            createColumn('id', COLUMN_TYPE.DATA, 100).editable(false).visible(false).header('id').end(),
-            createColumn('menuName', COLUMN_TYPE.DATA, 100).editable(false).visible(false).header('menuName').end()
-        ]);
-
-        const treeMenus = setTreeId(menus);
-        const treeMenusTreeName = setTreeName(treeMenus, (m) => m.getMenuName());
-
-        treeProvider.setRows(treeMenusTreeName, "treeId", false, null, 'iconField');
-        treeView.setDataSource(treeProvider);
-
-        treeView.displayOptions.fitStyle = 'evenFill';
-        treeView.displayOptions.emptyMessage = '표시할 데이타가 없습니다.';
-        treeView.treeOptions.expanderIconStyle = "square"//기본 "triangle"
-        treeView.treeOptions.defaultIcon = 4;
-    }
-
-    document.addEventListener('DOMContentLoaded', async () => {
-        const menus = await fetchAllMenus();
-        const container = qs(document, '#content');
-        const editForm_form = qs(container, '#menuEditForm')
-        const gridContainer = qs(container, '#grid');
-        const treeProvider = new RealGrid.LocalTreeDataProvider();
-        const treeView = new RealGrid.TreeView(gridContainer);
-        const editForm = new EditForm(editForm_form);
-        const roleCodes = await fetchRoleCodeName();
-        const showUpperMenuDialog = () => {
-            const swal = Swal;
-            swal.fire({
-                title: '상위메뉴',
-                html: `
-                <div id="dialog">
-                    <table>
-                        <tr>
-                            <th>ID</th>
-                            <th>메뉴명</th>
-                            <th></th>
-                        </tr>
-                    </table>
-                </div>
-            `,
-                didOpen: async () => {
-                    const folderMenus = await fetchFolderMenus();
-                    const dialogContainer = qs(document, '#dialog');
-                    const table = qs(dialogContainer, 'table');
+            #setGridClickEvent() {
+                const editForm = this.menuManageEditForm;
+                const tGrid = this.menuManageGrid.tGrid;
+                tGrid.setCellClick(({ rowNum, columnName }) => {
                     /**
-                     * @param {HTMLTableElement} table
-                     * @param {FolderMenu} folderMenu
-                     * @return {string}
+                     * @type {TGridMenuRowData | null}
                      */
-                    const addTr = (table, folderMenu) => {
-                        const inputBtn = createEl('input', {type: 'button', value: '선택'});
-                        const tr = createEl('tr');
-                        const idTd = createEl('td', {innerText: folderMenu.getId()});
-                        const menuNameTd = createEl('td', {innerText: folderMenu.getMenuName()});
-                        const btnTd = createEl('td');
+                    const { id } = tGrid.getRowData(rowNum);
+                    editForm.setEditMode(id);
+                });
+            }
 
-                        inputBtn.addEventListener('click', () => {
-                            qs(container, '#upperId').value = folderMenu.getId();
-                            qs(container, '#upperMenuName').value = folderMenu.getMenuName();
-                            swal.close();
-                        })
+            async #gridRefresh() {
+                const menus = await MenuManageMediator.FetchAllMenus();
+                this.menuManageGrid.setData(menus);
+            }
 
-                        btnTd.append(inputBtn);
-                        tr.append(idTd, menuNameTd, btnTd)
-                        table.append(tr);
-                    }
-                    folderMenus.forEach(fm => {
-                        addTr(table, fm);
-                    });
+            static async FetchAllMenus() {
+                return await fetchAllMenus(MenuManageSearchRequestDto.createEmptySearchCriteria());
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            /** @type {ManageMenu[]} */
+            const menus = await MenuManageMediator.FetchAllMenus();
+            const container = qs(document, '.menuContent');
+            const gridWrapper = qs(container, '#grid');
+            const editFormContainer = qs(container, '#editContainer');
+            const editFormBtnArea = qs(container, '.rightBtnArea');
+            const menuManageEditForm = new MenuManageEditForm({
+                container: editFormContainer,
+                btnArea: editFormBtnArea,
+            });
+            /** @type {Role[]} */
+            const roleCodes = await getAllRolesFlat();
+            /** @type {HTMLSelectElement} */
+            const roleCodeSelect = qs(container, '#roleCode');
+            /** @type {HTMLSelectElement} */
+            const menuTypeSelect = qs(container, '#menuType');
+
+            /**
+             *
+             * @param {HTMLSelectElement} roleCodeSelect
+             * @param {[]} roleCodes
+             */
+            const createRoleCodeOption = (roleCodeSelect, roleCodes) => {
+                for (const roleCode of roleCodes) {
+                    roleCodeSelect.innerHTML += `<option value="${roleCode.getRoleCode()}">${roleCode.getRoleName()}</option>`;
                 }
-            })
-        }
-        const showProgramListDialog = () => {
-            const swal = Swal;
-            swal.fire({
-                title: '프로그램목록',
-                showCloseButton: true,
-                showConfirmButton: false,
-                html: `
-                <div id="dialog">
-                    <table>
-                        <tr>
-                            <th>ID</th>
-                            <th>프로그램명</th>
-                            <th>url</th>
-                            <th></th>
-                        </tr>
-                    </table>
-                </div>
-            `,
-                didOpen: async () => {
-                    const programs = await fetchAllProgram();
-                    const dialogContainer = qs(document, '#dialog');
-                    const table = qs(dialogContainer, 'table');
-                    /**
-                     * @param {HTMLTableElement} table
-                     * @param {Program} program
-                     * @return {string}
-                     */
-                    const addTr = (table, program) => {
-                        const inputBtn = createEl('input', {type: 'button', value: '선택'});
-                        const tr = createEl('tr');
-                        const idTd = createEl('td', {innerText: program.getId()});
-                        const nameTd = createEl('td', {innerText: program.getProgramName()});
-                        const urlTd = createEl('td', {innerText: program.getUrl()});
-                        const btnTd = createEl('td');
+            };
 
-                        inputBtn.addEventListener('click', () => {
-                            qs(container, '#programId').value = program.getId();
-                            qs(container, '#programName').value = program.getProgramName();
-                            swal.close();
-                        })
+            const createMenuTypeOption = (menuTypeSelect) => {
+                for (const key of Object.keys(MENU_TYPE)) {
+                    const menuTypeValue = MENU_TYPE[key];
+                    const menuTypeName = getMenuTypeName(menuTypeValue);
 
-                        btnTd.append(inputBtn);
-                        tr.append(idTd, nameTd, urlTd, btnTd);
-                        table.append(tr);
-                    }
-                    programs.forEach(fm => {
-                        addTr(table, fm);
-                    });
+                    menuTypeSelect.innerHTML += `<option value="${menuTypeValue}">${menuTypeName}</option>`;
                 }
+            };
+
+            const TUI_GRID = tui.Grid;
+            const tGrid = TGrid.create({
+                tuiGrid: TUI_GRID,
+                wrapperElement: gridWrapper,
+                columns: [
+                    TGridColumn.create({ name: 'id', header: 'id' }).hidden().end(),
+                    TGridColumn.create({ name: 'upperMenuId', header: 'upperMenuId' }).hidden().end(),
+                    TGridColumn.create({ name: 'menuName', header: '메뉴' }).alignLeft().end(),
+                    TGridColumn.create({ name: 'programId', header: 'programId' }).hidden().end(),
+                    TGridColumn.create({ name: 'programName', header: 'programName' }).hidden().end(),
+                    TGridColumn.create({ name: 'menuType', header: 'menuType' }).hidden().end(),
+                    TGridColumn.create({ name: 'orderNum', header: 'orderNum' }).hidden().end(),
+                ],
+                treeColumnOptions: {
+                    name: 'menuName',
+                },
             })
-        }
+                .setBodyHeight(800)
+                .end();
 
-        const roleCodeSelect = qs(container, '#roleCode');
-        for(const roleCode of roleCodes) {
-            roleCodeSelect.innerHTML += `<option value="${roleCode.getRoleCode()}">${roleCode.getRoleName()}</option>`
-        }
+            const menuManageGrid = new MenuManageGrid(tGrid);
+            menuManageGrid.setData(menus);
 
-        drawGrid(menus, treeView, treeProvider);
-        treeView.onCellClicked = (grid, clickData) => {
-            if (clickData.cellType === 'gridEmpty')
-                return false;
-            const {id} = grid.getDataSource().getJsonRow(clickData.dataRow);
+            const menuManageMediator = new MenuManageMediator({
+                menuManageGrid,
+                menuManageEditForm,
+            });
 
-            editForm.setEditMode(id);
-        };
+            createRoleCodeOption(roleCodeSelect, roleCodes);
+            createMenuTypeOption(menuTypeSelect);
 
-        editForm_form.addEventListener('submit', (e) => e.preventDefault());
-
-        qs(container, '#findUpperMenuBtn').addEventListener('click', showUpperMenuDialog);
-
-        qs(container, '#findProgramBtn').addEventListener('click', showProgramListDialog);
-    });
+        });
 
 
-</script>
+    </script>
+</div>
+</body>
+</html>
+

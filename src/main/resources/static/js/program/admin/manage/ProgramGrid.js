@@ -1,7 +1,7 @@
 import { isEmptyObject, qs } from '/js/common/util.js';
 import ProgramSearchRequestDto from '/js/apis/program/request/program-manage-search.request.dto.js';
 import Program from '/js/program/Program.js';
-import { fetchManageProgram } from '/js/apis/program/program';
+import { fetchManageProgram } from '/js/apis/program/program.js';
 
 const tag = '[ProgramGrid]';
 /**
@@ -101,7 +101,9 @@ export default class ProgramGrid {
      */
     async search({ page = 1 } = {}) {
         {
+            /** @type {HTMLSelectElement} */
             const searchType = qs(this.searchForm, '#searchType').value;
+            /** @type {HTMLInputElement} */
             const searchInput = qs(this.searchForm, '#searchInput').value;
             const searchParam = {
                 [searchType]: searchInput,

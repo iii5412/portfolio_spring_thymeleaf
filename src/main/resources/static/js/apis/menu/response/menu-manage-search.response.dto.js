@@ -10,6 +10,10 @@ export default class MenuManageSearchResponseDto extends ResponseDto {
      */
     upperMenuId;
     /**
+     * @type {string|null}
+     */
+    upperMenuName;
+    /**
      * @type {number|null}
      */
     programId;
@@ -56,6 +60,7 @@ export default class MenuManageSearchResponseDto extends ResponseDto {
      * @param {object} param
      * @param {number} param.id
      * @param {number|null} param.upperMenuId
+     * @param {string|null} param.upperMenuName
      * @param {number|null} param.programId
      * @param {string|null} param.programName
      * @param {string} param.menuName
@@ -67,10 +72,11 @@ export default class MenuManageSearchResponseDto extends ResponseDto {
      * @param {string} param.createdAt
      * @param {string} param.updatedAt
      */
-    constructor({ id, upperMenuId, programId, programName, menuName, menuType, roleCode, orderNum, lastModifiedByLoginId, subMenus, createdAt, updatedAt }) {
+    constructor({ id, upperMenuId, upperMenuName, programId, programName, menuName, menuType, roleCode, orderNum, lastModifiedByLoginId, subMenus, createdAt, updatedAt }) {
         super();
         this.id = id;
         this.upperMenuId = upperMenuId;
+        this.upperMenuName = upperMenuName;
         this.programId = programId;
         this.programName = programName;
         this.menuName = menuName;
@@ -85,13 +91,14 @@ export default class MenuManageSearchResponseDto extends ResponseDto {
 
     /**
      * DTO를 오브젝트로 변환합니다.
-      * @returns {{id: number, upperMenuId: number, programId: number, programName: string, menuName: string, menuType: MENU_TYPE, roleCode: ROLE_CODE, orderNum: number, lastModifiedByLoginId: string, subMenus: MenuManageSearchResponseDto[], createdAt: string, updatedAt: string}}
+      * @returns {{id: number, upperMenuId: number, upperMenuName: string, programId: number, programName: string, menuName: string, menuType: MENU_TYPE, roleCode: ROLE_CODE, orderNum: number, lastModifiedByLoginId: string, subMenus: MenuManageSearchResponseDto[], createdAt: string, updatedAt: string}}
      */
     toObject() {
         return {
             ...super.toObject(),
             id: this.id,
             upperMenuId: this.upperMenuId,
+            upperMenuName: this.upperMenuName,
             programId: this.programId,
             programName: this.programName,
             menuName: this.menuName,

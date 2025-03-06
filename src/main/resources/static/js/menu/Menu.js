@@ -47,7 +47,6 @@ export default class Menu {
      * @param {Menu[]} param0.subMenus - 하위 메뉴들의 배열입니다.
      */
     constructor({ id, upperMenuId, menuName, programUrl, menuType, orderNum, subMenus = [] }) {
-
         Object.assign(this, { id, upperMenuId, menuName, programUrl, menuType, orderNum, subMenus });
     }
 

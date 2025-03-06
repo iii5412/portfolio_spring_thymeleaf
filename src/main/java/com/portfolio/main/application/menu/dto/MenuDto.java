@@ -20,6 +20,7 @@ public class MenuDto {
     private Long id;
 //    private MenuDto upperMenu;
     private Long upperMenuId;
+    private String upperMenuName;
     private MenuType menuType;
     private Long orderNum;
     private ProgramDto program;
@@ -35,6 +36,7 @@ public class MenuDto {
 
         if(menu.hasUpperMenu()){
             this.upperMenuId = menu.getUpperMenu().getId();
+            this.upperMenuName = menu.getUpperMenu().getMenuName();
         }
 
         this.menuType = menu.getMenuType();
@@ -64,6 +66,7 @@ public class MenuDto {
     public MenuDto (MenuDto menuDto) {
         this.id = menuDto.getId();
         this.upperMenuId = menuDto.getUpperMenuId();
+        this.upperMenuName = menuDto.getUpperMenuName();
         this.menuType = menuDto.getMenuType();
         this.orderNum = menuDto.getOrderNum();
         this.program = menuDto.getProgram();

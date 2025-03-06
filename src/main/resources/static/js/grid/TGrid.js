@@ -1,6 +1,5 @@
-import Grid from "/js/grid/Grid.js";
-import TGridColumnHeader from "/js/grid/TGridColumnHeader.js";
-
+import Grid from '/js/grid/Grid.js';
+import TGridColumnHeader from '/js/grid/TGridColumnHeader.js';
 
 /**
  * @description tuiGrid 인스턴스를 생성한다.
@@ -8,22 +7,24 @@ import TGridColumnHeader from "/js/grid/TGridColumnHeader.js";
  * @param {function} param.tuiGrid - tuiGrid
  * @param {HTMLElement} param.wrapperElement
  * @param {TGridColumn[]} param.columns
+ * @param {object} [param.treeColumnOptions]
  * @returns {function} tuiGrid Instance
  */
 function _createTuiGrid({
-                            tuiGrid
-                            , wrapperElement
-                            , columns = []
-                        }) {
+    tuiGrid,
+    wrapperElement,
+    columns = [],
+    treeColumnOptions,
+}) {
     const columnAndHeaderInfo = columns.reduce((result, column) => {
         result.columns.push(column.getColumnInfo());
         result.headers.push(column.getHeaderInfo());
         return result;
-    }, {columns: [], headers: []});
+    }, { columns: [], headers: [] });
     /**
      * @type {CreateGridInitOptions}
      */
-    const createGridInitOptions =  {
+    const createGridInitOptions = {
         el: wrapperElement,
         columns: columnAndHeaderInfo.columns,
         header: {
@@ -31,6 +32,7 @@ function _createTuiGrid({
             valign: TGridColumnHeader.VERTICAL_ALIGN.MIDDLE,
             columns: columnAndHeaderInfo.headers,
         },
+        treeColumnOptions,
     };
     return new tuiGrid(createGridInitOptions);
 }
@@ -67,7 +69,6 @@ class TGridBuilder {
         return this.tGrid;
     }
 }
-
 
 /**
  * @typedef {Object} CreateGridInitOptions
@@ -118,16 +119,17 @@ export default class TGrid extends Grid {
 
     /**
      * @description 셀 클릭 이벤트를 설정한다.
-     * @param {function} func - 셀 클릭 시 호출될 함수
-     * @param {Object} func.param - 셀 클릭 이벤트의 파라미터 객체
-     * @param {number} func.param.rowNum - 클릭된 셀의 행 번호
-     * @param {string} func.param.columnName - 클릭된 셀의 열 이름
+     * @param {function} callback - 셀 클릭 시 호출될 함수
+     * @param {Object} callback.param - 셀 클릭 이벤트의 파라미터 객체
+     * @param {number} callback.param.rowNum - 클릭된 셀의 행 번호
+     * @param {string} callback.param.columnName - 클릭된 셀의 열 이름
      */
-    setCellClick(func) {
+    setCellClick(callback) {
         this.tuiGrid.on('click', (ev) => {
-            const {rowKey, columnName} = ev;
-            func({rowNum : rowKey, columnName});
-        })
+            const { rowKey, columnName } = ev;
+            if (Object.prototype.hasOwnProperty.call(ev, 'rowKey'))
+                callback({ rowNum: rowKey, columnName });
+        });
     }
 
     /**
@@ -137,7 +139,7 @@ export default class TGrid extends Grid {
      */
     getRowData(rowNum) {
         const row = this.tuiGrid.getRow(rowNum);
-        if(row) {
+        if (row) {
             return row;
         } else {
             console.warn(`[getRowData] 존재하지 않는 행 번호 입니다. rownum => ${rowNum}`);
@@ -150,18 +152,21 @@ export default class TGrid extends Grid {
      * @param {function} param.tuiGrid
      * @param {HTMLElement} param.wrapperElement
      * @param {TGridColumn[]} param.columns
+     * @param {object} [param.treeColumnOptions]
      * @return {TGridBuilder}
      */
     static create({
-                        tuiGrid
-                      , wrapperElement
-                      , columns = []
-                  }) {
+        tuiGrid,
+        wrapperElement,
+        columns = [],
+        treeColumnOptions,
+    }) {
 
         const _tuiGrid = _createTuiGrid({
-            tuiGrid
-            , wrapperElement
-            , columns
+            tuiGrid,
+            wrapperElement,
+            columns,
+            treeColumnOptions,
         });
         return new TGrid(_tuiGrid)._builder();
     }

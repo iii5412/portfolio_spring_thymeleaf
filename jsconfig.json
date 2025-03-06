@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src/main/resources/static",
+    "paths": {
+      "/js/*": ["js/*"]
+    }
+  },
+  "include": ["src/main/resources/static/**/*"]
+}

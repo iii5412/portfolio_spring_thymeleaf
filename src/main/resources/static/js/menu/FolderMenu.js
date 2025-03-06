@@ -6,35 +6,6 @@ import { MENU_TYPE } from '/js/menu/menuConstants.js';
  */
 export default class FolderMenu extends Menu {
     /**
-     * @type {number}
-     */
-    id;
-    /**
-     * @type {number|null}
-     */
-    upperMenuId = null;
-    /**
-     * @type {string}
-     */
-    menuName;
-    /**
-     * @type {string}
-     */
-    programUrl;
-    /**
-     * @type {MENU_TYPE}
-     */
-    menuType;
-    /**
-     * @type {number}
-     */
-    orderNum;
-    /**
-     * @type {FolderMenu[]}
-     */
-    subMenus = [];
-
-    /**
      * 폴더 메뉴를 생성하는 생성자 함수입니다.
      * @param {Object} param
      * @param {number} param.id

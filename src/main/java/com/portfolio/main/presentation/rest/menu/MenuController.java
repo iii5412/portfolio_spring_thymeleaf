@@ -2,13 +2,13 @@ package com.portfolio.main.presentation.rest.menu;
 
 import com.portfolio.main.application.menu.dto.*;
 import com.portfolio.main.application.menu.service.MenuManageService;
-import com.portfolio.main.application.menurole.service.MenuRoleApplicationService;
+import com.portfolio.main.application.menu.service.MenuQueryService;
+import com.portfolio.main.presentation.rest.menu.request.CreateMenuRequest;
 import com.portfolio.main.presentation.rest.menu.request.EditMenuRequest;
 import com.portfolio.main.presentation.rest.menu.response.FolderMenusResponse;
 import com.portfolio.main.presentation.rest.menu.response.MainMenuResponse;
 import com.portfolio.main.presentation.rest.menu.response.ManageMenuResponse;
 import com.portfolio.main.presentation.rest.response.SuccResponse;
-import com.portfolio.main.application.menu.service.MenuQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -75,9 +75,10 @@ public class MenuController {
 
 
     @PostMapping("")
-    public ResponseEntity<Long> createMenu(@AuthenticationPrincipal UserDetails userDetails, @RequestBody CreateMenu createMenu) {
-        createMenu.setCreateUserLoginId(userDetails.getUsername());
-        createMenu.validate();
+    public ResponseEntity<Long> createMenu(@AuthenticationPrincipal UserDetails userDetails, @RequestBody CreateMenuRequest createMenuRequest) {
+        createMenuRequest.setCreateUserLoginId(userDetails.getUsername());
+        createMenuRequest.validate();
+        final CreateMenu createMenu = createMenuRequest.toCreateMenu();
         final Long savedMenuId = menuManageService.createMenu(createMenu);
         return ResponseEntity.ok(savedMenuId);
     }

@@ -19,6 +19,7 @@ public class MenuManageDto {
     private Long id;
 //    private MenuManageDto upperMenu;
     private Long upperMenuId;
+    private String upperMenuName;
     private MenuType menuType;
     private RoleCode roleCode;
     private Long orderNum;
@@ -43,6 +44,7 @@ public class MenuManageDto {
         if (menuDto.hasUpperMenu()) {
 //            this.upperMenu = new MenuManageDto(menuDto.getUpperMenu());
             this.upperMenuId = menuDto.getUpperMenuId();
+            this.upperMenuName = menuDto.getUpperMenuName();
         }
 
         if (menuDto.hasSubMenus()) {

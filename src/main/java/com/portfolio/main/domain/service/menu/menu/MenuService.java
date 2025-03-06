@@ -126,7 +126,7 @@ public class MenuService {
 
         final Menu savedMenu = menuRepository.save(newMenu);
 
-        final RoleCode roleCode = RoleCode.valueOf(createMenu.getRoleCode());
+        final RoleCode roleCode = createMenu.getRoleCode();
         final Role role = roleService.findByRoleCode(roleCode);
 
         menuRoleService.save(savedMenu, role);

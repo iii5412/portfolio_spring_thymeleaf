@@ -81,18 +81,17 @@
         </div>
     </div>
 </div>
-</div>
 <div layout:fragment="pageScripts">
     <script th:type="module">
-        import {qs, qsAll, HTTP_STATUS} from "/js/common/util.js";
-        import ProgramGrid from "/js/program/admin/manage/ProgramGrid.js";
-        import TGrid from "/js/grid/TGrid.js";
-        import TGridColumn from "/js/grid/TGridColumn.js";
-        import EditForm from "/js/program/admin/manage/EditForm.js";
-        import {fetchCreateProgram, fetchDeleteProgram, fetchEditProgram} from "/js/apis/program/program.js";
-        import {errorAlert, infoAlert} from "/js/common/alert.js";
-        import {FetchError, FieldFetchError} from "/js/error/fetchError.js";
-        import TPagination from "/js/common/TPagination.js";
+        import { qs, qsAll, HTTP_STATUS } from '/js/common/util.js';
+        import ProgramGrid from '/js/program/admin/manage/ProgramGrid.js';
+        import TGrid from '/js/grid/TGrid.js';
+        import TGridColumn from '/js/grid/TGridColumn.js';
+        import { fetchCreateProgram, fetchDeleteProgram, fetchEditProgram } from '/js/apis/program/program.js';
+        import { errorAlert, infoAlert } from '/js/common/alert.js';
+        import { FetchError, FieldFetchError } from '/js/error/fetchError.js';
+        import TPagination from '/js/common/TPagination.js';
+        import ProgramManageEditForm from '/js/program/admin/manage/ProgramManageEditForm.js';
 
         const tag = '[programManage]';
 
@@ -102,13 +101,13 @@
              */
             programGrid;
             /**
-             * @type {EditForm}
+             * @type {ProgramManageEditForm}
              */
             editForm;
 
             constructor(programGrid) {
                 this.programGrid = programGrid;
-                this.editForm = new EditForm({
+                this.editForm = new ProgramManageEditForm({
                     form: qs(document, '#programEditForm'),
                     addBtnCallback: this.#addBtnCallback(),
                     editBtnCallback: this.#editBtnCallback(),
@@ -135,7 +134,7 @@
             }
 
             #init() {
-                this.programGrid.setClickEvent(async ({rowNum, columnName}) => {
+                this.programGrid.setClickEvent(async ({ rowNum, columnName }) => {
                     const program = this.programGrid.getProgram(rowNum);
 
                     if (!program)
@@ -165,8 +164,8 @@
                     const url = this.editForm.getUrl();
                     const form = this.editForm.getForm();
                     try {
-                        await fetchCreateProgram({programName, url});
-                        infoAlert("저장되었습니다.");
+                        await fetchCreateProgram({ programName, url });
+                        infoAlert('저장되었습니다.');
                         await this.programGrid.search();
                         this.newMode();
                     } catch (e) {
@@ -181,11 +180,11 @@
                                 fieldFetchError.bindingMessage();
                             }
                         } else {
-                            errorAlert("저장에 실패하였습니다. 잠시 후 다시 시도해주세요.");
+                            errorAlert('저장에 실패하였습니다. 잠시 후 다시 시도해주세요.');
                             throw e;
                         }
                     }
-                }
+                };
             }
 
             /**
@@ -200,8 +199,8 @@
                     const url = this.editForm.getUrl();
 
                     try {
-                        await fetchEditProgram({id, programName, url})
-                        infoAlert("수정되었습니다.");
+                        await fetchEditProgram({ id, programName, url });
+                        infoAlert('수정되었습니다.');
                         await this.programGrid.search();
                         this.newMode();
                     } catch (e) {
@@ -213,7 +212,7 @@
                                 fieldFetchError.bindingMessage();
                             }
                         } else {
-                            errorAlert("수정에 실패하였습니다. 잠시 후 다시 시도해주세요.");
+                            errorAlert('수정에 실패하였습니다. 잠시 후 다시 시도해주세요.');
                             throw e;
                         }
                     }
@@ -229,14 +228,14 @@
                     try {
                         const id = this.editForm.getId();
                         await fetchDeleteProgram(id);
-                        infoAlert("삭제되었습니다.");
+                        infoAlert('삭제되었습니다.');
                         await this.programGrid.search();
                         this.newMode();
                     } catch (e) {
-                        errorAlert("삭제에 실패하였습니다. 잠시 후 다시 시도해주세요.");
+                        errorAlert('삭제에 실패하였습니다. 잠시 후 다시 시도해주세요.');
                         throw e;
                     }
-                }
+                };
             }
 
         }
@@ -252,26 +251,26 @@
             const searchType = qs(searchForm, '#searchType');
             const pagination = TPagination.create({
                 tuiPageNation: TUI_PAGINATION
-                , paginationContainer: qs(container, '#pagination')
+                , paginationContainer: qs(container, '#pagination'),
             })
-                    .end();
+                .end();
             const tGrid = TGrid.create({
                 tuiGrid: TUI_GRID,
                 wrapperElement: gridWrapper,
                 columns: [
-                    TGridColumn.create({name: 'id', header: 'id'}).width(50).end()
-                    , TGridColumn.create({name: 'programName', header: '프로그램명'})
-                            .alignLeft()
-                            .end()
-                    , TGridColumn.create({name: 'url', header: 'URL'}).end()
-                    , TGridColumn.create({name: 'createdAt', header: '생성일'}).end()
-                    , TGridColumn.create({name: 'updatedAt', header: '수정일'}).end()
-                    , TGridColumn.create({name: 'lastUpdatedByUserLoginId', header: '수정자'}).end()
+                    TGridColumn.create({ name: 'id', header: 'id' }).width(50).end()
+                    , TGridColumn.create({ name: 'programName', header: '프로그램명' })
+                        .alignLeft()
+                        .end()
+                    , TGridColumn.create({ name: 'url', header: 'URL' }).end()
+                    , TGridColumn.create({ name: 'createdAt', header: '생성일' }).end()
+                    , TGridColumn.create({ name: 'updatedAt', header: '수정일' }).end()
+                    , TGridColumn.create({ name: 'lastUpdatedByUserLoginId', header: '수정자' }).end(),
                 ],
                 pagination,
             })
-                    .setBodyHeight(800)
-                    .end();
+                .setBodyHeight(800)
+                .end();
             const programGrid = new ProgramGrid({
                 tGrid,
                 container,
@@ -290,11 +289,11 @@
                         fieldFetchError.clearMessage(...qsAll(form, 'input[type="text"]'));
                         fieldFetchError.bindingMessage();
                     } else {
-                        errorAlert("검색에 실패하였습니다. 잠시 후 다시 시도해주세요.");
+                        errorAlert('검색에 실패하였습니다. 잠시 후 다시 시도해주세요.');
                         throw e;
                     }
                 }
-            }
+            };
 
             await search();
 

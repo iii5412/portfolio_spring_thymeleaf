@@ -1,11 +1,11 @@
-import TGridColumnHeader from "/js/grid/TGridColumnHeader.js";
+import TGridColumnHeader from '/js/grid/TGridColumnHeader.js';
 
 export default class TGridColumn {
     static ALIGN = {
         LEFT: 'left',
         CENTER: 'center',
         RIGHT: 'right',
-    }
+    };
 
     /**
      * @type {string}
@@ -27,6 +27,11 @@ export default class TGridColumn {
      * @type {TGridColumn.ALIGN}
      */
     align = TGridColumn.ALIGN.CENTER;
+    /**
+     *
+     * @type {boolean}
+     */
+    hidden = false;
     /**
      * @type {TGridColumnHeader}
      */
@@ -83,6 +88,10 @@ export default class TGridColumn {
         this.header.setHeaderAlign(align);
     }
 
+    _hidden() {
+        this.hidden = true;
+    }
+
     /**
      * column정보를 object로 반환한다.
      * @return {{editor: string, name: string, width: number, headerName: string}}
@@ -94,7 +103,8 @@ export default class TGridColumn {
             editor: this.editor,
             width: this.width,
             align: this.align,
-        }
+            hidden: this.hidden,
+        };
     }
 
     /**
@@ -176,6 +186,11 @@ export default class TGridColumn {
                 return this;
             }
 
+            hidden() {
+                this.tGridColumn._hidden();
+                return this;
+            }
+
             /**
              *
              * @return {TGridColumn}
@@ -195,7 +210,7 @@ export default class TGridColumn {
      * @param {string} param.header
      * @return {TGridBuilder}
      */
-    static create({name, header}) {
+    static create({ name, header }) {
         const tGridColumn = new TGridColumn(name, header);
         return tGridColumn._builder();
     }

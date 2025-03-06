@@ -4,6 +4,7 @@ import com.portfolio.main.application.menu.exception.InvalidCreateMenuException;
 import com.portfolio.main.domain.model.account.type.RoleCode;
 import com.portfolio.main.domain.model.menu.type.MenuType;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.util.StringUtils;
 
@@ -12,6 +13,7 @@ import org.springframework.util.StringUtils;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 public class CreateMenu {
     /**
      * 메뉴 상위 ID.
@@ -32,20 +34,17 @@ public class CreateMenu {
     /**
      * 메뉴 접근 권한 RoleCode String Value
      */
-    private String roleCode;
+    private RoleCode roleCode;
     /**
      * 메뉴를 생성한 사용자의 로그인 ID
      */
     private String createUserLoginId;
 
-    public CreateMenu() {
-    }
-
     public CreateMenu(String menuName, MenuType menuType, Long orderNum, RoleCode roleCode, String createUserLoginId) {
         this.menuName = menuName;
         this.menuType = menuType;
         this.orderNum = orderNum;
-        this.roleCode = roleCode.name();
+        this.roleCode = roleCode;
         this.createUserLoginId = createUserLoginId;
     }
 
@@ -54,27 +53,8 @@ public class CreateMenu {
         this.menuName = menuName;
         this.menuType = menuType;
         this.orderNum = orderNum;
-        this.roleCode = roleCode.name();
+        this.roleCode = roleCode;
         this.createUserLoginId = createUserLoginId;
-    }
-
-    public void validate() {
-        final InvalidCreateMenuException invalidCreateMenuException = new InvalidCreateMenuException();
-
-        if(!StringUtils.hasText(this.menuName))
-            invalidCreateMenuException.addValidation("menuName", "입력해주세요.");
-
-        if(this.menuType == null)
-            invalidCreateMenuException.addValidation("menuType", "입력해주세요.");
-
-        if(this.orderNum == null)
-            invalidCreateMenuException.addValidation("orderNum", "입력해주세요.");
-
-        if(StringUtils.hasText(this.roleCode))
-            invalidCreateMenuException.addValidation("roleCode", "입력해주세요.");
-
-        if(invalidCreateMenuException.hasErrors())
-            throw invalidCreateMenuException;
     }
 
     /**

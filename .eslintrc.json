@@ -32,6 +32,5 @@
     "keyword-spacing": ["error", { "before": true, "after": true }],
     "comma-spacing": ["error", { "before": false, "after": true }],
     "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 1 }],
-    "no-restricted-imports": ["error", { "patterns": ["js/*", "!*.js"] }]
   }
 }

@@ -1,0 +1,9 @@
+.rightBtnArea {
+    display: flex;           /* 자식들을 가로로 배치 */
+    align-items: center;     /* 수직 중앙 정렬 */
+    width: 100%;            /* 가로 전체 폭 사용 */
+}
+
+.rightBtnArea > div.addBtnWrapper {
+    margin-right: auto;     /* 왼쪽 요소를 제외하고 나머지를 오른쪽으로 밀어냄 */
+}

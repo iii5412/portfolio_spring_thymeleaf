@@ -1,7 +1,7 @@
 import { FETCH, toQueryString } from '/js/common/util.js';
 import RequiredValueError from '/js/error/RequiredValueError.js';
 import Program from '/js/program/Program.js';
-import ProgramSearchResponseDto from '/js/apis/program/response/program-manage.search.response.dto';
+import ProgramSearchResponseDto from '/js/apis/program/response/program-manage.search.response.dto.js';
 
 const tag = '[api/program]';
 const DOMAIN = '/program';
@@ -39,7 +39,7 @@ function fetchCreateProgram(programManageCreateRequestDto) {
 /**
  * @param {ProgramManageEditRequestDto} programManageEditRequestDto
  * @param programManageEditRequestDto
- * @returns {Promise<*|undefined>}
+ * @returns {Promise<Object>}
  */
 function fetchEditProgram(programManageEditRequestDto) {
     const { id } = programManageEditRequestDto.toObject();
@@ -53,7 +53,7 @@ function fetchEditProgram(programManageEditRequestDto) {
 /**
  * 프로그램을 삭제합니다.
  * @param {ProgramManageDeleteRequestDto} programManageDeleteRequestDto
- * @returns {Promise<*>}
+ * @returns {Promise<Object>}
  */
 function fetchDeleteProgram(programManageDeleteRequestDto) {
     const { id } = programManageDeleteRequestDto.toObject();

@@ -18,6 +18,8 @@ public class ManageMenuResponse {
 
     private Long upperMenuId;
 
+    private String upperMenuName;
+
     private Long programId;
 
     private String programName;
@@ -44,6 +46,7 @@ public class ManageMenuResponse {
 
         if (menuManageDto.hasUpperMenu()) {
             this.upperMenuId = menuManageDto.getUpperMenuId();
+            this.upperMenuName = menuManageDto.getUpperMenuName();
         }
 
         this.id = menuManageDto.getId();

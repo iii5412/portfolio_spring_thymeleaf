@@ -39,4 +39,17 @@ export default class MenuManageSearchRequestDto extends Dto {
             roleCode: this.roleCode,
         };
     }
+
+    /**
+     * 빈 검색 조건을 반환하는 static factory 함수
+     * @returns {MenuManageSearchRequestDto}
+     */
+    static createEmptySearchCriteria() {
+        return new MenuManageSearchRequestDto({
+            id: '',
+            menuName: '',
+            roleCode: '',
+        });
+    }
+
 }

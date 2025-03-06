@@ -13,6 +13,7 @@ import com.portfolio.main.domain.model.menu.exception.MenuNotFoundException;
 import com.portfolio.main.domain.service.menu.menu.MenuService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -60,6 +61,7 @@ public class MenuManageService {
 
         return menuManageDtos;
     }
+
     /**
      * 특정 ID를 가진 MenuManageDto 객체를 찾아 반환하는 메서드.
      *
@@ -98,14 +100,14 @@ public class MenuManageService {
                     }
                 })
                 .filter(menuDto -> {
-                    if (searchMenu.getMenuName() != null) {
+                    if (StringUtils.hasText(searchMenu.getMenuName())) {
                         return menuDto.getMenuName().contains(searchMenu.getMenuName());
                     } else {
                         return true;
                     }
                 })
                 .filter(menuDto -> {
-                    if (searchMenu.getRoleCode() != null) {
+                    if (StringUtils.hasText(searchMenu.getRoleCode())) {
                         final List<MenuRoleDto> menuRoleDtos = menuRoleApplicationService.findByMenu(menuDto);
                         if (menuRoleDtos.isEmpty()) {
                             return false;

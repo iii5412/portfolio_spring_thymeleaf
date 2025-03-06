@@ -19,7 +19,6 @@ public class RoleResponse {
     private Long upperRoleId;
     private RoleCode roleCode;
     private String roleName;
-    private List<RoleResponse> childRoles;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "${locale.timezone}")
     private LocalDateTime createAt;
 
@@ -34,11 +33,6 @@ public class RoleResponse {
         this.id = roleDto.getId();
         this.roleCode = roleDto.getRoleCode();
         this.roleName = roleDto.getRoleName();
-
-        if (roleDto.hasChildRoles()) {
-            this.childRoles = roleDto.getChildRoles().stream().map(RoleResponse::new).toList();
-        }
-
         this.createAt = roleDto.getCreatedAt();
         this.updatedAt = roleDto.getUpdatedAt();
     }

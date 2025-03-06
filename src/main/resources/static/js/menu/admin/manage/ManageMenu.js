@@ -102,54 +102,102 @@ export default class ManageMenu {
      * 하위 Menu data를 Menu객체로 변환 후 반환한다.
      * @return {ManageMenu[]}
      */
-    getChildren() {
+    getSubMenus() {
         return this.subMenus.map(sm => new ManageMenu(sm));
     }
 
+    /**
+     *
+     * @returns {number|null}
+     */
     getUpperId() {
         return this.upperMenuId;
     }
 
+    /**
+     *
+     * @returns {number}
+     */
     getId() {
         return this.id;
     }
 
+    /**
+     *
+     * @returns {string}
+     */
     getMenuName() {
         return this.menuName;
     }
 
+    /**
+     *
+     * @returns {MENU_TYPE}
+     */
     getMenuType() {
         return this.menuType;
     }
 
+    /**
+     *
+     * @returns {ROLE_CODE}
+     */
     getRoleCode() {
         return this.roleCode;
     }
 
+    /**
+     *
+     * @returns {string|null}
+     */
     getUpperName() {
         return this.upperMenuName;
     }
 
+    /**
+     *
+     * @returns {number|null}
+     */
     getProgramId() {
         return this.programId;
     }
 
+    /**
+     *
+     * @returns {string|null}
+     */
     getProgramName() {
         return this.programName;
     }
 
+    /**
+     *
+     * @returns {number}
+     */
     getOrderNum() {
         return this.orderNum;
     }
 
+    /**
+     *
+     * @returns {string}
+     */
     getLastModifiedByLoginId() {
         return this.lastModifiedByLoginId;
     }
 
+    /**
+     *
+     * @returns {string}
+     */
     getUpdatedAt() {
         return this.updatedAt;
     }
 
+    /**
+     *
+     * @param {ManageMenu[]} subMenus
+     */
     setSubMenus(subMenus) {
         this.subMenus = subMenus;
     }
@@ -161,12 +209,12 @@ export default class ManageMenu {
         return this.menuType === MENU_TYPE.PROGRAM;
     }
 
+    /**
+     *
+     * @returns {boolean}
+     */
     isFolderMenu() {
         return this.menuType === MENU_TYPE.FOLDER;
-    }
-
-    getProgramUrl() {
-        return this.programUrl;
     }
 
     getUpperMenuName() {

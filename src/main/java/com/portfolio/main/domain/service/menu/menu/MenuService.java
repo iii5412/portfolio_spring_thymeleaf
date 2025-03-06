@@ -3,7 +3,6 @@ package com.portfolio.main.domain.service.menu.menu;
 import com.portfolio.main.application.login.exception.InvalidLoginId;
 import com.portfolio.main.application.menu.dto.CreateMenu;
 import com.portfolio.main.application.menu.dto.EditMenu;
-import com.portfolio.main.application.menu.dto.MenuDto;
 import com.portfolio.main.application.menu.dto.SearchMenu;
 import com.portfolio.main.application.menu.exception.CannotDeleteMenuWithSubmenusException;
 import com.portfolio.main.application.menu.exception.UpperMenuNotFoundException;
@@ -13,13 +12,11 @@ import com.portfolio.main.domain.model.account.User;
 import com.portfolio.main.domain.model.account.exception.RoleNotFoundException;
 import com.portfolio.main.domain.model.account.type.RoleCode;
 import com.portfolio.main.domain.model.menu.Menu;
-import com.portfolio.main.domain.model.menu.MenuRole;
 import com.portfolio.main.domain.model.menu.Program;
 import com.portfolio.main.domain.model.menu.exception.MenuCannotBeOwnParentException;
 import com.portfolio.main.domain.model.menu.exception.MenuNotFoundException;
 import com.portfolio.main.domain.model.menu.exception.ProgramNotFoundException;
 import com.portfolio.main.domain.repository.menu.MenuRepository;
-import com.portfolio.main.domain.repository.menu.MenuRoleRepository;
 import com.portfolio.main.domain.service.account.UserService;
 import com.portfolio.main.domain.service.account.role.RoleService;
 import com.portfolio.main.domain.service.menu.menurole.MenuRoleService;
@@ -29,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,10 +100,10 @@ public class MenuService {
      * 제공된 정보를 기반으로 새 메뉴를 만듭니다.
      *
      * @param createMenu 생성할 메뉴의 세부정보가 포함된 객체입니다.
-     * 상위 메뉴ID, 메뉴명, 메뉴종류, 주문번호, 역할코드, 작성자 로그인ID가 포함되어야 합니다.
+     *                   상위 메뉴ID, 메뉴명, 메뉴종류, 주문번호, 역할코드, 작성자 로그인ID가 포함되어야 합니다.
      * @return 새로 생성된 메뉴의 ID입니다.
      * @throws UpperMenuNotFoundException createMenu에 지정된 상위 메뉴를 찾을 수 없는 경우.
-     * @throws RoleNotFoundException createMenu에 지정된 역할을 찾을 수 없는 경우.
+     * @throws RoleNotFoundException      createMenu에 지정된 역할을 찾을 수 없는 경우.
      */
     @Transactional
     public Long createMenu(CreateMenu createMenu) throws UpperMenuNotFoundException, RoleNotFoundException {
@@ -127,9 +125,13 @@ public class MenuService {
         final Menu savedMenu = menuRepository.save(newMenu);
 
         final RoleCode roleCode = createMenu.getRoleCode();
-        final Role role = roleService.findByRoleCode(roleCode);
+        final List<RoleCode> higherAndSelfRoles = roleCode.getHigherAndSelfRoles();
 
-        menuRoleService.save(savedMenu, role);
+        higherAndSelfRoles.forEach(higherRoleCode -> {
+            final Role role = roleService.findByRoleCode(higherRoleCode);
+            menuRoleService.save(savedMenu, role);
+        });
+
         return savedMenu.getId();
     }
 
@@ -155,6 +157,18 @@ public class MenuService {
         final User editUser = userService.findByLoginId(editMenu.getEditUserLoginId());
 
         targetMenu.edit(editMenu.getMenuName(), editMenu.getMenuType(), editMenu.getOrderNum(), upperMenu, program, editUser);
+
+        // RoleCode가 수정되었을 경우
+        if (StringUtils.hasText(editMenu.getRoleCode())) {
+            final RoleCode editRoleCode = RoleCode.valueOf(editMenu.getRoleCode());
+            menuRoleService.deleteByMenuId(targetMenuId);
+            final List<RoleCode> higherAndSelfRoles = editRoleCode.getHigherAndSelfRoles();
+            higherAndSelfRoles.forEach(higherRoleCode -> {
+                final Role role = roleService.findByRoleCode(higherRoleCode);
+                menuRoleService.save(targetMenu, role);
+            });
+
+        }
 
         return targetMenu.getId();
     }

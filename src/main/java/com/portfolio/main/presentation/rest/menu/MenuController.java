@@ -50,7 +50,7 @@ public class MenuController {
         return ResponseEntity.ok(mainMenuResponseList);
     }
 
-    @GetMapping("/forderMenus")
+    @GetMapping("/folderMenus")
     public ResponseEntity<List<FolderMenusResponse>> getFolderMenus() {
         final List<MenuDto> menuDtos = menuManageService.selectFolderMenus();
         final List<FolderMenusResponse> folderMenusResponses = menuDtos.stream().map(FolderMenusResponse::new).toList();

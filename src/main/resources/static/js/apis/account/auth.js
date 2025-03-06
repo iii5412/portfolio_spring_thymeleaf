@@ -9,9 +9,7 @@ const tag = '[auth]';
  */
 async function logout() {
     try {
-        await FETCH.post({
-            url: '/account/logout',
-        });
+        await FETCH.post('/account/logout');
         if (location.pathname === '/')
             location.reload();
         else

@@ -37,7 +37,7 @@ async function fetchAllMenus(menuManageSearchRequestDto) {
  * @returns {Promise<FolderMenu[]>}
  */
 async function fetchFolderMenus() {
-    const response = await FETCH.get(`${requestMapping}/forderMenus`);
+    const response = await FETCH.get(`${requestMapping}/folderMenus`);
     const folderMenuResponseDtos = response.map(r => new FolderMenuResponseDto(r));
     return folderMenuMapping(folderMenuResponseDtos);
 }

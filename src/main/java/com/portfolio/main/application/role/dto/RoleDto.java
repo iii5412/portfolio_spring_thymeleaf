@@ -29,7 +29,7 @@ public class RoleDto {
 
         this.roleCode = role.getRoleCode();
         this.roleName = role.getRoleName();
-        this.level = role.getLevel();
+        this.level = this.roleCode.getLevel();
         this.createdAt = role.getCreatedAt();
         this.updatedAt = role.getUpdatedAt();
 

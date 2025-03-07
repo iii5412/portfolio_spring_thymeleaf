@@ -1,9 +1,9 @@
 package com.portfolio.main.domain.model.menu.exception;
 
-import com.portfolio.main.common.exception.BusiException;
+import com.portfolio.main.common.exception.CustomException;
 import org.springframework.http.HttpStatus;
 
-public class MenuNotFoundException extends BusiException {
+public class MenuNotFoundException extends CustomException {
     public static final String MESSAGE = "메뉴를 찾을 수 없습니다.";
 
     public MenuNotFoundException() {

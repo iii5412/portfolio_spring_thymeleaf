@@ -1,10 +1,11 @@
 package com.portfolio.main.application.program.exception;
 
-import com.portfolio.main.common.exception.BusiException;
+import com.portfolio.main.common.exception.FieldValidationException;
 import org.springframework.http.HttpStatus;
 
-public class InvalidSearchParameterException  extends BusiException {
+public class InvalidSearchParameterException extends FieldValidationException {
     public static final String MESSAGE = "검색어를 확인해주세요.";
+
     public InvalidSearchParameterException() {
         super(MESSAGE);
     }

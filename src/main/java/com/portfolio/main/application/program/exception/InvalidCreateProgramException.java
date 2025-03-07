@@ -1,10 +1,11 @@
 package com.portfolio.main.application.program.exception;
 
-import com.portfolio.main.common.exception.BusiException;
+import com.portfolio.main.common.exception.FieldValidationException;
 import org.springframework.http.HttpStatus;
 
-public class InvalidCreateProgramException extends BusiException {
+public class InvalidCreateProgramException extends FieldValidationException {
     public static final String MESSAGE = "입력 값을 확인해주세요.";
+
     public InvalidCreateProgramException() {
         super(MESSAGE);
     }

@@ -1,15 +1,16 @@
-package com.portfolio.main.application.menu.exception;
+package com.portfolio.main.presentation.rest.menu.exception;
 
-import com.portfolio.main.common.exception.BusiException;
+import com.portfolio.main.common.exception.FieldValidationException;
 import org.springframework.http.HttpStatus;
 
-public class InvalidCreateMenuException extends BusiException {
+public class InvalidMenuInputException extends FieldValidationException {
     public static final String MESSAGE = "입력 값을 확인해주세요.";
-    public InvalidCreateMenuException() {
+
+    public InvalidMenuInputException() {
         super(MESSAGE);
     }
 
-    public InvalidCreateMenuException(String fieldName, String message) {
+    public InvalidMenuInputException(String fieldName, String message) {
         super(MESSAGE);
         addValidation(fieldName, message);
     }

@@ -10,12 +10,16 @@ import {goLoginPage} from "/js/common/route.js";
 class FetchError extends Error {
     status;
     serverMessage = "";
+    errorName;
     validation = {};
-    constructor({code, message, validation = {}}) {
+    isFieldError;
+    constructor({code, message, errorName, validation = {}, isFieldException = false}) {
         super(message);
         this.status = Number(code);
         this.serverMessage = message;
+        this.errorName = errorName;
         this.validation = validation;
+        this.isFieldError = isFieldException;
 
         switch(this.status) {
             case HTTP_STATUS.UNAUTHORIZED :
@@ -36,6 +40,7 @@ class FetchError extends Error {
 class FieldFetchError {
     status;
     serverMessage;
+    errorName;
     validation;
 
     /**
@@ -48,6 +53,7 @@ class FieldFetchError {
         if(fetchError) {
             this.status = fetchError.status;
             this.serverMessage = fetchError.serverMessage;
+            this.errorName = fetchError.errorName;
             this.validation = fetchError.validation;
         }
     }

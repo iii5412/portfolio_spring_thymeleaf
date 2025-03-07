@@ -1,9 +1,9 @@
 package com.portfolio.main.domain.model.menu.exception;
 
-import com.portfolio.main.common.exception.BusiException;
+import com.portfolio.main.common.exception.CustomException;
 import org.springframework.http.HttpStatus;
 
-public class ProgramNotFoundException extends BusiException {
+public class ProgramNotFoundException extends CustomException {
     public static final String MESSAGE = "프로그램을 찾을 수 없습니다.";
 
     public ProgramNotFoundException() {

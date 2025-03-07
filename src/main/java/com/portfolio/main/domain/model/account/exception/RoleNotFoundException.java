@@ -1,9 +1,9 @@
 package com.portfolio.main.domain.model.account.exception;
 
-import com.portfolio.main.common.exception.BusiException;
+import com.portfolio.main.common.exception.CustomException;
 import org.springframework.http.HttpStatus;
 
-public class RoleNotFoundException extends BusiException {
+public class RoleNotFoundException extends CustomException {
     public static final String MESSAGE = "권한을 찾을 수 없습니다.";
 
     public RoleNotFoundException() {

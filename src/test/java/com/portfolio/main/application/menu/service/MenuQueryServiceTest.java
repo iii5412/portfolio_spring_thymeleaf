@@ -27,10 +27,10 @@ class MenuQueryServiceTest {
 
     @Test
     void selectAllMenusByUserRole() {
-        testAuth.setUserAdminAndGetToken();
+        testAuth.setUserUserAndGetToken();
         final List<MenuDto> allMenu = menuQueryService.selectAllMenusByUserRole();
-        assertEquals(1, allMenu.size());
-        assertEquals(1, allMenu.get(0).getSubMenus().size());
+        assertEquals(2, allMenu.size());
+        assertEquals(0, allMenu.getFirst().getSubMenus().size());
     }
 
     @Test

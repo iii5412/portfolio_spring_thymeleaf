@@ -5,22 +5,18 @@ import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-@Getter
-public class ErrorResponse {
-    private final String code;
-    private final String message;
-    private final Map<String, String> validation;
-
+public record ErrorResponse(String code, String errorName, String message, Map<String, String> validation, Boolean isFieldException) {
     @Builder
-    public ErrorResponse(String code, String message, Map<String, String> validation) {
+    public ErrorResponse(String code, String errorName, String message, Map<String, String> validation, Boolean isFieldException) {
         this.code = code;
+        this.errorName = errorName;
         this.message = message;
 
-        if (validation == null)
-            this.validation = new HashMap<>();
-        else
-            this.validation = validation;
+        this.isFieldException = Objects.requireNonNullElse(isFieldException, false);
+
+        this.validation = Objects.requireNonNullElseGet(validation, HashMap::new);
     }
 
     public void addValidation(String filedName, String errorMessage) {

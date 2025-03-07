@@ -1,9 +1,10 @@
 package com.portfolio.main.application.program.exception;
 
-import com.portfolio.main.common.exception.BusiException;
+import com.portfolio.main.common.exception.CustomException;
+import com.portfolio.main.common.exception.FieldValidationException;
 import org.springframework.http.HttpStatus;
 
-public class DuplicatedProgramUrlException extends BusiException {
+public class DuplicatedProgramUrlException extends FieldValidationException {
     public static final String MESSAGE = "프로그램의 URL이 중복됩니다.";
     public DuplicatedProgramUrlException() {
         super(MESSAGE);

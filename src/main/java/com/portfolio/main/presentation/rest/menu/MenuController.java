@@ -67,8 +67,8 @@ public class MenuController {
 
     @PatchMapping("")
     public ResponseEntity<Long> edit(@AuthenticationPrincipal UserDetails userDetails, @RequestBody EditMenuRequest editMenuRequest) {
+        editMenuRequest.validate();
         final EditMenu editMenu = new EditMenu(editMenuRequest, userDetails.getUsername());
-
         final Long editedMenuId = menuManageService.editMenu(editMenu);
         return ResponseEntity.ok(editedMenuId);
     }

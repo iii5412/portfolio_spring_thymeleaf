@@ -53,13 +53,12 @@ public class MenuManageService {
         final List<MenuDto> filteredMenus = filterBySearchMenu(flatMenus, searchMenu);
         // Step 3
         final List<MenuManageDto> flattenMenuManageDtos = filteredMenus.stream()
-                .map(this::menuDtoToMenuManageDto)
+                .map(MenuManageDto::new)
                 .filter(menuManageDto -> !menuManageDto.hasUpperMenu())
                 .toList();
         // Step 4
-        final List<MenuManageDto> menuManageDtos = rebuildHierarchyFromFlatMenuList(flattenMenuManageDtos);
 
-        return menuManageDtos;
+        return rebuildHierarchyFromFlatMenuList(flattenMenuManageDtos);
     }
 
     /**
@@ -70,7 +69,7 @@ public class MenuManageService {
      */
     public MenuManageDto findById(Long id) {
         final MenuDto findMenu = menuQueryService.findById(id);
-        return menuDtoToMenuManageDto(findMenu);
+        return new MenuManageDto(findMenu);
     }
 
     public List<MenuDto> selectFolderMenus() {
@@ -138,14 +137,6 @@ public class MenuManageService {
         return Stream
                 .concat(filteredMenus.stream(), filteredMenusChildren.stream())
                 .distinct().toList();
-    }
-
-    private MenuManageDto menuDtoToMenuManageDto(MenuDto menuDto) {
-        return menuDto.getRoles().stream()
-                .map(roleDto -> roleApplicationService.findById(roleDto.getId()))
-                .min(Comparator.comparing(RoleDto::getLevel))
-                .map(roleLevelDto ->
-                        new MenuManageDto(menuDto)).orElseGet(() -> new MenuManageDto(menuDto));
     }
 
     /**

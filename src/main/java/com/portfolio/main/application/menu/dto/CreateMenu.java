@@ -1,12 +1,10 @@
 package com.portfolio.main.application.menu.dto;
 
-import com.portfolio.main.application.menu.exception.InvalidCreateMenuException;
 import com.portfolio.main.domain.model.account.type.RoleCode;
 import com.portfolio.main.domain.model.menu.type.MenuType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.util.StringUtils;
 
 /**
  * 메뉴 생성

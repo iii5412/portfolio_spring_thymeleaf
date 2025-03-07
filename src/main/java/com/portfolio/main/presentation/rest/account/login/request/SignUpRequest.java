@@ -1,6 +1,6 @@
 package com.portfolio.main.presentation.rest.account.login.request;
 
-import com.portfolio.main.application.login.exception.InvalidRegistUser;
+import com.portfolio.main.presentation.rest.account.login.exception.InvalidRegistUser;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

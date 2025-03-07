@@ -25,17 +25,24 @@ export default class FieldError {
 
     showMessage(elId, message) {
         const messageArea = this.getMessageArea(elId);
+        /** @type {HTMLInputElement} */
+        const targetEl = qs(this.target, `#${elId}`);
         if (message) {
             messageArea.innerHTML = message;
             messageArea.classList.add('show');
+            targetEl.classList.add('is-invalid');
         }
     }
 
     clearMessage(...elements) {
+
         elements.forEach(el => {
+            /** @type {HTMLInputElement} */
+            const targetEl = qs(this.target, `#${el.id}`);
             const messageArea = this.getMessageArea(el.id);
             messageArea.innerHTML = '';
             messageArea.classList.remove('show');
+            targetEl.classList.remove('is-invalid');
         });
     }
 }

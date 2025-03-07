@@ -6,17 +6,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-public abstract class BusiException extends RuntimeException {
+public abstract class FieldValidationException extends CustomException {
     private final Map<String, String> validation = new HashMap<>();
-    public BusiException(String message) {
+
+    public FieldValidationException(String message) {
         super(message);
     }
 
-    public BusiException(String message, Throwable cause) {
+    public FieldValidationException(String message, Throwable cause) {
         super(message, cause);
     }
-
-    public abstract int getStatusCode();
 
     public void addValidation(String fieldName, String message) {
         validation.put(fieldName, message);
@@ -25,4 +24,6 @@ public abstract class BusiException extends RuntimeException {
     public boolean hasErrors() {
         return !this.getValidation().isEmpty();
     }
+
+
 }

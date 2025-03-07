@@ -1,14 +1,10 @@
 package com.portfolio.main.application.menu.dto;
 
 import com.portfolio.main.application.login.dto.UserDto;
-import com.portfolio.main.application.menurole.dto.MenuRoleDto;
 import com.portfolio.main.application.program.dto.ProgramDto;
 import com.portfolio.main.application.role.dto.RoleDto;
-import com.portfolio.main.domain.model.account.Role;
-import com.portfolio.main.domain.model.account.User;
 import com.portfolio.main.domain.model.menu.Menu;
 import com.portfolio.main.domain.model.menu.MenuRole;
-import com.portfolio.main.domain.model.menu.Program;
 import com.portfolio.main.domain.model.menu.type.MenuType;
 import lombok.Getter;
 
@@ -106,9 +102,15 @@ public class MenuDto {
         this.subMenus.sort(Comparator.comparing(MenuDto::getOrderNum));
     }
 
-    public RoleDto getTopRole() {
-        final Optional<RoleDto> topRoleDto = this.roles.stream().min(Comparator.comparing(RoleDto::getLevel));
+    public RoleDto getHighestRole() {
+        final Optional<RoleDto> topRoleDto = this.roles.stream()
+                .min(Comparator.comparing(RoleDto::getRoleCode));
         return topRoleDto.orElse(null);
+    }
+
+    public RoleDto getLowestRole() {
+        final Optional<RoleDto> lowRoleDto = this.roles.stream().max(Comparator.comparing(RoleDto::getLevel));
+        return lowRoleDto.orElse(null);
     }
 
     @Override

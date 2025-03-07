@@ -1,6 +1,6 @@
 package com.portfolio.main.domain.service.menu.menu;
 
-import com.portfolio.main.application.login.exception.InvalidLoginId;
+import com.portfolio.main.presentation.rest.account.login.exception.InvalidLoginId;
 import com.portfolio.main.application.menu.dto.CreateMenu;
 import com.portfolio.main.application.menu.dto.EditMenu;
 import com.portfolio.main.application.menu.dto.SearchMenu;
@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,8 +71,7 @@ public class MenuService {
      * @return 역할이 액세스할 수 있는 최상위 메뉴 목록
      */
     public List<Menu> selectMenuByRoleCode(RoleCode roleCode) {
-        final List<Menu> menus = menuRepository.selectMenuByRoleCode(roleCode);
-        return getTopMenus(menus);
+        return menuRepository.selectMenuByRoleCode(roleCode);
     }
 
     public PageResult<Menu> selectMenuWithPageable(SearchMenu searchMenu, PageRequest pageRequest) {
@@ -125,12 +123,7 @@ public class MenuService {
         final Menu savedMenu = menuRepository.save(newMenu);
 
         final RoleCode roleCode = createMenu.getRoleCode();
-        final List<RoleCode> higherAndSelfRoles = roleCode.getHigherAndSelfRoles();
-
-        higherAndSelfRoles.forEach(higherRoleCode -> {
-            final Role role = roleService.findByRoleCode(higherRoleCode);
-            menuRoleService.save(savedMenu, role);
-        });
+        saveMenuRole(roleCode, savedMenu);
 
         return savedMenu.getId();
     }
@@ -158,17 +151,10 @@ public class MenuService {
 
         targetMenu.edit(editMenu.getMenuName(), editMenu.getMenuType(), editMenu.getOrderNum(), upperMenu, program, editUser);
 
-        // RoleCode가 수정되었을 경우
-        if (StringUtils.hasText(editMenu.getRoleCode())) {
-            final RoleCode editRoleCode = RoleCode.valueOf(editMenu.getRoleCode());
-            menuRoleService.deleteByMenuId(targetMenuId);
-            final List<RoleCode> higherAndSelfRoles = editRoleCode.getHigherAndSelfRoles();
-            higherAndSelfRoles.forEach(higherRoleCode -> {
-                final Role role = roleService.findByRoleCode(higherRoleCode);
-                menuRoleService.save(targetMenu, role);
-            });
+        menuRoleService.deleteByMenuId(targetMenuId);
 
-        }
+        final RoleCode editRoleCode = editMenu.getRoleCode();
+        saveMenuRole(editRoleCode, targetMenu);
 
         return targetMenu.getId();
     }
@@ -196,6 +182,14 @@ public class MenuService {
         for (Menu subMenu : menu.getSubMenus()) {
             addMenuAndDescendants(flattenedMenus, subMenu);
         }
+    }
+
+    private void saveMenuRole(RoleCode editRoleCode, Menu targetMenu) {
+        final List<RoleCode> higherAndSelfRoles = editRoleCode.getHigherAndSelfRoles();
+        higherAndSelfRoles.forEach(higherRoleCode -> {
+            final Role role = roleService.findByRoleCode(higherRoleCode);
+            menuRoleService.save(targetMenu, role);
+        });
     }
 
 //    private Menu convertToMenu(MenuDto menuDto) {

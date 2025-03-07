@@ -1,9 +1,9 @@
 package com.portfolio.main.domain.model.menu.exception;
 
-import com.portfolio.main.common.exception.BusiException;
+import com.portfolio.main.common.exception.CustomException;
 import org.springframework.http.HttpStatus;
 
-public class MenuCannotBeOwnParentException extends BusiException {
+public class MenuCannotBeOwnParentException extends CustomException {
     public static final String MESSAGE = "자신의 ID를 상위 메뉴로 설정할 수 없습니다.";
 
     public MenuCannotBeOwnParentException() {

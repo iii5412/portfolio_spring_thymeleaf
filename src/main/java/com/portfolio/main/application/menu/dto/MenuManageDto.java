@@ -42,7 +42,6 @@ public class MenuManageDto {
         this.updatedAt = menuDto.getUpdatedAt();
 
         if (menuDto.hasUpperMenu()) {
-//            this.upperMenu = new MenuManageDto(menuDto.getUpperMenu());
             this.upperMenuId = menuDto.getUpperMenuId();
             this.upperMenuName = menuDto.getUpperMenuName();
         }
@@ -53,8 +52,8 @@ public class MenuManageDto {
         }
 
 
-        if (menuDto.getTopRole() != null) {
-            this.roleCode = menuDto.getTopRole().getRoleCode();
+        if (!menuDto.getRoles().isEmpty()) {
+            this.roleCode = menuDto.getLowestRole().getRoleCode();
         }
 
     }

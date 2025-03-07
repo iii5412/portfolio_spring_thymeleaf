@@ -1,7 +1,7 @@
 package com.portfolio.main.presentation.rest.menu.request;
 
 import com.portfolio.main.application.menu.dto.CreateMenu;
-import com.portfolio.main.application.menu.exception.InvalidCreateMenuException;
+import com.portfolio.main.presentation.rest.menu.exception.InvalidMenuInputException;
 import com.portfolio.main.domain.model.account.type.RoleCode;
 import com.portfolio.main.domain.model.menu.type.MenuType;
 import lombok.Getter;
@@ -61,21 +61,21 @@ public class CreateMenuRequest {
     }
 
     public void validate() {
-        final InvalidCreateMenuException invalidCreateMenuException = new InvalidCreateMenuException();
+        final InvalidMenuInputException invalidMenuInputException = new InvalidMenuInputException();
 
         if (!StringUtils.hasText(this.menuName))
-            invalidCreateMenuException.addValidation("menuName", "입력해주세요.");
+            invalidMenuInputException.addValidation("menuName", "입력해주세요.");
 
         if (!StringUtils.hasText(this.menuType))
-            invalidCreateMenuException.addValidation("menuType", "입력해주세요.");
+            invalidMenuInputException.addValidation("menuType", "입력해주세요.");
 
         if (this.orderNum == null)
-            invalidCreateMenuException.addValidation("orderNum", "입력해주세요.");
+            invalidMenuInputException.addValidation("orderNum", "입력해주세요.");
 
         if (!StringUtils.hasText(this.roleCode))
-            invalidCreateMenuException.addValidation("roleCode", "입력해주세요.");
+            invalidMenuInputException.addValidation("roleCode", "입력해주세요.");
 
-        if (invalidCreateMenuException.hasErrors())
-            throw invalidCreateMenuException;
+        if (invalidMenuInputException.hasErrors())
+            throw invalidMenuInputException;
     }
 }

@@ -2,12 +2,10 @@ package com.portfolio.main.application.login.service;
 
 import com.portfolio.main.application.login.dto.UserCreateDto;
 import com.portfolio.main.application.login.dto.UserDto;
-import com.portfolio.main.domain.model.account.User;
 import com.portfolio.main.presentation.rest.account.login.response.JwtResponse;
 import com.portfolio.main.presentation.rest.account.login.request.SignUpRequest;
-import com.portfolio.main.application.login.exception.InvalidLoginId;
-import com.portfolio.main.application.login.exception.InvalidLoginPassword;
-import com.portfolio.main.application.login.exception.InvalidRegistUser;
+import com.portfolio.main.presentation.rest.account.login.exception.InvalidLoginId;
+import com.portfolio.main.presentation.rest.account.login.exception.InvalidRegistUser;
 import com.portfolio.main.domain.model.account.type.RoleCode;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

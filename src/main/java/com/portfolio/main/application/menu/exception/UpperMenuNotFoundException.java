@@ -1,12 +1,12 @@
 package com.portfolio.main.application.menu.exception;
 
-import com.portfolio.main.common.exception.BusiException;
+import com.portfolio.main.common.exception.CustomException;
 import org.springframework.http.HttpStatus;
 
 /**
  * 상위 메뉴를 찾을 수 없는 시나리오를 나타내는 사용자 정의 예외입니다.
  */
-public class UpperMenuNotFoundException extends BusiException {
+public class UpperMenuNotFoundException extends CustomException {
     public static final String MESSAGE = "상위 메뉴를 찾을 수 없습니다.";
 
     public UpperMenuNotFoundException() {

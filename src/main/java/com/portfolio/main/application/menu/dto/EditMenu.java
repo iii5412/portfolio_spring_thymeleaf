@@ -13,7 +13,7 @@ public class EditMenu {
     private MenuType menuType;
     private Long orderNum;
     private Long programId;
-    private String roleCode;
+    private RoleCode roleCode;
     private String editUserLoginId;
 
     public EditMenu(Long id, Long upperId, String menuName, MenuType menuType, Long orderNum, Long programId, RoleCode roleCode, String editUserLoginId) {
@@ -23,7 +23,7 @@ public class EditMenu {
         this.menuType = menuType;
         this.orderNum = orderNum;
         this.programId = programId;
-        this.roleCode = roleCode.name();
+        this.roleCode = roleCode;
         this.editUserLoginId = editUserLoginId;
     }
 
@@ -31,10 +31,10 @@ public class EditMenu {
         this.id = editMenuRequest.getId();
         this.upperId = editMenuRequest.getUpperId();
         this.menuName = editMenuRequest.getMenuName();
-        this.menuType = editMenuRequest.getMenuType();
+        this.menuType = MenuType.valueOf(editMenuRequest.getMenuType());
         this.orderNum = editMenuRequest.getOrderNum();
         this.programId = editMenuRequest.getProgramId();
-        this.roleCode = editMenuRequest.getRoleCode();
+        this.roleCode = RoleCode.valueOf(editMenuRequest.getRoleCode());
         this.editUserLoginId = editUserLoginId;
     }
 

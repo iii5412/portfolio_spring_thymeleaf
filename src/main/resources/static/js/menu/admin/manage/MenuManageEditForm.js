@@ -285,9 +285,13 @@ export default class MenuManageEditForm {
             await this.setEditMode(menuManageEditRequestDto.id);
         } catch (e) {
             if (e instanceof FetchError) {
-                const fieldFetchError = new FieldFetchError(this.container, e);
-                fieldFetchError.clearMessage(...qsAll(this.container, 'input[type="text"], select'));
-                fieldFetchError.bindingMessage();
+                if(e.isFieldError) {
+                    const fieldFetchError = new FieldFetchError(this.container, e);
+                    fieldFetchError.clearMessage(...qsAll(this.container, 'input[type="text"], select'));
+                    fieldFetchError.bindingMessage();
+                } else {
+                    errorAlert(e.serverMessage);
+                }
             } else {
                 errorAlert('저장에 실패하였습니다. 잠시 후 다시 시도해주세요.');
                 throw e;

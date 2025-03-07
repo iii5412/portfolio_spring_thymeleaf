@@ -1,4 +1,4 @@
-import { createEl } from '/js/common/util.js';
+import { createEl, stringToHTMLElement } from '/js/common/util.js';
 import { loadContent } from '/js/common/common.js';
 import { fetchMenusByUserRole } from '/js/apis/menu/menu.js';
 import { FetchError } from '/js/error/fetchError.js';
@@ -41,8 +41,14 @@ export default class Menus {
         return ul;
     }
 
-    addLi(parent, options = {}) {
-        const li = createEl('li', options);
+    addLi(parent, menuName) {
+        const li = stringToHTMLElement(`
+            <li class="menuToggleIcon">
+                <i class="bi bi-plus plusIcon"></i>
+                <i class="bi bi-dash minusIcon"></i>
+                ${menuName}
+            </li>
+        `);
         parent.appendChild(li);
         return li;
     }
@@ -54,7 +60,7 @@ export default class Menus {
      */
     addTopLi(parent, mainMenu) {
         let menuName = mainMenu.getMenuName();
-        return this.addLi(parent, { href: '#', innerText: menuName });
+        return this.addLi(parent, menuName);
     }
 
     /**
@@ -62,8 +68,7 @@ export default class Menus {
      * @param {MainMenu[]} subMenus
      */
     #createSubMenu(parentElement, subMenus) {
-        const subMenuDiv = createEl('div');
-        subMenuDiv.classList.add('subMenu');
+        const subMenuDiv = stringToHTMLElement(`<div class="subMenu"></div>`)
 
         subMenus.forEach(subMenu => {
             const a = createEl('a', { innerText: subMenu.getMenuName() });

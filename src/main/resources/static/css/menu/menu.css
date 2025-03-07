@@ -1,8 +1,8 @@
 /* 메뉴 영역 */
 .menu {
     height: 50px;
-    background-color: #ffffff;
-    color: #000;
+    background-color: #1CA8AF; /* 포인트 컬러 적용 */
+    color: #fff;             /* 메뉴 전체 텍스트를 화이트톤으로 변경 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -30,7 +30,7 @@
 }
 
 .menu nav ul li > a {
-    color: #000;
+    color: #fff;             /* 메뉴 링크 폰트 화이트 */
     text-decoration: none;
     padding: 10px 15px;
     border-radius: 5px;
@@ -40,17 +40,18 @@
 }
 
 .menu nav ul li > a:hover {
-    background-color: #e9ecef;
+    background-color: rgba(255, 255, 255, 0.2); /* hover 효과: 화이트 계열 투명 효과 */
 }
 
+/* 드롭다운(서브메뉴) 영역도 포인트 컬러와 화이트 폰트 적용 */
 .menu nav ul li .subMenu {
     display: none;
     position: absolute;
-    top: 100%; /* 메뉴 바로 아래에 표시 */
+    top: 100%;
     left: 0;
-    background-color: #ffffff;
+    background-color: #1CA8AF; /* 드롭다운 배경도 포인트 컬러 적용 */
     border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* 그림자 강도와 블러 반경 조정 */
     min-width: 200px;
     z-index: 10;
 }
@@ -61,7 +62,7 @@
 }
 
 .menu nav ul li .subMenu a {
-    color: #000;
+    color: #fff;             /* 드롭다운 링크 폰트 화이트 */
     text-decoration: none;
     padding: 10px 15px;
     display: block;
@@ -70,5 +71,18 @@
 }
 
 .menu nav ul li .subMenu a:hover {
-    background-color: #e9ecef;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* 기본 상태에서는 - 아이콘을 감춤 */
+.menuToggleIcon .minusIcon {
+    display: none;
+}
+
+/* hover 시 + 아이콘을 감추고 - 아이콘을 표시 */
+.menuToggleIcon:hover .plusIcon {
+    display: none;
+}
+.menuToggleIcon:hover .minusIcon {
+    display: inline-block;
 }

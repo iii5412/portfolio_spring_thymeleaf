@@ -8,10 +8,8 @@ body {
 }
 
 /* 테마 컬러 */
-:root {
-    --theme-color: #009BFF; /* 좀 더 밝은 파란색 */
-    /*--light-theme-color: #e6f5ff; !* 조금 더 밝은 파란색의 연한 버전 *!*/
-    /*--dark-theme-color: #0070c0; !* 약간 진한 파란색의 버전 *!*/
+:root, [data-bs-theme=light] {
+    --bs-primary: #1CA8AF;
 }
 
 .hidden {

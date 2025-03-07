@@ -10,13 +10,15 @@
 /* 헤더 영역 */
 .loginHeader {
     height: 60px;
-    background-color: #f8f9fa;
-    color: #000;
+    background-color: #1CA8AF; /* 포인트 컬러 적용 */
+    color: #fff; /* 텍스트를 화이트톤으로 변경 */
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
 }
 
 .loginHeader .loginDiv {
@@ -26,7 +28,7 @@
 }
 
 .loginHeader .loginDiv a {
-    color: #000;
+    color: #fff;
     text-decoration: none;
     padding: 5px 10px;
     border-radius: 5px;
@@ -34,7 +36,7 @@
 }
 
 .loginHeader .loginDiv a:hover {
-    background-color: #e9ecef;
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 
@@ -47,7 +49,7 @@
     box-sizing: border-box;
     border-radius: 10px;
     margin: 15px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: relative;
     z-index: 1;
 }
@@ -60,5 +62,5 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
